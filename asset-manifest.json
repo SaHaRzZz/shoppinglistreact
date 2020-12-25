@@ -1,6 +1,6 @@
 {
   "files": {
-    "main.css": "/ShoppingListReact/static/css/main.ab7136cd.chunk.css",
+    "main.css": "/ShoppingListReact/static/css/main.9055cfeb.chunk.css",
     "main.js": "/ShoppingListReact/static/js/main.ed8f8c8f.chunk.js",
     "main.js.map": "/ShoppingListReact/static/js/main.ed8f8c8f.chunk.js.map",
     "runtime-main.js": "/ShoppingListReact/static/js/runtime-main.5a5161c3.js",
@@ -12,7 +12,7 @@
     "static/js/3.fafa72ff.chunk.js.map": "/ShoppingListReact/static/js/3.fafa72ff.chunk.js.map",
     "index.html": "/ShoppingListReact/index.html",
     "static/css/2.20aa2d7b.chunk.css.map": "/ShoppingListReact/static/css/2.20aa2d7b.chunk.css.map",
-    "static/css/main.ab7136cd.chunk.css.map": "/ShoppingListReact/static/css/main.ab7136cd.chunk.css.map",
+    "static/css/main.9055cfeb.chunk.css.map": "/ShoppingListReact/static/css/main.9055cfeb.chunk.css.map",
     "static/js/2.4d9106a4.chunk.js.LICENSE.txt": "/ShoppingListReact/static/js/2.4d9106a4.chunk.js.LICENSE.txt",
     "static/media/logo.6ce24c58.svg": "/ShoppingListReact/static/media/logo.6ce24c58.svg"
   },
@@ -20,7 +20,7 @@
     "static/js/runtime-main.5a5161c3.js",
     "static/css/2.20aa2d7b.chunk.css",
     "static/js/2.4d9106a4.chunk.js",
-    "static/css/main.ab7136cd.chunk.css",
+    "static/css/main.9055cfeb.chunk.css",
     "static/js/main.ed8f8c8f.chunk.js"
   ]
 }
