@@ -1,0 +1,6 @@
+export const ADD_ITEM_TO_LIST = 'ADD_ITEM_TO_LIST';
+export const REMOVE_ITEM_FROM_LIST = 'REMOVE_ITEM_FROM_LIST';
+export const CREATE_ITEM_IN_LIST = 'CREATE_ITEM_IN_LIST';
+export const RESET_ITEM_FROM_LIST = 'RESET_ITEM_FROM_LIST';
+export const SET_LIST = 'SET_LIST';
+export const RESET_LIST = 'RESET_LIST';

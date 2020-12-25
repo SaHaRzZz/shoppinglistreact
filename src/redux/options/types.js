@@ -1,0 +1,1 @@
+export const SET_IMAGES_SIZE = 'SET_IMAGES_SIZE';
