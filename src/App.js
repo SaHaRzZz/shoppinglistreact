@@ -11,7 +11,7 @@ function App() {
     <Provider store={store}>
         <BrowserRouter>
           <Route component={Options} path="/options" exact/>
-          <Route component={MainList} path="/" exact/>
+          <Route component={MainList} path="/ShoppingListReact" exact/>
         </BrowserRouter>
     </Provider>
   );

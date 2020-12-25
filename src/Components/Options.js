@@ -26,7 +26,7 @@ function Options(props) {
     console.log(props.options.imagesSize);
     return (
         <div className="text-center">
-            <Link to="/">
+            <Link to="/ShoppingListReact">
                 <FontAwesomeIcon type="button" icon={faHome} size="4x" className="position-absolute border-right border-bottom" style={{left: 0, zIndex: 1}}/>
             </Link>
             <div className="dropdown">
