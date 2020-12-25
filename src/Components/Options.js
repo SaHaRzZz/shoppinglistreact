@@ -1,5 +1,9 @@
 import React, { useEffect } from 'react';
 import {connect} from 'react-redux';
+import {faHome} from '@fortawesome/free-solid-svg-icons';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {Link} from 'react-router-dom';
+
 import {setImagesSize} from '../redux/';
 
 const makeSetImagesSize = (setImagesSizeFunc, payload) => {
@@ -21,15 +25,18 @@ function Options(props) {
     useEffect(() => updateOptions(props.setImagesSize), []);
     console.log(props.options.imagesSize);
     return (
-        <div>
-            <div class="dropdown">
-                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <div className="text-center">
+            <Link to="/">
+                <FontAwesomeIcon type="button" icon={faHome} size="4x" className="position-absolute border-right border-bottom" style={{left: 0, zIndex: 1}}/>
+            </Link>
+            <div className="dropdown">
+                <button className="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     {`גודל תמונות: ${props.options.imagesSize == '64px' ? 'קטן' : props.options.imagesSize == '96px' ? 'בינוני' : 'גדול'}`}
                 </button>
-                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                    <a class="dropdown-item" onClick={() => makeSetImagesSize(props.setImagesSize, '64px')}>קטן</a>
-                    <a class="dropdown-item" onClick={() => makeSetImagesSize(props.setImagesSize, '96px')}>בינוני</a>
-                    <a class="dropdown-item" onClick={() => makeSetImagesSize(props.setImagesSize, '128px')}>גדול</a>
+                <div className="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                    <a className="dropdown-item" onClick={() => makeSetImagesSize(props.setImagesSize, '64px')}>קטן</a>
+                    <a className="dropdown-item" onClick={() => makeSetImagesSize(props.setImagesSize, '96px')}>בינוני</a>
+                    <a className="dropdown-item" onClick={() => makeSetImagesSize(props.setImagesSize, '128px')}>גדול</a>
                 </div>
             </div>
         </div>
