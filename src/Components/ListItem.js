@@ -23,7 +23,7 @@ const itemRemove = (id, list, removeItemFromListFunc) => {
 
 function ListItem(props) {
     return (
-        <div className="card flex-row my-1 shadow" style={{backgroundColor: props.list[props.id] ? "rgb(0, 0, 255, 0.5)" : "rgb(255, 0, 0, 0.5)"}}>
+        <div className="card flex-row my-1 shadow text-center" style={{backgroundColor: props.list[props.id] ? "rgb(0, 0, 255, 0.5)" : "rgb(255, 0, 0, 0.5)"}}>
             <div className="card-header border-0">
                 <img src={`${API_IMG_SRC}${props.logo}`} className="user-select-none" style={{width: props.options.imagesSize}} onClick={() => itemAdd(props.id, props.list, props.addItemToList, props.createItemInList)}/>
             </div>

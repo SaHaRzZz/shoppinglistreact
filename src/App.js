@@ -1,15 +1,18 @@
 import logo from './logo.svg';
 import './App.css';
 import MainList from './Components/MainList';
+import Options from './Components/Options';
 import {Provider} from 'react-redux';
 import store from './redux/store';
+import {Router, Route, Switch, BrowserRouter} from 'react-router-dom';
 
 function App() {
   return (
     <Provider store={store}>
-      <div className="App">
-        <MainList/>
-      </div>
+        <BrowserRouter>
+          <Route component={Options} path="/options" exact/>
+          <Route component={MainList} path="/" exact/>
+        </BrowserRouter>
     </Provider>
   );
 }

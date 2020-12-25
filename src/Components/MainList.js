@@ -2,8 +2,8 @@ import React, { useEffect } from 'react';
 import {connect} from 'react-redux';
 
 import ListItem from './ListItem';
-import {setFilterText, setFilterType, setFilterTypeHebrew, fetch, setFilterCategory, setFinal, setFinalHebrew, setList} from '../redux/';
-
+import {setFilterText, setFilterType, setFilterTypeHebrew, fetch, setFilterCategory, setFinal, setFinalHebrew, setList, setImagesSize} from '../redux/';
+import {updateOptions} from './Options';
 const FILTERING_TYPE_WHOLE = 'FILTERING_TYPE_WHOLE';
 const FILTERING_TYPE_SOME = 'FILTERING_TYPE_SOME';
 
@@ -37,18 +37,15 @@ const renderByFilter = (filtering, filteringType, fetchData, filterCategory, fin
 const getBase64Code = list => {
     list = JSON.stringify(list);
     list = btoa(list);
-    navigator.clipboard.writeText(list);
-    alert('הרשימה הועתקה!')
+    setClipboard(list);
+    alert('הרשימה הועתקה!');
 }
 
 const setBase64Code = setList => {
-    navigator.clipboard.readText()
-        .then(clipText => atob(clipText))
-        .then(atobText => JSON.parse(atobText))
-        .then(finalText => {
-            setList(finalText);
-        })
-        .catch(() => alert('נמצאה שגיאה בקוד הרשימה!'))
+    let list = prompt('הכניסו קוד רשימה');
+    list = atob(list);
+    list = JSON.parse(list);
+    setList(list);
 }
 
 const resetList = setList => {setList(JSON.parse(atob('e30=')))}
@@ -79,11 +76,25 @@ const changeFinal = (final, setFinalFunc, setFinalHebrewFunc) => {
     }
 }
 
+const setClipboard = str => {
+    const el = document.createElement('textarea');
+    el.value = str;
+    el.setAttribute('readonly', '');
+    el.style.position = 'absolute';
+    el.style.left = '-9999px';
+    document.body.appendChild(el);
+    el.select();
+    document.execCommand('copy');
+    document.body.removeChild(el);
+}
+
+
 function MainList(props) {
     useEffect(props.fetch, []);
+    useEffect(() => updateOptions(props.setImagesSize), []);
     return (
         !props.fetchLoading ?
-        <div>
+        <div className="text-center">
             <input placeholder={`חיפוש לפי: ${props.filterTypeHebrew}`} className="text-center" onChange={event => props.setFilterText(event.target.value)}></input>
             <div className="dropdown mt-2">
                 <button className="btn btn-primary rounded-0 dropdown-toggle" dir="rtl" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -142,7 +153,8 @@ const mapDispatchToProps = dispatch => {
         setFilterCategory: val => dispatch(setFilterCategory(val)),
         setFinal: val => dispatch(setFinal(val)),
         setFinalHebrew: val => dispatch(setFinalHebrew(val)),
-        setList: val => dispatch(setList(val))
+        setList: val => dispatch(setList(val)),
+        setImagesSize: val => dispatch(setImagesSize(val))
     }
 }
 
