@@ -129,7 +129,7 @@ function MainList(props) {
 
         </div>
         :
-        <div>Loading...</div>
+        <div className="text-center display-1">Loading...</div>
     )
 }
 
