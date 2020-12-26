@@ -4,7 +4,7 @@ import {addItemToList, removeItemFromList, createItemInList, resetItemFromList} 
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faTimesCircle, faPlusCircle, faMinusCircle, faMinus} from '@fortawesome/free-solid-svg-icons';
 
-const API_IMG_SRC = 'https://raw.githubusercontent.com/SaHaRzZz/test/main/imgs/';
+export const API_IMG_SRC = 'https://raw.githubusercontent.com/SaHaRzZz/test/main/imgs/';
 
 const itemAdd = (id, list, addItemToListFunc, createItemInListFunc) => {
     if(list[id]) {
@@ -29,15 +29,19 @@ function ListItem(props) {
             </div>
             <div className="card-body row p-0 text-wrap">
                 <div className="card-title text-decoration-underline font-weight-bold col-5 h5 m-0 user-select-none align-self-center" style={{fontSize: props.options.titlesSize}}>{props.title}</div>
-                <div className="col-1 mr-2" style={{transform: "translateY(40%)"}}><FontAwesomeIcon size="2x" onClick={() => itemAdd(props.id, props.list, props.addItemToList, props.createItemInList)} icon={faPlusCircle}/></div>
-                <div className="text-center h5 font-italic border-left border-right m-0 align-self-center">
+                <div className="text-center h5 font-italic border-left border-right align-self-center">
                     {props.list[props.id] ? [
-                        <button className="btn rounded-circle shadow-lg font-italic mx-2" style={{backgroundColor: "rgb(0, 0, 255, 0.5)", fontSize: "1.1rem"}} onClick={() => window.confirm("לאפס את המוצר?") && props.resetItemFromList(props.id)}><FontAwesomeIcon icon={faTimesCircle}/><br/>{props.list[props.id]}</button>,
+                        <button className="btn rounded-circle shadow-lg mx-2 font-italic" style={{backgroundColor: "rgb(0, 0, 255, 0.5)", fontSize: "1.1rem"}} onClick={() => window.confirm("לאפס את המוצר?") && props.resetItemFromList(props.id)}><FontAwesomeIcon icon={faTimesCircle}/>{props.list[props.id]}</button>,
                     ]
                     :
-                    <div className="rounded-circle shadow-lg col-1 font-italic mx-2" style={{fontSize: "1.1rem"}}>0</div>}
+                    <div className="rounded-circle shadow-lg col-1 font-italic mx-2">
+                        <div className="col-1 mr-2 position-absolute" style={{transform: "translate(-50%, -40%)"}}><FontAwesomeIcon size="2x" onClick={() => itemAdd(props.id, props.list, props.addItemToList, props.createItemInList)} icon={faPlusCircle}/></div>
+                    </div>}
                 </div>
-                <div className="col-1 ml-2" style={{transform: "translateY(40%)"}}><FontAwesomeIcon size="2x" className={`${!props.list[props.id] ? 'd-none' : ''}`} onClick={() => itemRemove(props.id, props.list, props.removeItemFromList)} icon={faMinusCircle}/></div>
+                {props.list[props.id] ? [
+                <div className="col-1 align-self-center mx-2"><FontAwesomeIcon size="2x" onClick={() => itemAdd(props.id, props.list, props.addItemToList, props.createItemInList)} icon={faPlusCircle}/></div>,
+                <div className="col-1 align-self-center"><FontAwesomeIcon size="2x" onClick={() => itemRemove(props.id, props.list, props.removeItemFromList)} icon={faMinusCircle}/></div>
+                ] : ''}
                 <div className="card-title h-100 text-muted m-0 user-select-none align-self-center position-absolute" style={{right: '10px'}}>{props.category}</div>
             </div>
         </div>
