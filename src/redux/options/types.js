@@ -1,1 +1,2 @@
 export const SET_IMAGES_SIZE = 'SET_IMAGES_SIZE';
+export const SET_TITLES_SIZE = 'SET_TITLES_SIZE';

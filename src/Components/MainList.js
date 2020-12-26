@@ -5,7 +5,7 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {Link} from 'react-router-dom';
 
 import ListItem from './ListItem';
-import {setFilterText, setFilterType, setFilterTypeHebrew, fetch, setFilterCategory, setFinal, setFinalHebrew, setList, setImagesSize} from '../redux/';
+import {setFilterText, setFilterType, setFilterTypeHebrew, fetch, setFilterCategory, setFinal, setFinalHebrew, setList, setImagesSize, setTitlesSize} from '../redux/';
 import {updateOptions} from './Options';
 const FILTERING_TYPE_WHOLE = 'FILTERING_TYPE_WHOLE';
 const FILTERING_TYPE_SOME = 'FILTERING_TYPE_SOME';
@@ -94,7 +94,7 @@ const setClipboard = str => {
 
 function MainList(props) {
     useEffect(props.fetch, []);
-    useEffect(() => updateOptions(props.setImagesSize), []);
+    useEffect(() => updateOptions(props.setImagesSize, props.setTitlesSize), []);
     return (
         !props.fetchLoading ?
         <div className="text-center">
@@ -160,7 +160,8 @@ const mapDispatchToProps = dispatch => {
         setFinal: val => dispatch(setFinal(val)),
         setFinalHebrew: val => dispatch(setFinalHebrew(val)),
         setList: val => dispatch(setList(val)),
-        setImagesSize: val => dispatch(setImagesSize(val))
+        setImagesSize: val => dispatch(setImagesSize(val)),
+        setTitlesSize: val => dispatch(setTitlesSize(val))
     }
 }
 

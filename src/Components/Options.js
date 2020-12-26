@@ -4,26 +4,26 @@ import {faHome} from '@fortawesome/free-solid-svg-icons';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {Link} from 'react-router-dom';
 
-import {setImagesSize} from '../redux/';
+import {setImagesSize, setTitlesSize} from '../redux/';
 
 const makeSetImagesSize = (setImagesSizeFunc, payload) => {
     setImagesSizeFunc(payload);
     localStorage.setItem('options-images-size', payload);
 }
 
-export const updateOptions = setImagesSizeFunc => {
-    if(localStorage.getItem('options-images-size')) {
+const makeSetTitlesSize = (setTitlesSizeFunc, payload) => {
+    setTitlesSizeFunc(payload);
+    localStorage.setItem('options-titles-size', payload);
+}
+
+export const updateOptions = (setImagesSizeFunc, setTitlesSizeFunc) => {
+    if(localStorage.getItem('options-images-size'))
         setImagesSizeFunc(localStorage.getItem('options-images-size'));
-        console.log('yes');
-    }
-    else {
-        console.log('no');
-    }
+    if(localStorage.getItem('options-titles-size'))
+        setTitlesSizeFunc(localStorage.getItem('options-titles-size'));
 }
 
 function Options(props) {
-    useEffect(() => updateOptions(props.setImagesSize), []);
-    console.log(props.options.imagesSize);
     return (
         <div className="text-center">
             <Link to="/ShoppingListReact">
@@ -39,6 +39,18 @@ function Options(props) {
                     <a className="dropdown-item" onClick={() => makeSetImagesSize(props.setImagesSize, '128px')}>גדול</a>
                 </div>
             </div>
+            <div className="dropdown">
+                <button className="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    {`גודל כותרות מוצר: ${props.options.titlesSize == '2vw' ? 'פיצי' : props.options.titlesSize == '3vw' ? 'קטן' : props.options.titlesSize == '4vw' ? 'בינוני' : props.options.titlesSize == '5vw' ? 'גדול' : 'ענק'}`}
+                </button>
+                <div className="dropdown-menu" aria-labelledby="dropdownMenuButton2">
+                    <a className="dropdown-item" onClick={() => makeSetTitlesSize(props.setTitlesSize, '2vw')}>פיצי</a>
+                    <a className="dropdown-item" onClick={() => makeSetTitlesSize(props.setTitlesSize, '3vw')}>קטן</a>
+                    <a className="dropdown-item" onClick={() => makeSetTitlesSize(props.setTitlesSize, '4vw')}>בינוני</a>
+                    <a className="dropdown-item" onClick={() => makeSetTitlesSize(props.setTitlesSize, '5vw')}>גדול</a>
+                    <a className="dropdown-item" onClick={() => makeSetTitlesSize(props.setTitlesSize, '6vw')}>ענק</a>
+                </div>
+            </div>
         </div>
     )
 }
@@ -51,7 +63,8 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        setImagesSize: val => dispatch(setImagesSize(val))
+        setImagesSize: val => dispatch(setImagesSize(val)),
+        setTitlesSize: val => dispatch(setTitlesSize(val))
     }
 }
 

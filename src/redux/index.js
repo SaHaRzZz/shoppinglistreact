@@ -1,4 +1,4 @@
 export {setFilterText, setFilterType, setFilterTypeHebrew, setFilterCategory, setFilterCategoryHebrew, setFinal, setFinalHebrew} from './filtering/actions';
 export {fetchRequest, fetchSuccess, fetchFailure, fetch} from './api/actions';
 export {addItemToList, removeItemFromList, createItemInList, resetItemFromList, setList} from './list/actions';
-export {setImagesSize} from './options/actions';
+export {setImagesSize, setTitlesSize} from './options/actions';

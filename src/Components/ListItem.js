@@ -27,17 +27,16 @@ function ListItem(props) {
             <div className="card-header border-0">
                 <img src={`${API_IMG_SRC}${props.logo}`} className="user-select-none" style={{width: props.options.imagesSize}} onClick={() => itemAdd(props.id, props.list, props.addItemToList, props.createItemInList)}/>
             </div>
-            <div className="card-body row p-0">
-                <div className="card-title text-decoration-underline font-weight-bold col-5 position-absolute h5 m-0 user-select-none align-self-center">{props.title}</div>
-                <div className="card-title text-decoration-underline font-weight-bold col-5 border-left m-0" onClick={() => itemAdd(props.id, props.list, props.addItemToList, props.createItemInList)}></div>
+            <div className="card-body row p-0 text-wrap">
+                <div className="card-title text-decoration-underline font-weight-bold col-5 h5 m-0 user-select-none align-self-center" onClick={() => itemAdd(props.id, props.list, props.addItemToList, props.createItemInList)} style={{fontSize: props.options.titlesSize}}>{props.title}</div>
                 <div className="col-3 text-center h5 font-italic border-left border-right m-0 align-self-center position-relative">
                     {props.list[props.id] ? [
-                        <button className="btn rounded-circle shadow-lg" style={{backgroundColor: "rgb(0, 0, 255, 0.5)", fontSize: "1.1rem"}} onClick={() => window.confirm("לאפס את המוצר?") && props.resetItemFromList(props.id)}><FontAwesomeIcon icon={faTimesCircle}/>{props.list[props.id]}</button>,
+                        <button className="btn rounded-circle shadow-lg font-italic" style={{backgroundColor: "rgb(0, 0, 255, 0.5)", fontSize: "1.1rem"}} onClick={() => window.confirm("לאפס את המוצר?") && props.resetItemFromList(props.id)}><FontAwesomeIcon icon={faTimesCircle}/><br/>{props.list[props.id]}</button>,
                     ]
                     :
-                    ''}
+                    <div>0</div>}
                 </div>
-                <div className="card-title mb-2 text-muted col-4 m-0 user-select-none align-self-center" onClick={() => itemRemove(props.id, props.list, props.removeItemFromList)}>{props.category}</div>
+                <div className="card-title h-100 text-muted col-4 m-0 user-select-none align-self-center" style={{transform: "translateY(40%)"}} onClick={() => itemRemove(props.id, props.list, props.removeItemFromList)}>{props.category}</div>
             </div>
         </div>
     )
