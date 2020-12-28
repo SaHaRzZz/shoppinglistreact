@@ -2,7 +2,7 @@ import React from 'react';
 import {connect} from 'react-redux';
 import {addItemToList, removeItemFromList, createItemInList, resetItemFromList} from '../redux/';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {faTimesCircle, faPlusCircle, faMinusCircle, faMinus} from '@fortawesome/free-solid-svg-icons';
+import {faTimesCircle, faPlusCircle, faMinusCircle} from '@fortawesome/free-solid-svg-icons';
 
 export const API_IMG_SRC = 'https://raw.githubusercontent.com/SaHaRzZz/test/main/imgs/';
 
@@ -43,8 +43,8 @@ function ListItem(props) {
                     </div>}
                 </div>
                 {props.list[props.id] ? [
-                <div className="col-1 align-self-center mx-2"><FontAwesomeIcon size="2x" onClick={() => itemAdd(props.id, props.list, props.addItemToList, props.createItemInList)} icon={faPlusCircle}/></div>,
-                <div className="col-1 align-self-center"><FontAwesomeIcon size="2x" onClick={() => itemRemove(props.id, props.list, props.removeItemFromList)} icon={faMinusCircle}/></div>
+                <div className="col-1 align-self-center mx-2" style={{zIndex: 3}} onClick={() => itemAdd(props.id, props.list, props.addItemToList, props.createItemInList)}><FontAwesomeIcon size="2x" icon={faPlusCircle}/></div>,
+                <div className="col-1 align-self-center" style={{zIndex: 3}} onClick={() => itemAdd(props.id, props.list, props.addItemToList, props.createItemInList)}><FontAwesomeIcon size="2x" icon={faMinusCircle}/></div>
                 ] : ''}
                 <div className="card-title h-100 text-muted m-0 user-select-none align-self-center position-absolute" style={{right: '10px'}}>{props.category}</div>
             </div>

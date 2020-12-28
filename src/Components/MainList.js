@@ -21,7 +21,6 @@ const renderByFilter = (filtering, filteringType, fetchData, filterCategory, fin
             case FILTERING_TYPE_WHOLE:
                 for(let i=0;i<filtering.length;i++) {
                     fetchData = fetchData.filter(item => item.title[i] == filtering[i]);
-                    console.log()
                 }
                 break;
             case FILTERING_TYPE_SOME:
@@ -104,7 +103,6 @@ function MainList(props) {
     useEffect(() => {
         if(localStorage.getItem('saved-list')) {
             let tempList = localStorage.getItem('saved-list');
-            console.log('doing: ' + tempList);
             tempList = atob(tempList);
             tempList = JSON.parse(tempList);
             props.setList(tempList);
@@ -112,15 +110,12 @@ function MainList(props) {
         else {
             localStorage.setItem('saved-list', {});
         }
-        console.log('runs once');
     }, []);
     useEffect(() => {
         let tempList = props.list;
         tempList = JSON.stringify(tempList);
         tempList = btoa(tempList);
         localStorage.setItem('saved-list', tempList);
-        console.log('runs everytime');
-        console.log(tempList);
     })
     return (
         !props.fetchLoading ?
