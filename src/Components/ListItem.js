@@ -21,6 +21,10 @@ const itemRemove = (id, list, removeItemFromListFunc) => {
     }
 }
 
+const itemReset = (resetItemFromListFunc, id) => {
+    resetItemFromListFunc(id);
+}
+
 function ListItem(props) {
     return (
         <div className="card flex-row my-1 shadow text-center" style={{backgroundColor: props.list[props.id] ? "rgb(0, 0, 255, 0.5)" : "rgb(255, 0, 0, 0.5)"}}>
@@ -31,7 +35,7 @@ function ListItem(props) {
                 <div className="card-title text-decoration-underline font-weight-bold col-5 h5 m-0 user-select-none align-self-center" style={{fontSize: props.options.titlesSize}}>{props.title}</div>
                 <div className="text-center h5 font-italic border-left border-right align-self-center">
                     {props.list[props.id] ? [
-                        <button className="btn rounded-circle shadow-lg mx-2 font-italic" style={{backgroundColor: "rgb(0, 0, 255, 0.5)", fontSize: "1.1rem"}} onClick={() => window.confirm("לאפס את המוצר?") && props.resetItemFromList(props.id)}><FontAwesomeIcon icon={faTimesCircle}/>{props.list[props.id]}</button>,
+                        <button className="btn rounded-circle shadow-lg mx-2 font-italic" style={{backgroundColor: "rgb(0, 0, 255, 0.5)", fontSize: "1.1rem"}} onClick={() => window.confirm("לאפס את המוצר?") && itemReset(props.resetItemFromList, props.id)}><FontAwesomeIcon icon={faTimesCircle}/>{props.list[props.id]}</button>,
                     ]
                     :
                     <div className="rounded-circle shadow-lg col-1 font-italic mx-2">

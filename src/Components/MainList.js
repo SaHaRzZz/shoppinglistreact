@@ -45,10 +45,16 @@ const getBase64Code = list => {
 }
 
 const setBase64Code = setList => {
-    let list = prompt('הכניסו קוד רשימה');
-    list = atob(list);
-    list = JSON.parse(list);
-    setList(list);
+    try {
+
+        let list = prompt('הכניסו קוד רשימה');
+        list = atob(list);
+        list = JSON.parse(list);
+        setList(list);
+    }
+    catch{
+        alert('קוד שגוי!');
+    }
 }
 
 const resetList = setList => {setList(JSON.parse(atob('e30=')))}
@@ -95,6 +101,27 @@ const setClipboard = str => {
 function MainList(props) {
     useEffect(props.fetch, []);
     useEffect(() => updateOptions(props.setImagesSize, props.setTitlesSize), []);
+    useEffect(() => {
+        if(localStorage.getItem('saved-list')) {
+            let tempList = localStorage.getItem('saved-list');
+            console.log('doing: ' + tempList);
+            tempList = atob(tempList);
+            tempList = JSON.parse(tempList);
+            props.setList(tempList);
+        }
+        else {
+            localStorage.setItem('saved-list', {});
+        }
+        console.log('runs once');
+    }, []);
+    useEffect(() => {
+        let tempList = props.list;
+        tempList = JSON.stringify(tempList);
+        tempList = btoa(tempList);
+        localStorage.setItem('saved-list', tempList);
+        console.log('runs everytime');
+        console.log(tempList);
+    })
     return (
         !props.fetchLoading ?
         <div className="text-center">
