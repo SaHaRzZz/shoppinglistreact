@@ -25,7 +25,21 @@ export const fetchFailure = error => {
 export const fetch = () => {
     return function(dispatch) {
         axios.get('https://raw.githubusercontent.com/SaHaRzZz/test/main/json/Data.json')
-             .then(response => dispatch(fetchSuccess(response.data.food)))
-             .catch(error => dispatch(fetchFailure(error.message)));
+             .then(response => {
+                let temp = response.data.food;
+                temp = JSON.stringify(temp);
+                localStorage.setItem('items-database', temp);
+                console.log(response.data.food);
+                return dispatch(fetchSuccess(response.data.food));
+            })
+             .catch(error => {
+                 if(localStorage.getItem('items-database')) {
+                    let temp = localStorage.getItem('items-database');
+                    temp = JSON.parse(temp);
+                    console.log(temp);
+                    return dispatch(fetchSuccess(temp));
+                 }
+                return dispatch(fetchFailure(error.message));
+            });
     }
 }

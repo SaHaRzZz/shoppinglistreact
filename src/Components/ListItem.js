@@ -3,6 +3,7 @@ import {connect} from 'react-redux';
 import {addItemToList, removeItemFromList, createItemInList, resetItemFromList} from '../redux/';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faTimesCircle, faPlusCircle, faMinusCircle} from '@fortawesome/free-solid-svg-icons';
+import placeholderImg from '../_400.png';
 
 export const API_IMG_SRC = 'https://raw.githubusercontent.com/SaHaRzZz/test/main/imgs/';
 
@@ -29,7 +30,7 @@ function ListItem(props) {
     return (
         <div className="card flex-row my-1 shadow text-center" style={{backgroundColor: props.list[props.id] ? "rgb(0, 0, 255, 0.5)" : "rgb(255, 0, 0, 0.5)"}}>
             <div className="card-header border-0">
-                <img src={`${API_IMG_SRC}${props.logo}`} className="user-select-none" style={{width: props.options.imagesSize}}/>
+                <img src={`${API_IMG_SRC}${props.logo}`} onError={e => e.target.src = placeholderImg} className="user-select-none" style={{width: props.options.imagesSize}}/>
             </div>
             <div className="card-body row p-0 text-wrap">
                 <div className="card-title text-decoration-underline font-weight-bold col-5 h5 m-0 user-select-none align-self-center" style={{fontSize: props.options.titlesSize}}>{props.title}</div>
@@ -44,7 +45,7 @@ function ListItem(props) {
                 </div>
                 {props.list[props.id] ? [
                 <div className="col-1 align-self-center mx-2" style={{zIndex: 3}} onClick={() => itemAdd(props.id, props.list, props.addItemToList, props.createItemInList)}><FontAwesomeIcon size="2x" icon={faPlusCircle}/></div>,
-                <div className="col-1 align-self-center" style={{zIndex: 3}} onClick={() => itemAdd(props.id, props.list, props.addItemToList, props.createItemInList)}><FontAwesomeIcon size="2x" icon={faMinusCircle}/></div>
+                <div className="col-1 align-self-center" style={{zIndex: 3}} onClick={() => itemRemove(props.id, props.list, props.removeItemFromList)}><FontAwesomeIcon size="2x" icon={faMinusCircle}/></div>
                 ] : ''}
                 <div className="card-title h-100 text-muted m-0 user-select-none align-self-center position-absolute" style={{right: '10px'}}>{props.category}</div>
             </div>
