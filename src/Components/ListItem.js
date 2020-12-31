@@ -47,7 +47,7 @@ function ListItem(props) {
                             <div className="font-weight-bold">{props.title}</div>
                             <div>{props.list[props.id][1]}</div>
                             {props.list[props.id][1] ? [
-                                <button className="btn btn-primary rounded-0" onClick={() => props.setNote(props.id, prompt(`הערה ל${props.title}:`))}>שנה</button>,
+                                <button className="btn btn-primary rounded-0" onClick={() => props.setNote(props.id, prompt(`הערה ל${props.title}:`, props.list[props.id][1]))}>שנה</button>,
                                 <button className="btn btn-danger rounded-0" onClick={() => props.setNote(props.id, '')}>מחק</button>
                             ]
                             :
