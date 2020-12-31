@@ -116,6 +116,10 @@ function MainList(props) {
         tempList = JSON.stringify(tempList);
         tempList = btoa(tempList);
         localStorage.setItem('saved-list', tempList);
+        let tempNotes = props.notes;
+        tempNotes = JSON.stringify(tempNotes);
+        tempNotes = btoa(tempNotes);
+        localStorage.setItem('saved-notes', tempNotes);
     })
     return (
         !props.fetchLoading ?
@@ -168,7 +172,8 @@ const mapStateToProps = state => {
         fetchData: state.api.data,
         fetchError: state.api.error,
 
-        list: state.list
+        list: state.list,
+        notes: state.notes
     }
 }
 

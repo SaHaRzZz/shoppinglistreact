@@ -4,3 +4,4 @@ export const CREATE_ITEM_IN_LIST = 'CREATE_ITEM_IN_LIST';
 export const RESET_ITEM_FROM_LIST = 'RESET_ITEM_FROM_LIST';
 export const SET_LIST = 'SET_LIST';
 export const RESET_LIST = 'RESET_LIST';
+export const SET_NOTE = 'SET_NOTE';

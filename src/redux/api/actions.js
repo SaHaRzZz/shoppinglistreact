@@ -29,14 +29,12 @@ export const fetch = () => {
                 let temp = response.data.food;
                 temp = JSON.stringify(temp);
                 localStorage.setItem('items-database', temp);
-                console.log(response.data.food);
                 return dispatch(fetchSuccess(response.data.food));
             })
              .catch(error => {
                  if(localStorage.getItem('items-database')) {
                     let temp = localStorage.getItem('items-database');
                     temp = JSON.parse(temp);
-                    console.log(temp);
                     return dispatch(fetchSuccess(temp));
                  }
                 return dispatch(fetchFailure(error.message));
