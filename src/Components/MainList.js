@@ -3,6 +3,7 @@ import {connect} from 'react-redux';
 import {faCog} from '@fortawesome/free-solid-svg-icons';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {Link} from 'react-router-dom';
+import {encode, decode} from 'js-base64';
 
 import ListItem from './ListItem';
 import {setFilterText, setFilterType, setFilterTypeHebrew, fetch, setFilterCategory, setFinal, setFinalHebrew, setList, setImagesSize, setTitlesSize} from '../redux/';
@@ -38,7 +39,7 @@ const renderByFilter = (filtering, filteringType, fetchData, filterCategory, fin
 
 const getBase64Code = list => {
     list = JSON.stringify(list);
-    list = btoa(list);
+    list = encode(list);
     setClipboard(list);
     alert('הרשימה הועתקה!');
 }
@@ -47,7 +48,7 @@ const setBase64Code = setList => {
     try {
 
         let list = prompt('הכניסו קוד רשימה');
-        list = atob(list);
+        list = decode(list);
         list = JSON.parse(list);
         setList(list);
     }
@@ -103,7 +104,7 @@ function MainList(props) {
     useEffect(() => {
         if(localStorage.getItem('saved-list')) {
             let tempList = localStorage.getItem('saved-list');
-            tempList = atob(tempList);
+            tempList = decode(tempList);
             tempList = JSON.parse(tempList);
             props.setList(tempList);
         }
@@ -114,12 +115,8 @@ function MainList(props) {
     useEffect(() => {
         let tempList = props.list;
         tempList = JSON.stringify(tempList);
-        tempList = btoa(tempList);
+        tempList = encode(tempList);
         localStorage.setItem('saved-list', tempList);
-        let tempNotes = props.notes;
-        tempNotes = JSON.stringify(tempNotes);
-        tempNotes = btoa(tempNotes);
-        localStorage.setItem('saved-notes', tempNotes);
     })
     return (
         !props.fetchLoading ?
