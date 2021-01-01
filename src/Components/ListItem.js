@@ -60,7 +60,7 @@ function ListItem(props) {
             ''}
                 <div className="text-center h5 font-italic border-left border-right align-self-center">
                     {props.list[props.id] ? [
-                        <button className="btn rounded-circle shadow-lg mx-2 font-italic" style={{backgroundColor: "rgb(0, 0, 255, 0.5)", fontSize: "1.1rem"}} onClick={() => window.confirm("לאפס את המוצר?") && itemReset(props.resetItemFromList, props.id)}><FontAwesomeIcon icon={faTimesCircle}/>{props.list[props.id][0]}</button>,
+                        <button className="btn rounded-circle shadow-lg mx-2 font-italic" style={{backgroundColor: "rgb(0, 0, 255, 0.5)", fontSize: "1.1rem", zIndex: 3}} onClick={() => window.confirm("לאפס את המוצר?") && itemReset(props.resetItemFromList, props.id)}><FontAwesomeIcon icon={faTimesCircle}/>{props.list[props.id][0]}</button>,
                     ]
                     :
                     <div className="rounded-circle shadow-lg col-1 font-italic mx-2">

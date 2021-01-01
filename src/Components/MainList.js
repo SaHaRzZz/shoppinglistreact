@@ -120,6 +120,7 @@ function MainList(props) {
         tempList = encode(tempList);
         localStorage.setItem('saved-list', tempList);
     })
+    
     return (
         !props.fetchLoading ?
         <div className="text-center">
@@ -131,16 +132,26 @@ function MainList(props) {
                 <button className="btn btn-primary rounded-0 dropdown-toggle" dir="rtl" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     {props.filterCategory}
                 </button>
-                <button className="btn btn-primary rounded-0" type="button" onClick={() => changeFinal(props.final, props.setFinal, props.setFinalHebrew)}>
-                    {props.finalHebrew}
-                </button>
+                <button className="btn btn-primary rounded-0" type="button" onClick={e => {
+                    e.target.blur();
+                    changeFinal(props.final, props.setFinal, props.setFinalHebrew);
+                }}>{props.finalHebrew}</button>
                 <div>
                     <div>
-                        <button className="btn btn-secondary rounded-0" onClick={() => setBase64Code(props.setList)}>הדבק רשימה</button>
-                        <button className="btn btn-secondary rounded-0" onClick={() => getBase64Code(props.list)}>העתק רשימה</button>
+                        <button className="btn btn-secondary rounded-0" onClick={e => {
+                            e.target.blur();
+                            setBase64Code(props.setList);
+                        }}>הדבק רשימה</button>
+                        <button className="btn btn-secondary rounded-0" onClick={e => {
+                            e.target.blur();
+                            getBase64Code(props.list);
+                        }}>העתק רשימה</button>
                     </div>
                 </div>
-                <button className="btn btn-danger rounded-0" onClick={() => resetList(props.setList)}>איפוס</button>
+                <button className="btn btn-danger rounded-0" onClick={e => {
+                    e.target.blur();
+                    resetList(props.setList);
+                }}>איפוס</button>
                 <div className="dropdown-menu bg-secondary" aria-labelledby="dropdownMenuButton">
                     <a className="dropdown-item" href="#" onClick={event => props.setFilterCategory(event.target.innerText)}>הכל</a>
                     <a className="dropdown-item" href="#" onClick={event => props.setFilterCategory(event.target.innerText)}>אוכל</a>
@@ -148,7 +159,10 @@ function MainList(props) {
                     <a className="dropdown-item" href="#" onClick={event => props.setFilterCategory(event.target.innerText)}>תינוק</a>
                 </div>
             </div>
-            <button onClick={() => changeFilterType(props.filterType, props.setFilterType, props.setFilterTypeHebrew)} className="btn btn-danger my-2">חיפוש לפי: {props.filterTypeHebrew}</button>
+            <button onClick={e => {
+                e.target.blur();
+                changeFilterType(props.filterType, props.setFilterType, props.setFilterTypeHebrew);
+            }} className="btn btn-danger my-2">חיפוש לפי: {props.filterTypeHebrew}</button>
             
             {renderByFilter(props.filterText, props.filterType, props.fetchData, props.filterCategory, props.final, props.list)}
 
