@@ -30,6 +30,8 @@ const renderByFilter = (filtering, filteringType, fetchData, filterCategory, fin
         }
     }
 
+    fetchData = fetchData.sort((a, b) => `${a.order}${a.title}` < `${b.order}${b.title}` ? -1 : 1);
+
     if(final)
         fetchData = fetchData.filter(item => list[item.img.split("").reverse().join("").slice(8).split("").reverse().join("")]);
 
