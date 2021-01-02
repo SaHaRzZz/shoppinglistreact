@@ -33,6 +33,92 @@ const itemReset = (resetItemFromListFunc, id) => {
     resetItemFromListFunc(id);
 }
 
+const numToFont = num => {
+    switch(num) {
+        case 0: {return 'A'};
+        case 1: {return 'B'};
+        case 2: {return 'C'};
+        case 3: {return 'D'};
+        case 4: {return 'E'};
+        case 5: {return 'F'};
+        case 6: {return 'G'};
+        case 7: {return 'H'};
+        case 8: {return 'I'};
+        case 9: {return 'J'};
+        case 10: {return 'K'};
+        case 11: {return 'L'};
+        case 12: {return 'M'};
+        case 13: {return 'N'};
+        case 14: {return 'O'};
+        case 15: {return 'P'};
+        case 16: {return 'Q'};
+        case 17: {return 'R'};
+        case 18: {return 'S'};
+        case 19: {return 'T'};
+        case 20: {return 'U'};
+        case 21: {return 'V'};
+        case 22: {return 'W'};
+        case 23: {return 'X'};
+        case 24: {return 'Y'};
+        case 25: {return 'Z'};
+        case 26: {return '8'};
+        case 27: {return '9'};
+        case 28: {return ':'};
+        case 29: {return ';'};
+        case 30: {return '<'};
+        case 31: {return '='};
+        case 32: {return 'a'};
+        case 33: {return 'b'};
+        case 34: {return 'c'};
+        case 35: {return 'd'};
+        case 36: {return 'e'};
+        case 37: {return 'f'};
+        case 38: {return 'g'};
+        case 39: {return 'h'};
+        case 40: {return 'i'};
+        case 41: {return 'j'};
+        case 42: {return 'k'};
+        case 43: {return 'l'};
+        case 44: {return 'm'};
+        case 45: {return 'n'};
+        case 46: {return 'o'};
+        case 47: {return 'p'};
+        case 48: {return 'q'};
+        case 49: {return 'r'};
+        case 50: {return 's'};
+        case 51: {return 't'};
+        case 52: {return 'u'};
+        case 53: {return 'v'};
+        case 54: {return 'w'};
+        case 55: {return 'x'};
+        case 56: {return 'y'};
+        case 57: {return 'z'};
+        case 58: {return '4'};
+        case 59: {return '5'};
+        case 60: {return '6'};
+        case 61: {return '7'};
+        case 62: {return '!'};
+        case 63: {return '"'};
+        case 64: {return '#'};
+        case 65: {return '$'};
+        case 66: {return '%'};
+        case 67: {return '&'};
+        case 68: {return "'"};
+        case 69: {return '('};
+        case 70: {return ')'};
+        case 71: {return '*'};
+        case 72: {return '+'};
+        case 73: {return ','};
+        case 74: {return '-'};
+        case 75: {return '.'};
+        case 76: {return '/'};
+        case 77: {return '0'};
+        case 78: {return '1'};
+        case 79: {return '2'};
+        case 80: {return '3'};
+    }
+}
+
 function ListItem(props) {
     return (
         <div className="card flex-row my-1 shadow text-center" style={{backgroundColor: props.list[props.id] ? "rgb(0, 0, 255, 0.5)" : "rgb(255, 0, 0, 0.5)"}}>
@@ -60,11 +146,11 @@ function ListItem(props) {
             ''}
                 <div className="text-center h5 font-italic border-left border-right align-self-center">
                     {props.list[props.id] ? [
-                        <button className="btn rounded-circle shadow-lg mx-2 font-italic" style={{backgroundColor: "rgb(0, 0, 255, 0.5)", fontSize: "1.1rem", zIndex: 3}} onClick={() => window.confirm("לאפס את המוצר?") && itemReset(props.resetItemFromList, props.id)}><FontAwesomeIcon icon={faTimesCircle}/>{props.list[props.id][0]}</button>,
+                        <div className="mx-2 font-italic user-select-none" style={{fontSize: "2rem", zIndex: 3, fontFamily: 'numberpile'}} onClick={() => window.confirm("לאפס את המוצר?") && itemReset(props.resetItemFromList, props.id)}>{numToFont(props.list[props.id][0])}</div>,
                     ]
                     :
                     <div className="rounded-circle shadow-lg col-1 font-italic mx-2">
-                        <div className="col-1 mr-2 position-absolute" style={{transform: "translate(-50%, -40%)"}}><FontAwesomeIcon size="2x" onClick={() => itemAdd(props.id, props.list, props.addItemToList, props.createItemInList)} icon={faPlusCircle}/></div>
+                        <div className="col-1 mr-2 position-absolute" style={{transform: "translate(-50%, -40%)"}} onClick={() => itemAdd(props.id, props.list, props.addItemToList, props.createItemInList)}><FontAwesomeIcon size="2x"  icon={faPlusCircle}/></div>
                     </div>}
                 </div>
                 {props.list[props.id] ? [
