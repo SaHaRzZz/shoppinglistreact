@@ -10,7 +10,6 @@ import {setFilterText, setFilterType, setFilterTypeHebrew, fetch, setFilterCateg
 import {updateOptions} from './Options';
 const FILTERING_TYPE_WHOLE = 'FILTERING_TYPE_WHOLE';
 const FILTERING_TYPE_SOME = 'FILTERING_TYPE_SOME';
-
 const FILTERING_CAT_ALL = 'הכל';
 
 const renderByFilter = (filtering, filteringType, fetchData, filterCategory, final, list) => {

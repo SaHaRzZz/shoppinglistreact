@@ -13,7 +13,12 @@ export const API_IMG_SRC = 'https://raw.githubusercontent.com/SaHaRzZz/test/main
 
 const itemAdd = (id, list, addItemToListFunc, createItemInListFunc) => {
     if(list[id]) {
-        addItemToListFunc(id);
+        if(list[id][0] == 80) {
+            alert('מקסימום 80 יחידות למוצר!');
+        }
+        else {
+            addItemToListFunc(id);
+        }
     }
     else {
         createItemInListFunc(id);
@@ -125,7 +130,7 @@ function ListItem(props) {
             <div className="card-header border-0">
                 <img src={`${API_IMG_SRC}${props.logo}`} onError={e => e.target.src = placeholderImg} className="user-select-none" style={{width: props.options.imagesSize}}/>
             </div>
-            <div className="card-body row p-0 text-wrap">
+            <div className="card-body row p-0 m-0 text-wrap">
                 <div className="card-title text-decoration-underline font-weight-bold col-5 h5 m-0 user-select-none align-self-center" style={{fontSize: props.options.titlesSize}}>{props.title}</div>
                 {props.list[props.id] ? [
                     <Popup trigger={<div className="align-self-center mx-2"><FontAwesomeIcon icon={props.list[props.id][1] ? faStickyNote : farStickyNote} size="2x"/></div>} position="center center">
@@ -144,18 +149,20 @@ function ListItem(props) {
                 ]
             :
             ''}
-                <div className="text-center h5 font-italic border-left border-right align-self-center">
+                <div className="text-center h5 font-italic align-self-center">
                     {props.list[props.id] ? [
                         <div className="mx-2 font-italic user-select-none" style={{fontSize: "2rem", zIndex: 3, fontFamily: 'numberpile'}} onClick={() => window.confirm("לאפס את המוצר?") && itemReset(props.resetItemFromList, props.id)}>{numToFont(props.list[props.id][0])}</div>,
                     ]
                     :
                     <div className="rounded-circle shadow-lg col-1 font-italic mx-2">
-                        <div className="col-1 mr-2 position-absolute" style={{transform: "translate(-50%, -40%)"}} onClick={() => itemAdd(props.id, props.list, props.addItemToList, props.createItemInList)}><FontAwesomeIcon size="2x"  icon={faPlusCircle}/></div>
+                        <div className="mr-2 position-absolute" style={{transform: "translate(-50%, -40%)"}} onClick={() => itemAdd(props.id, props.list, props.addItemToList, props.createItemInList)}><FontAwesomeIcon size="2x"  icon={faPlusCircle}/></div>
                     </div>}
                 </div>
                 {props.list[props.id] ? [
-                <div className="col-1 align-self-center mx-2" style={{zIndex: 3}} onClick={() => itemAdd(props.id, props.list, props.addItemToList, props.createItemInList)}><FontAwesomeIcon size="2x" icon={faPlusCircle}/></div>,
-                <div className="col-1 align-self-center" style={{zIndex: 3}} onClick={() => itemRemove(props.id, props.list, props.removeItemFromList, props.resetItemFromList)}><FontAwesomeIcon size="2x" icon={faMinusCircle}/></div>
+                    <div className="col-12">
+                        <div className="col-1 align-self-center" style={{zIndex: 3}} onClick={() => itemAdd(props.id, props.list, props.addItemToList, props.createItemInList)}><FontAwesomeIcon size="2x" icon={faPlusCircle}/></div>
+                        <div className="col-1 align-self-center" style={{zIndex: 3}} onClick={() => itemRemove(props.id, props.list, props.removeItemFromList, props.resetItemFromList)}><FontAwesomeIcon size="2x" icon={faMinusCircle}/></div>
+                    </div>
                 ] : ''}
                 <div className="card-title h-100 text-muted m-0 user-select-none align-self-center position-absolute" style={{right: '10px'}}>{props.category}</div>
             </div>
