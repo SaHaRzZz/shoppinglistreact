@@ -1,9 +1,10 @@
 import React, { useEffect } from 'react';
 import {connect} from 'react-redux';
-import {faCog} from '@fortawesome/free-solid-svg-icons';
+import {faCog, faCopy} from '@fortawesome/free-solid-svg-icons';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {Link} from 'react-router-dom';
 import {encode, decode} from 'js-base64';
+import {WhatsappShareButton, WhatsappIcon} from 'react-share';
 
 import ListItem from './ListItem';
 import {setFilterText, setFilterType, setFilterTypeHebrew, fetch, setFilterCategory, setFinal, setFinalHebrew, setList, setImagesSize, setTitlesSize} from '../redux/';
@@ -11,6 +12,8 @@ import {updateOptions} from './Options';
 const FILTERING_TYPE_WHOLE = 'FILTERING_TYPE_WHOLE';
 const FILTERING_TYPE_SOME = 'FILTERING_TYPE_SOME';
 const FILTERING_CAT_ALL = 'הכל';
+
+let updatingList;
 
 const renderByFilter = (filtering, filteringType, fetchData, filterCategory, final, list) => {
     if(filterCategory != FILTERING_CAT_ALL)
@@ -56,6 +59,12 @@ const setBase64Code = setList => {
     catch{
         alert('קוד שגוי!');
     }
+}
+
+const getBase64Whatsapp = list => {
+    updatingList = list;
+    updatingList = JSON.stringify(updatingList);
+    updatingList = encode(updatingList);
 }
 
 const resetList = setList => {setList(JSON.parse(atob('e30=')))}
@@ -104,20 +113,20 @@ function MainList(props) {
     useEffect(() => updateOptions(props.setImagesSize, props.setTitlesSize), []);
     useEffect(() => {
         if(localStorage.getItem('saved-list')) {
-            let tempList = localStorage.getItem('saved-list');
-            tempList = decode(tempList);
-            tempList = JSON.parse(tempList);
-            props.setList(tempList);
+            updatingList = localStorage.getItem('saved-list');
+            updatingList = decode(updatingList);
+            updatingList = JSON.parse(updatingList);
+            props.setList(updatingList);
         }
         else {
             localStorage.setItem('saved-list', {});
         }
     }, []);
     useEffect(() => {
-        let tempList = props.list;
-        tempList = JSON.stringify(tempList);
-        tempList = encode(tempList);
-        localStorage.setItem('saved-list', tempList);
+        updatingList = props.list;
+        updatingList = JSON.stringify(updatingList);
+        updatingList = encode(updatingList);
+        localStorage.setItem('saved-list', updatingList);
     })
     
     return (
@@ -144,13 +153,15 @@ function MainList(props) {
                         <button className="btn btn-secondary rounded-0" onClick={e => {
                             e.target.blur();
                             getBase64Code(props.list);
-                        }}>העתק רשימה</button>
+                        }}><FontAwesomeIcon icon={faCopy} size="1x"/></button>
+                        <WhatsappShareButton beforeOnClick={getBase64Whatsapp(props.list)} url={updatingList}><WhatsappIcon size={38}/></WhatsappShareButton>
                     </div>
                 </div>
                 <button className="btn btn-danger rounded-0" onClick={e => {
                     e.target.blur();
                     resetList(props.setList);
                 }}>איפוס</button>
+                
                 <div className="dropdown-menu bg-secondary" aria-labelledby="dropdownMenuButton">
                     <a className="dropdown-item" href="#" onClick={event => props.setFilterCategory(event.target.innerText)}>הכל</a>
                     <a className="dropdown-item" href="#" onClick={event => props.setFilterCategory(event.target.innerText)}>אוכל</a>
