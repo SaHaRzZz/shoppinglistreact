@@ -1,10 +1,11 @@
 import React, { useEffect } from 'react';
 import {connect} from 'react-redux';
-import {faCog, faCopy} from '@fortawesome/free-solid-svg-icons';
+import {faCog, faCopy, faList} from '@fortawesome/free-solid-svg-icons';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {Link} from 'react-router-dom';
 import {encode, decode} from 'js-base64';
 import {WhatsappShareButton, WhatsappIcon} from 'react-share';
+import Popup from 'reactjs-popup';
 
 import ListItem from './ListItem';
 import {setFilterText, setFilterType, setFilterTypeHebrew, fetch, setFilterCategory, setFinal, setFinalHebrew, setList, setImagesSize, setTitlesSize} from '../redux/';
@@ -14,6 +15,7 @@ const FILTERING_TYPE_SOME = 'FILTERING_TYPE_SOME';
 const FILTERING_CAT_ALL = 'הכל';
 
 let updatingList;
+let stringList;
 
 const renderByFilter = (filtering, filteringType, fetchData, filterCategory, final, list) => {
     if(filterCategory != FILTERING_CAT_ALL)
@@ -48,15 +50,41 @@ const getBase64Code = list => {
     alert('הרשימה הועתקה!');
 }
 
+const getListString = (list, fetchData) => {
+    let listKeys = Object.keys(list);
+    let listValues = Object.values(list).map(item => item[0]);
+    listKeys = listKeys.map((listKey, index) => {
+        const specificItem = fetchData.find(item => item.img.split("").reverse().join("").slice(8).split("").reverse().join("") == listKey);
+        return `${specificItem.title}: ${listValues[index]}`;
+    });
+    listKeys = listKeys.join('\n');
+    setClipboard(listKeys);
+    alert('הרשימה הועתקה!')
+}
+
+const updateStringList = (list, fetchData) => {
+    let listKeys = Object.keys(list);
+    let listValues = Object.values(list).map(item => item[0]);
+    listKeys = listKeys.map((listKey, index) => {
+        const specificItem = fetchData.find(item => item.img.split("").reverse().join("").slice(8).split("").reverse().join("") == listKey);
+        return `${specificItem.title}: ${listValues[index]}`;
+    });
+    listKeys = listKeys.join('\n');
+    stringList = listKeys;
+}
+
 const setBase64Code = setList => {
     try {
 
         let list = prompt('הכניסו קוד רשימה');
+        if(list == null) {
+            return;
+        }
         list = decode(list);
         list = JSON.parse(list);
         setList(list);
     }
-    catch{
+    catch {
         alert('קוד שגוי!');
     }
 }
@@ -128,7 +156,7 @@ function MainList(props) {
         updatingList = encode(updatingList);
         localStorage.setItem('saved-list', updatingList);
     })
-    
+
     return (
         !props.fetchLoading ?
         <div className="text-center">
@@ -146,21 +174,43 @@ function MainList(props) {
                 }}>{props.finalHebrew}</button>
                 <div>
                     <div>
-                        <button className="btn btn-secondary rounded-0" onClick={e => {
-                            e.target.blur();
-                            setBase64Code(props.setList);
-                        }}>הדבק רשימה</button>
-                        <button className="btn btn-secondary rounded-0" onClick={e => {
-                            e.target.blur();
-                            getBase64Code(props.list);
-                        }}><FontAwesomeIcon icon={faCopy} size="1x"/></button>
-                        <WhatsappShareButton beforeOnClick={getBase64Whatsapp(props.list)} url={updatingList}><WhatsappIcon size={38}/></WhatsappShareButton>
+                        <Popup closeOnDocumentClick={false} trigger={<div className="btn btn-info rounded-0"><FontAwesomeIcon icon={faList} size="1x"/></div>}>
+                            <div className="col text-center">
+                                <button className="btn btn-secondary rounded-0 col-12" onClick={e => {
+                                    e.target.blur();
+                                    setBase64Code(props.setList);
+                                }}>הדבק רשימה</button>
+                                <Popup closeOnDocumentClick={false} trigger={<div className="btn btn-primary rounded-0 col-12">העתק רשימה</div>}>
+
+                                    <Popup closeOnDocumentClick={true} trigger={<div className="btn btn-secondary rounded-0 col-12">העתק רשימה כטקסט</div>}>
+                                        <div className="d-flex justify-content-around">
+                                            <button className="btn btn-secondary rounded-0" onClick={e => {
+                                                e.target.blur();
+                                                getListString(props.list, props.fetchData);
+                                            }}><FontAwesomeIcon icon={faCopy} size="2x"/></button>
+                                            <WhatsappShareButton beforeOnClick={updateStringList(props.list, props.fetchData)} url={stringList}><WhatsappIcon size={60}/></WhatsappShareButton>
+                                        </div>
+                                    </Popup>
+
+                                    <Popup closeOnDocumentClick={true} trigger={<div className="btn btn-secondary rounded-0 col-12">העתק רשימה כקוד</div>}>
+                                        <div className="d-flex justify-content-around">
+                                            <button className="btn btn-secondary rounded-0" onClick={e => {
+                                                e.target.blur();
+                                                getBase64Code(props.list);
+                                            }}><FontAwesomeIcon icon={faCopy} size="2x"/></button>
+                                            <WhatsappShareButton beforeOnClick={getBase64Whatsapp(props.list)} url={updatingList}><WhatsappIcon size={60}/></WhatsappShareButton>
+                                        </div>
+                                    </Popup>
+                                    
+                                </Popup>
+                                <button className="btn btn-danger rounded-0 col-12" onClick={e => {
+                                    e.target.blur();
+                                    window.confirm('לאפס את הרשימה?') && resetList(props.setList);
+                                }}>איפוס</button>
+                            </div>
+                        </Popup>
                     </div>
                 </div>
-                <button className="btn btn-danger rounded-0" onClick={e => {
-                    e.target.blur();
-                    resetList(props.setList);
-                }}>איפוס</button>
                 
                 <div className="dropdown-menu bg-secondary" aria-labelledby="dropdownMenuButton">
                     <a className="dropdown-item" href="#" onClick={event => props.setFilterCategory(event.target.innerText)}>הכל</a>
@@ -178,7 +228,7 @@ function MainList(props) {
 
         </div>
         :
-        <div className="text-center display-1">Loading...</div>
+        <div className="text-center display-2">Loading...</div>
     )
 }
 

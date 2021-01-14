@@ -1,6 +1,6 @@
 import {ADD_ITEM_TO_LIST, REMOVE_ITEM_FROM_LIST, CREATE_ITEM_IN_LIST, RESET_ITEM_FROM_LIST, SET_LIST, SET_NOTE} from './types';
 
-const initialState = {imageLoaded: 0}
+const initialState = {}
 
 const reducer = (state = initialState, action) => {
     if(state)
@@ -22,7 +22,6 @@ const reducer = (state = initialState, action) => {
             [action.item]: ''
         }
         case SET_LIST: return {
-            imageLoaded: state.imageLoaded,
             ...action.payload
         }
         case SET_NOTE: return {
