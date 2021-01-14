@@ -188,7 +188,7 @@ function MainList(props) {
                                                 e.target.blur();
                                                 getListString(props.list, props.fetchData);
                                             }}><FontAwesomeIcon icon={faCopy} size="2x"/></button>
-                                            <WhatsappShareButton beforeOnClick={updateStringList(props.list, props.fetchData)} url={stringList}><WhatsappIcon size={60}/></WhatsappShareButton>
+                                            <WhatsappShareButton beforeOnClick={() => updateStringList(props.list, props.fetchData)} url={stringList}><WhatsappIcon size={60}/></WhatsappShareButton>
                                         </div>
                                     </Popup>
 
@@ -198,7 +198,7 @@ function MainList(props) {
                                                 e.target.blur();
                                                 getBase64Code(props.list);
                                             }}><FontAwesomeIcon icon={faCopy} size="2x"/></button>
-                                            <WhatsappShareButton beforeOnClick={getBase64Whatsapp(props.list)} url={updatingList}><WhatsappIcon size={60}/></WhatsappShareButton>
+                                            <WhatsappShareButton beforeOnClick={() => getBase64Whatsapp(props.list)} url={updatingList}><WhatsappIcon size={60}/></WhatsappShareButton>
                                         </div>
                                     </Popup>
                                     
