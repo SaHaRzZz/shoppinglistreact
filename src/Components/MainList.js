@@ -8,32 +8,26 @@ import {WhatsappShareButton, WhatsappIcon} from 'react-share';
 import Popup from 'reactjs-popup';
 
 import ListItem from './ListItem';
-import {setFilterText, setFilterType, setFilterTypeHebrew, fetch, setFilterCategory, setFinal, setFinalHebrew, setList, setImagesSize, setTitlesSize, setLangauge} from '../redux/';
+import {setFilterText, setFilterType, fetch, setFilterCategory, setFinal, setList, setImagesSize, setTitlesSize, setLangauge} from '../redux/';
 import {updateOptions} from './Options';
 import heFlag from '../imgs/he_flag.png';
 import enFlag from '../imgs/en_flag.png';
-const FILTERING_TYPE_WHOLE = 'FILTERING_TYPE_WHOLE';
-const FILTERING_TYPE_SOME = 'FILTERING_TYPE_SOME';
-const FILTERING_CAT_ALL = 'הכל';
 
 let updatingList;
 let stringList;
 
 const renderByFilter = (filtering, filteringType, fetchData, filterCategory, final, list) => {
-    if(filterCategory != FILTERING_CAT_ALL)
-        fetchData = fetchData.filter(item => item.category == filterCategory);
+    if(filterCategory)
+        fetchData = fetchData.filter(item => item.filter == filterCategory);
         
     if(filtering != '') {
         filtering = filtering.toLowerCase();
-        switch(filteringType) {
-            case FILTERING_TYPE_WHOLE:
-                for(let i=0;i<filtering.length;i++) {
-                    fetchData = fetchData.filter(item => item.title[i] == filtering[i]);
-                }
-                break;
-            case FILTERING_TYPE_SOME:
-                fetchData = fetchData.filter(item => item.title.includes(filtering));
-                break;
+        if(filteringType) {
+            fetchData = fetchData.filter(item => item.title.includes(filtering));
+        } else {
+            for(let i=0;i<filtering.length;i++) {
+                fetchData = fetchData.filter(item => item.title[i] == filtering[i]);
+            }
         }
     }
 
@@ -46,23 +40,24 @@ const renderByFilter = (filtering, filteringType, fetchData, filterCategory, fin
     return fetchData;
 }
 
-const getBase64Code = list => {
+const getBase64Code = (list, msg) => {
     list = JSON.stringify(list);
     list = encode(list);
     setClipboard(list);
-    alert('הרשימה הועתקה!');
+    alert(`${msg}!`);
 }
 
-const getListString = (list, fetchData) => {
+const getListString = (list, fetchData, msg) => {
     let listKeys = Object.keys(list);
     let listValues = Object.values(list).map(item => item[0]);
     listKeys = listKeys.map((listKey, index) => {
         const specificItem = fetchData.find(item => item.img.split("").reverse().join("").slice(8).split("").reverse().join("") == listKey);
+        specificItem.title = specificItem.title.replace(/(^\w{1})|(\s{1}\w{1})/g, match => match.toUpperCase());
         return `${specificItem.title}: ${listValues[index]}`;
     });
     listKeys = listKeys.join('\n');
     setClipboard(listKeys);
-    alert('הרשימה הועתקה!')
+    alert(`${msg}!`);
 }
 
 const updateStringList = (list, fetchData) => {
@@ -70,16 +65,17 @@ const updateStringList = (list, fetchData) => {
     let listValues = Object.values(list).map(item => item[0]);
     listKeys = listKeys.map((listKey, index) => {
         const specificItem = fetchData.find(item => item.img.split("").reverse().join("").slice(8).split("").reverse().join("") == listKey);
+        specificItem.title = specificItem.title.replace(/(^\w{1})|(\s{1}\w{1})/g, match => match.toUpperCase());
         return `${specificItem.title}: ${listValues[index]}`;
     });
     listKeys = listKeys.join('\n');
     stringList = listKeys;
 }
 
-const setBase64Code = setList => {
+const setBase64Code = (setList, promptMsg, errorMsg) => {
     try {
 
-        let list = prompt('הכניסו קוד רשימה');
+        let list = prompt(`${promptMsg}`);
         if(list == null) {
             return;
         }
@@ -88,7 +84,7 @@ const setBase64Code = setList => {
         setList(list);
     }
     catch {
-        alert('קוד שגוי!');
+        alert(`${errorMsg}!`);
     }
 }
 
@@ -99,32 +95,6 @@ const getBase64Whatsapp = list => {
 }
 
 const resetList = setList => {setList(JSON.parse(atob('e30=')))}
-
-const changeFilterType = (current, setFilterTypeFunc, setFilterTypeHebrewFunc) => {
-    switch(current) {
-        case FILTERING_TYPE_WHOLE:
-            setFilterTypeFunc(FILTERING_TYPE_SOME);
-            setFilterTypeHebrewFunc("שם חלקי");
-            break;
-        case FILTERING_TYPE_SOME:
-            setFilterTypeFunc(FILTERING_TYPE_WHOLE);
-            setFilterTypeHebrewFunc("שם מדויק");
-            break;
-    }
-}
-
-const changeFinal = (final, setFinalFunc, setFinalHebrewFunc) => {
-    switch(final) {
-        case true:
-            setFinalFunc(false);
-            setFinalHebrewFunc("הכנת רשימה סופית");
-            break;
-        case false:
-            setFinalFunc(true);
-            setFinalHebrewFunc("חזרה להכנת רשימה");
-            break;
-    }
-}
 
 const setClipboard = str => {
     const el = document.createElement('textarea');
@@ -138,10 +108,15 @@ const setClipboard = str => {
     document.body.removeChild(el);
 }
 
+const changeLangauge = (setLangaugeFunc, langauge) => {
+    setLangaugeFunc(langauge);
+    localStorage.setItem('options-langauge', langauge);
+}
+
 
 function MainList(props) {
     useEffect(props.fetch, []);
-    useEffect(() => updateOptions(props.setImagesSize, props.setTitlesSize), []);
+    useEffect(() => updateOptions(props.setImagesSize, props.setTitlesSize, props.setLangauge), []);
     useEffect(() => {
         if(localStorage.getItem('saved-list')) {
             updatingList = localStorage.getItem('saved-list');
@@ -166,42 +141,41 @@ function MainList(props) {
             <Link to="/options">
                 <FontAwesomeIcon type="button" icon={faCog} size="4x" className="position-absolute border-right border-bottom" style={{left: 0, zIndex: 1}}/>
             </Link>
-            <img type="button" onClick={() => props.setLangauge(props.fetchLang == 'en' ? 'he' : 'en')} src={props.fetchLang == 'en' ? enFlag : heFlag} className="position-absolute" style={{right: 0, zIndex: 1}}></img>
-
-            <input placeholder={`חיפוש לפי: ${props.filterTypeHebrew}`} className="text-center" onChange={event => props.setFilterText(event.target.value)}></input>
+            <img type="button" onClick={() => changeLangauge(props.setLangauge, props.lang == 'en' ? 'he' : 'en')} src={props.lang == 'en' ? enFlag : heFlag} className="position-absolute" style={{right: 0, zIndex: 1}}></img>
+            <input placeholder={`${props.fetchData[props.lang].strings[0]}: ${props.filterType ? props.fetchData[props.lang].strings[2] : props.fetchData[props.lang].strings[1]}`} className="text-center" onChange={event => props.setFilterText(event.target.value)}></input>
             <div className="dropdown mt-2">
                 <button className="btn btn-primary rounded-0 dropdown-toggle" dir="rtl" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    {props.filterCategory}
+                    {props.fetchData[props.lang].strings[10+props.filterCategory]}
                 </button>
                 <button className="btn btn-primary rounded-0" type="button" onClick={e => {
                     e.target.blur();
-                    changeFinal(props.final, props.setFinal, props.setFinalHebrew);
-                }}>{props.finalHebrew}</button>
+                    props.setFinal(!props.final);
+                }}>{`${props.final ? props.fetchData[props.lang].strings[3] : props.fetchData[props.lang].strings[4]}`}</button>
                 <div>
                     <div>
                         <Popup closeOnDocumentClick={false} trigger={<div className="btn btn-info rounded-0"><FontAwesomeIcon icon={faList} size="1x"/></div>}>
                             <div className="col text-center">
                                 <button className="btn btn-secondary rounded-0 col-12" onClick={e => {
                                     e.target.blur();
-                                    setBase64Code(props.setList);
-                                }}>הדבק רשימה</button>
-                                <Popup closeOnDocumentClick={false} trigger={<div className="btn btn-primary rounded-0 col-12">העתק רשימה</div>}>
+                                    setBase64Code(props.setList, props.fetchData[props.lang].strings[15], props.fetchData[props.lang].strings[16]);
+                                }}>{props.fetchData[props.lang].strings[5]}</button>
+                                <Popup closeOnDocumentClick={false} trigger={<div className="btn btn-primary rounded-0 col-12">{props.fetchData[props.lang].strings[6]}</div>}>
 
-                                    <Popup closeOnDocumentClick={true} trigger={<div className="btn btn-secondary rounded-0 col-12">העתק רשימה כטקסט</div>}>
+                                    <Popup closeOnDocumentClick={true} trigger={<div className="btn btn-secondary rounded-0 col-12">{props.fetchData[props.lang].strings[7]}</div>}>
                                         <div className="d-flex justify-content-around">
                                             <button className="btn btn-secondary rounded-0" onClick={e => {
                                                 e.target.blur();
-                                                getListString(props.list, props.fetchData[props.fetchLang]);
+                                                getListString(props.list, props.fetchData[props.lang].items, props.fetchData[props.lang].strings[14]);
                                             }}><FontAwesomeIcon icon={faCopy} size="2x"/></button>
-                                            <WhatsappShareButton beforeOnClick={() => updateStringList(props.list, props.fetchData[props.fetchLang])} url={stringList}><WhatsappIcon size={60}/></WhatsappShareButton>
+                                            <WhatsappShareButton beforeOnClick={() => updateStringList(props.list, props.fetchData[props.lang].items)} url={stringList}><WhatsappIcon size={60}/></WhatsappShareButton>
                                         </div>
                                     </Popup>
 
-                                    <Popup closeOnDocumentClick={true} trigger={<div className="btn btn-secondary rounded-0 col-12">העתק רשימה כקוד</div>}>
+                                    <Popup closeOnDocumentClick={true} trigger={<div className="btn btn-secondary rounded-0 col-12">{props.fetchData[props.lang].strings[8]}</div>}>
                                         <div className="d-flex justify-content-around">
                                             <button className="btn btn-secondary rounded-0" onClick={e => {
                                                 e.target.blur();
-                                                getBase64Code(props.list);
+                                                getBase64Code(props.list, props.fetchData[props.lang].strings[14]);
                                             }}><FontAwesomeIcon icon={faCopy} size="2x"/></button>
                                             <WhatsappShareButton beforeOnClick={() => getBase64Whatsapp(props.list)} url={updatingList}><WhatsappIcon size={60}/></WhatsappShareButton>
                                         </div>
@@ -210,26 +184,26 @@ function MainList(props) {
                                 </Popup>
                                 <button className="btn btn-danger rounded-0 col-12" onClick={e => {
                                     e.target.blur();
-                                    window.confirm('לאפס את הרשימה?') && resetList(props.setList);
-                                }}>איפוס</button>
+                                    window.confirm(`${props.fetchData[props.lang].strings[17]}?`) && resetList(props.setList);
+                                }}>{props.fetchData[props.lang].strings[9]}</button>
                             </div>
                         </Popup>
                     </div>
                 </div>
                 
                 <div className="dropdown-menu bg-secondary" aria-labelledby="dropdownMenuButton">
-                    <a className="dropdown-item" href="#" onClick={event => props.setFilterCategory(event.target.innerText)}>הכל</a>
-                    <a className="dropdown-item" href="#" onClick={event => props.setFilterCategory(event.target.innerText)}>אוכל</a>
-                    <a className="dropdown-item" href="#" onClick={event => props.setFilterCategory(event.target.innerText)}>היגיינה</a>
-                    <a className="dropdown-item" href="#" onClick={event => props.setFilterCategory(event.target.innerText)}>תינוק</a>
+                    <a className="dropdown-item" href="#" onClick={() => props.setFilterCategory(0)}>{props.fetchData[props.lang].strings[10]}</a>
+                    <a className="dropdown-item" href="#" onClick={() => props.setFilterCategory(1)}>{props.fetchData[props.lang].strings[11]}</a>
+                    <a className="dropdown-item" href="#" onClick={() => props.setFilterCategory(2)}>{props.fetchData[props.lang].strings[12]}</a>
+                    <a className="dropdown-item" href="#" onClick={() => props.setFilterCategory(3)}>{props.fetchData[props.lang].strings[13]}</a>
                 </div>
             </div>
             <button onClick={e => {
                 e.target.blur();
-                changeFilterType(props.filterType, props.setFilterType, props.setFilterTypeHebrew);
-            }} className="btn btn-danger my-2">חיפוש לפי: {props.filterTypeHebrew}</button>
+                props.setFilterType(!props.filterType);
+            }} className="btn btn-danger my-2">{`${props.fetchData[props.lang].strings[0]}: ${props.filterType ? props.fetchData[props.lang].strings[2] : props.fetchData[props.lang].strings[1]}`}</button>
             
-            {renderByFilter(props.filterText, props.filterType, props.fetchData[props.fetchLang], props.filterCategory, props.final, props.list)}
+            {renderByFilter(props.filterText, props.filterType, props.fetchData[props.lang].items, props.filterCategory, props.final, props.list)}
 
         </div>
         :
@@ -241,18 +215,18 @@ const mapStateToProps = state => {
     return {
         filterText: state.filtering.filterText,
         filterType: state.filtering.filterType,
-        filterTypeHebrew: state.filtering.filterTypeHebrew,
         filterCategory: state.filtering.filterCategory,
         final: state.filtering.final,
-        finalHebrew: state.filtering.finalHebrew,
 
         fetchLoading: state.api.loading,
         fetchData: state.api.data,
         fetchError: state.api.error,
-        fetchLang: state.api.lang,
 
         list: state.list,
-        notes: state.notes
+        notes: state.notes,
+
+        lang: state.options.lang
+
     }
 }
 
@@ -260,11 +234,9 @@ const mapDispatchToProps = dispatch => {
     return {
         setFilterText: val => dispatch(setFilterText(val)),
         setFilterType: val => dispatch(setFilterType(val)),
-        setFilterTypeHebrew: val => dispatch(setFilterTypeHebrew(val)),
         fetch: () => dispatch(fetch()),
         setFilterCategory: val => dispatch(setFilterCategory(val)),
         setFinal: val => dispatch(setFinal(val)),
-        setFinalHebrew: val => dispatch(setFinalHebrew(val)),
         setList: val => dispatch(setList(val)),
         setImagesSize: val => dispatch(setImagesSize(val)),
         setTitlesSize: val => dispatch(setTitlesSize(val)),

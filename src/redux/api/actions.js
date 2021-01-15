@@ -1,4 +1,4 @@
-import {FETCH_REQUEST, FETCH_SUCCESS, FETCH_FAILURE, SET_LANGAUGE} from './types';
+import {FETCH_REQUEST, FETCH_SUCCESS, FETCH_FAILURE} from './types';
 
 import axios from 'axios';
 
@@ -19,13 +19,6 @@ export const fetchFailure = error => {
     return {
         type: FETCH_FAILURE,
         payload: error
-    }
-}
-
-export const setLangauge = lang => {
-    return {
-        type: SET_LANGAUGE,
-        payload: lang
     }
 }
 

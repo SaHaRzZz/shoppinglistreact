@@ -1,6 +1,10 @@
-import {SET_IMAGES_SIZE, SET_TITLES_SIZE} from './types';
+import {SET_IMAGES_SIZE, SET_TITLES_SIZE, SET_LANGAUGE} from './types';
 
-const initialState = {imagesSize: '96px', titlesSize: '4vw'};
+const initialState = {
+    imagesSize: '96px',
+    titlesSize: '4vw',
+    lang: 'en'
+};
 
 const reducer = (state = initialState, action) => {
     switch(action.type) {
@@ -11,6 +15,10 @@ const reducer = (state = initialState, action) => {
         case SET_TITLES_SIZE: return {
             ...state,
             titlesSize: action.payload
+        }
+        case SET_LANGAUGE: return {
+            ...state,
+            lang: action.payload
         }
         default: return state;
     }

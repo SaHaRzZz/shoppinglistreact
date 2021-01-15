@@ -4,7 +4,7 @@ import {faHome} from '@fortawesome/free-solid-svg-icons';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {Link} from 'react-router-dom';
 
-import {setImagesSize, setTitlesSize} from '../redux/';
+import {setImagesSize, setTitlesSize, setLangauge} from '../redux/';
 import {API_IMG_SRC} from './ListItem';
 
 const makeSetImagesSize = (setImagesSizeFunc, payload) => {
@@ -17,11 +17,13 @@ const makeSetTitlesSize = (setTitlesSizeFunc, payload) => {
     localStorage.setItem('options-titles-size', payload);
 }
 
-export const updateOptions = (setImagesSizeFunc, setTitlesSizeFunc) => {
+export const updateOptions = (setImagesSizeFunc, setTitlesSizeFunc, setLangaugeFunc) => {
     if(localStorage.getItem('options-images-size'))
         setImagesSizeFunc(localStorage.getItem('options-images-size'));
     if(localStorage.getItem('options-titles-size'))
         setTitlesSizeFunc(localStorage.getItem('options-titles-size'));
+    if(localStorage.getItem('options-langauge'))
+        setLangaugeFunc(localStorage.getItem('options-langauge'));
 }
 
 function Options(props) {
@@ -71,7 +73,8 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
     return {
         setImagesSize: val => dispatch(setImagesSize(val)),
-        setTitlesSize: val => dispatch(setTitlesSize(val))
+        setTitlesSize: val => dispatch(setTitlesSize(val)),
+        setLangauge: val => dispatch(setLangauge(val))
     }
 }
 
