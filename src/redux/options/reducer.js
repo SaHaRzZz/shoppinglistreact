@@ -3,7 +3,7 @@ import {SET_IMAGES_SIZE, SET_TITLES_SIZE, SET_LANGAUGE} from './types';
 const initialState = {
     imagesSize: '96px',
     titlesSize: '4vw',
-    lang: 'en'
+    lang: ''
 };
 
 const reducer = (state = initialState, action) => {

@@ -204,10 +204,10 @@ function MainList(props) {
             }} className="btn btn-danger my-2">{`${props.fetchData[props.lang].strings[0]}: ${props.filterType ? props.fetchData[props.lang].strings[2] : props.fetchData[props.lang].strings[1]}`}</button>
             
             {renderByFilter(props.filterText, props.filterType, props.fetchData[props.lang].items, props.filterCategory, props.final, props.list)}
-
+            
         </div>
         :
-        <div className="text-center display-2">Loading...</div>
+        <div className="text-center display-2">{props.lang == 'en' ? 'Loading' : 'טוען'}</div>
     )
 }
 

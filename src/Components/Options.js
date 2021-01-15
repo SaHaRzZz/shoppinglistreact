@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import {connect} from 'react-redux';
 import {faHome} from '@fortawesome/free-solid-svg-icons';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
@@ -24,6 +24,10 @@ export const updateOptions = (setImagesSizeFunc, setTitlesSizeFunc, setLangaugeF
         setTitlesSizeFunc(localStorage.getItem('options-titles-size'));
     if(localStorage.getItem('options-langauge'))
         setLangaugeFunc(localStorage.getItem('options-langauge'));
+    else {
+        setLangaugeFunc('en');
+        localStorage.setItem('options-langauge', 'en');
+    }
 }
 
 function Options(props) {
@@ -35,12 +39,12 @@ function Options(props) {
             <div className="mb-2">
                 <div className="dropdown">
                     <button className="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        {`גודל תמונות: ${props.options.imagesSize == '64px' ? 'קטן' : props.options.imagesSize == '96px' ? 'בינוני' : 'גדול'}`}
+                        {`${props.fetchData[props.lang].strings[23]}: ${props.options.imagesSize == '64px' ? props.fetchData[props.lang].strings[19] : props.options.imagesSize == '96px' ? props.fetchData[props.lang].strings[20] : props.fetchData[props.lang].strings[21]}`}
                     </button>
                     <div className="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                        <a className="dropdown-item" onClick={() => makeSetImagesSize(props.setImagesSize, '64px')}>קטן</a>
-                        <a className="dropdown-item" onClick={() => makeSetImagesSize(props.setImagesSize, '96px')}>בינוני</a>
-                        <a className="dropdown-item" onClick={() => makeSetImagesSize(props.setImagesSize, '128px')}>גדול</a>
+                        <a className="dropdown-item" onClick={() => makeSetImagesSize(props.setImagesSize, '64px')}>{props.fetchData[props.lang].strings[19]}</a>
+                        <a className="dropdown-item" onClick={() => makeSetImagesSize(props.setImagesSize, '96px')}>{props.fetchData[props.lang].strings[20]}</a>
+                        <a className="dropdown-item" onClick={() => makeSetImagesSize(props.setImagesSize, '128px')}>{props.fetchData[props.lang].strings[21]}</a>
                     </div>
                 </div>
                 <img src={`${API_IMG_SRC}_400.png`} style={{width: props.options.imagesSize}}/>
@@ -48,17 +52,17 @@ function Options(props) {
             <div className="my-2">
                 <div className="dropdown">
                     <button className="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        {`גודל כותרות מוצר: ${props.options.titlesSize == '2vw' ? 'פיצי' : props.options.titlesSize == '3vw' ? 'קטן' : props.options.titlesSize == '4vw' ? 'בינוני' : props.options.titlesSize == '5vw' ? 'גדול' : 'ענק'}`}
+                        {`${props.fetchData[props.lang].strings[24]}: ${props.options.titlesSize == '2vw' ? props.fetchData[props.lang].strings[18] : props.options.titlesSize == '3vw' ? props.fetchData[props.lang].strings[19] : props.options.titlesSize == '4vw' ? props.fetchData[props.lang].strings[20] : props.options.titlesSize == '5vw' ? props.fetchData[props.lang].strings[21] : props.fetchData[props.lang].strings[22]}`}
                     </button>
                     <div className="dropdown-menu" aria-labelledby="dropdownMenuButton2">
-                        <a className="dropdown-item" onClick={() => makeSetTitlesSize(props.setTitlesSize, '2vw')}>פיצי</a>
-                        <a className="dropdown-item" onClick={() => makeSetTitlesSize(props.setTitlesSize, '3vw')}>קטן</a>
-                        <a className="dropdown-item" onClick={() => makeSetTitlesSize(props.setTitlesSize, '4vw')}>בינוני</a>
-                        <a className="dropdown-item" onClick={() => makeSetTitlesSize(props.setTitlesSize, '5vw')}>גדול</a>
-                        <a className="dropdown-item" onClick={() => makeSetTitlesSize(props.setTitlesSize, '6vw')}>ענק</a>
+                        <a className="dropdown-item" onClick={() => makeSetTitlesSize(props.setTitlesSize, '2vw')}>{props.fetchData[props.lang].strings[18]}</a>
+                        <a className="dropdown-item" onClick={() => makeSetTitlesSize(props.setTitlesSize, '3vw')}>{props.fetchData[props.lang].strings[19]}</a>
+                        <a className="dropdown-item" onClick={() => makeSetTitlesSize(props.setTitlesSize, '4vw')}>{props.fetchData[props.lang].strings[20]}</a>
+                        <a className="dropdown-item" onClick={() => makeSetTitlesSize(props.setTitlesSize, '5vw')}>{props.fetchData[props.lang].strings[21]}</a>
+                        <a className="dropdown-item" onClick={() => makeSetTitlesSize(props.setTitlesSize, '6vw')}>{props.fetchData[props.lang].strings[22]}</a>
                     </div>
                 </div>
-                <div className="h5" style={{fontSize: props.options.titlesSize}}>כותרת לדוגמא</div>
+                <div className="h5" style={{fontSize: props.options.titlesSize}}>{props.fetchData[props.lang].strings[25]}</div>
             </div>
         </div>
     )
@@ -66,7 +70,9 @@ function Options(props) {
 
 const mapStateToProps = state => {
     return {
-        options: state.options
+        options: state.options,
+        lang: state.options.lang,
+        fetchData: state.api.data
     }
 }
 
