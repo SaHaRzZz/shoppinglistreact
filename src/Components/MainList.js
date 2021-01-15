@@ -52,17 +52,22 @@ const getListString = (list, fetchData, successMsg, noteMsg) => {
     listKeys = listKeys.map((listKey, index) => {
         try {
             const specificItem = fetchData.find(item => item.img.split("").reverse().join("").slice(8).split("").reverse().join("") == listKey);
-            specificItem.title = specificItem.title.replace(/(^\w{1})|(\s{1}\w{1})/g, match => match.toUpperCase());
-            const note = list[specificItem.img.split("").reverse().join("").slice(8).split("").reverse().join("")][1];
-            return `${specificItem.title}: ${listValues[index]}${note ? `, ${noteMsg}: ${note}` : ''}`;
+            if(specificItem && listValues[index]) {
+                specificItem.title = specificItem.title.replace(/(^\w{1})|(\s{1}\w{1})/g, match => match.toUpperCase());
+                const note = list[specificItem.img.split("").reverse().join("").slice(8).split("").reverse().join("")][1];
+                return `${specificItem.title}: ${listValues[index]}${note ? `, ${noteMsg}: ${note}` : ''}`;
+            }
         }
         catch {
             return;
         }
     });
-    listKeys = listKeys.join('\n');
-    setClipboard(listKeys);
-    alert(`${successMsg}!`);
+    if(listKeys) {
+
+        listKeys = listKeys.join('\n');
+        setClipboard(listKeys);
+        alert(`${successMsg}!`);
+    }
 }
 
 const DynamicWhatsappShareCode = list => {
@@ -84,14 +89,16 @@ const DynamicWhatsappShareString = (list, fetchData, noteMsg) => {
         let listValues = Object.values(list).map(item => item[0]);
         listKeys = listKeys.map((listKey, index) => {
             const specificItem = fetchData.find(item => item.img.split("").reverse().join("").slice(8).split("").reverse().join("") == listKey);
-            if(specificItem) {
+            if(specificItem && listValues[index]) {
                 specificItem.title = specificItem.title.replace(/(^\w{1})|(\s{1}\w{1})/g, match => match.toUpperCase());
                 const note = list[specificItem.img.split("").reverse().join("").slice(8).split("").reverse().join("")][1];
                 return `${specificItem.title}: ${listValues[index]}${note ? `, ${noteMsg}: ${note}` : ''}`;
             }
         });
-        listKeys = listKeys.join('\n');
-        return listKeys;
+        if(listKeys) {
+            listKeys = listKeys.join('\n');
+            return listKeys;
+        }
     };
   
     return (
@@ -113,12 +120,6 @@ const setBase64Code = (setList, promptMsg, errorMsg) => {
     catch {
         alert(`${errorMsg}!`);
     }
-}
-
-const getBase64Whatsapp = list => {
-    updatingList = list;
-    updatingList = JSON.stringify(updatingList);
-    updatingList = encode(updatingList);
 }
 
 const resetList = setList => {setList(JSON.parse(atob('e30=')))}
@@ -160,6 +161,18 @@ function MainList(props) {
         updatingList = JSON.stringify(updatingList);
         updatingList = encode(updatingList);
         localStorage.setItem('saved-list', updatingList);
+
+        function clean(obj) {
+            for (const propName in obj) {
+              if (obj[propName] == '') {
+                delete obj[propName];
+              }
+            }
+            return obj
+          }
+
+          clean(props.list);
+        
     });
 
     return (
