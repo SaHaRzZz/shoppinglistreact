@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {connect} from 'react-redux';
 import {addItemToList, removeItemFromList, createItemInList, resetItemFromList, setNote} from '../redux/';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
@@ -125,10 +125,12 @@ const numToFont = num => {
 }
 
 function ListItem(props) {
+    const [imageLoaded, setImageLoaded] = useState(false);
     return (
         <div className="card flex-row my-1 shadow text-center" style={{backgroundColor: props.list[props.id] ? "rgb(0, 0, 255, 0.5)" : "rgb(255, 0, 0, 0.5)"}}>
             <div className="card-header border-0">
-                <img src={`${API_IMG_SRC}${props.logo}`} onError={e => e.target.src = placeholderImg} className="user-select-none" style={{width: props.options.imagesSize}}/>
+                <img src={placeholderImg} onError={e => e.target.src = placeholderImg} onLoad={() => setImageLoaded(true)} className="user-select-none" style={{width: props.options.imagesSize, display: imageLoaded ? 'none' : 'block'}}/>
+                <img src={`${API_IMG_SRC}${props.logo}`} onError={e => e.target.src = placeholderImg} className="user-select-none" style={{width: props.options.imagesSize, display: imageLoaded ? 'block' : 'none'}}/>
             </div>
             <div className="card-body row p-0 m-0 text-wrap">
                 <div className="card-title text-decoration-underline font-weight-bold col-5 h5 m-0 user-select-none align-self-center text-capitalize" style={{fontSize: props.options.titlesSize}}>{props.title}</div>
