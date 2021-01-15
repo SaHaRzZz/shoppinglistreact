@@ -84,9 +84,11 @@ const DynamicWhatsappShareString = (list, fetchData, noteMsg) => {
         let listValues = Object.values(list).map(item => item[0]);
         listKeys = listKeys.map((listKey, index) => {
             const specificItem = fetchData.find(item => item.img.split("").reverse().join("").slice(8).split("").reverse().join("") == listKey);
-            specificItem.title = specificItem.title.replace(/(^\w{1})|(\s{1}\w{1})/g, match => match.toUpperCase());
-            const note = list[specificItem.img.split("").reverse().join("").slice(8).split("").reverse().join("")][1];
-            return `${specificItem.title}: ${listValues[index]}${note ? `, ${noteMsg}: ${note}` : ''}`;
+            if(specificItem) {
+                specificItem.title = specificItem.title.replace(/(^\w{1})|(\s{1}\w{1})/g, match => match.toUpperCase());
+                const note = list[specificItem.img.split("").reverse().join("").slice(8).split("").reverse().join("")][1];
+                return `${specificItem.title}: ${listValues[index]}${note ? `, ${noteMsg}: ${note}` : ''}`;
+            }
         });
         listKeys = listKeys.join('\n');
         return listKeys;
