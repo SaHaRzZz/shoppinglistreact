@@ -4,7 +4,7 @@ import {faCog, faCopy, faList} from '@fortawesome/free-solid-svg-icons';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {Link} from 'react-router-dom';
 import {encode, decode} from 'js-base64';
-import {WhatsappShareButton, WhatsappIcon} from 'react-share';
+import {WhatsappShareButton, WhatsappIcon} from '@kashuab/react-share';
 import Popup from 'reactjs-popup';
 
 import ListItem from './ListItem';
@@ -14,7 +14,6 @@ import heFlag from '../imgs/he_flag.png';
 import enFlag from '../imgs/en_flag.png';
 
 let updatingList;
-let stringList;
 
 const renderByFilter = (filtering, filteringType, fetchData, filterCategory, final, list) => {
     if(filterCategory)
@@ -61,17 +60,37 @@ const getListString = (list, fetchData, successMsg, noteMsg) => {
     alert(`${successMsg}!`);
 }
 
-const updateStringList = (list, fetchData) => {
-    let listKeys = Object.keys(list);
-    let listValues = Object.values(list).map(item => item[0]);
-    listKeys = listKeys.map((listKey, index) => {
-        const specificItem = fetchData.find(item => item.img.split("").reverse().join("").slice(8).split("").reverse().join("") == listKey);
-        specificItem.title = specificItem.title.replace(/(^\w{1})|(\s{1}\w{1})/g, match => match.toUpperCase());
-        return `${specificItem.title}: ${listValues[index]}`;
-    });
-    listKeys = listKeys.join('\n');
-    stringList = listKeys;
-}
+const DynamicWhatsappShareCode = list => {
+    const getUrl = async () => {
+        updatingList = list;
+        updatingList = JSON.stringify(updatingList);
+        updatingList = encode(updatingList);
+        return updatingList;
+    };
+  
+    return (
+        <WhatsappShareButton url={getUrl}><WhatsappIcon size={60}/></WhatsappShareButton>
+    );
+};
+
+const DynamicWhatsappShareString = (list, fetchData, noteMsg) => {
+    const getUrl = async () => {
+        let listKeys = Object.keys(list);
+        let listValues = Object.values(list).map(item => item[0]);
+        listKeys = listKeys.map((listKey, index) => {
+            const specificItem = fetchData.find(item => item.img.split("").reverse().join("").slice(8).split("").reverse().join("") == listKey);
+            specificItem.title = specificItem.title.replace(/(^\w{1})|(\s{1}\w{1})/g, match => match.toUpperCase());
+            const note = list[specificItem.img.split("").reverse().join("").slice(8).split("").reverse().join("")][1];
+            return `${specificItem.title}: ${listValues[index]}${note ? `, ${noteMsg}: ${note}` : ''}`;
+        });
+        listKeys = listKeys.join('\n');
+        return listKeys;
+    };
+  
+    return (
+        <WhatsappShareButton url={getUrl}><WhatsappIcon size={60}/></WhatsappShareButton>
+    );
+};
 
 const setBase64Code = (setList, promptMsg, errorMsg) => {
     try {
@@ -134,7 +153,7 @@ function MainList(props) {
         updatingList = JSON.stringify(updatingList);
         updatingList = encode(updatingList);
         localStorage.setItem('saved-list', updatingList);
-    })
+    });
 
     return (
         !props.fetchLoading ?
@@ -168,7 +187,7 @@ function MainList(props) {
                                                 e.target.blur();
                                                 getListString(props.list, props.fetchData[props.lang].items, props.fetchData[props.lang].strings[14], props.fetchData[props.lang].strings[26]);
                                             }}><FontAwesomeIcon icon={faCopy} size="2x"/></button>
-                                            <WhatsappShareButton beforeOnClick={() => updateStringList(props.list, props.fetchData[props.lang].items)} url={stringList}><WhatsappIcon size={60}/></WhatsappShareButton>
+                                            {DynamicWhatsappShareString(props.list, props.fetchData[props.lang].items, props.fetchData[props.lang].strings[26])}
                                         </div>
                                     </Popup>
 
@@ -178,7 +197,7 @@ function MainList(props) {
                                                 e.target.blur();
                                                 getBase64Code(props.list, props.fetchData[props.lang].strings[14]);
                                             }}><FontAwesomeIcon icon={faCopy} size="2x"/></button>
-                                            <WhatsappShareButton beforeOnClick={() => getBase64Whatsapp(props.list)} url={updatingList}><WhatsappIcon size={60}/></WhatsappShareButton>
+                                            {DynamicWhatsappShareCode(props.list)}
                                         </div>
                                     </Popup>
                                     
