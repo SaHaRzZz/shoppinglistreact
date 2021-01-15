@@ -2,12 +2,12 @@ import React from 'react';
 import {connect} from 'react-redux';
 import {addItemToList, removeItemFromList, createItemInList, resetItemFromList, setNote} from '../redux/';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {faTimesCircle, faPlusCircle, faMinusCircle, faStickyNote} from '@fortawesome/free-solid-svg-icons';
+import {faPlusCircle, faMinusCircle, faStickyNote} from '@fortawesome/free-solid-svg-icons';
 import {faStickyNote as farStickyNote} from '@fortawesome/free-regular-svg-icons';
 import Popup from 'reactjs-popup';
 import '../../node_modules/reactjs-popup/dist/index.css';
 
-import placeholderImg from '../_400.png';
+import placeholderImg from '../imgs/_400.png';
 
 export const API_IMG_SRC = 'https://raw.githubusercontent.com/SaHaRzZz/test/main/imgs/';
 
@@ -131,7 +131,7 @@ function ListItem(props) {
                 <img src={`${API_IMG_SRC}${props.logo}`} onError={e => e.target.src = placeholderImg} className="user-select-none" style={{width: props.options.imagesSize}}/>
             </div>
             <div className="card-body row p-0 m-0 text-wrap">
-                <div className="card-title text-decoration-underline font-weight-bold col-5 h5 m-0 user-select-none align-self-center" style={{fontSize: props.options.titlesSize}}>{props.title}</div>
+                <div className="card-title text-decoration-underline font-weight-bold col-5 h5 m-0 user-select-none align-self-center text-capitalize" style={{fontSize: props.options.titlesSize}}>{props.title}</div>
                 
                 {props.list[props.id] ? [
                     <div className="align-self-center">
@@ -164,7 +164,7 @@ function ListItem(props) {
                         <div className="mr-2 position-absolute" style={{transform: "translate(-50%, -40%)"}} onClick={() => itemAdd(props.id, props.list, props.addItemToList, props.createItemInList)}><FontAwesomeIcon size="2x"  icon={faPlusCircle}/></div>
                     </div>}
                 </div>
-                <div className="card-title h-100 text-muted m-0 user-select-none align-self-center position-absolute" style={{right: '10px'}}>{props.category}</div>
+                <div className="card-title h-100 text-muted m-0 user-select-none align-self-center position-absolute text-capitalize" style={{right: '10px'}}>{props.category}</div>
             </div>
         </div>
     )

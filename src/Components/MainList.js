@@ -8,8 +8,10 @@ import {WhatsappShareButton, WhatsappIcon} from 'react-share';
 import Popup from 'reactjs-popup';
 
 import ListItem from './ListItem';
-import {setFilterText, setFilterType, setFilterTypeHebrew, fetch, setFilterCategory, setFinal, setFinalHebrew, setList, setImagesSize, setTitlesSize} from '../redux/';
+import {setFilterText, setFilterType, setFilterTypeHebrew, fetch, setFilterCategory, setFinal, setFinalHebrew, setList, setImagesSize, setTitlesSize, setLangauge} from '../redux/';
 import {updateOptions} from './Options';
+import heFlag from '../imgs/he_flag.png';
+import enFlag from '../imgs/en_flag.png';
 const FILTERING_TYPE_WHOLE = 'FILTERING_TYPE_WHOLE';
 const FILTERING_TYPE_SOME = 'FILTERING_TYPE_SOME';
 const FILTERING_CAT_ALL = 'הכל';
@@ -22,6 +24,7 @@ const renderByFilter = (filtering, filteringType, fetchData, filterCategory, fin
         fetchData = fetchData.filter(item => item.category == filterCategory);
         
     if(filtering != '') {
+        filtering = filtering.toLowerCase();
         switch(filteringType) {
             case FILTERING_TYPE_WHOLE:
                 for(let i=0;i<filtering.length;i++) {
@@ -163,6 +166,8 @@ function MainList(props) {
             <Link to="/options">
                 <FontAwesomeIcon type="button" icon={faCog} size="4x" className="position-absolute border-right border-bottom" style={{left: 0, zIndex: 1}}/>
             </Link>
+            <img type="button" onClick={() => props.setLangauge(props.fetchLang == 'en' ? 'he' : 'en')} src={props.fetchLang == 'en' ? enFlag : heFlag} className="position-absolute" style={{right: 0, zIndex: 1}}></img>
+
             <input placeholder={`חיפוש לפי: ${props.filterTypeHebrew}`} className="text-center" onChange={event => props.setFilterText(event.target.value)}></input>
             <div className="dropdown mt-2">
                 <button className="btn btn-primary rounded-0 dropdown-toggle" dir="rtl" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -186,9 +191,9 @@ function MainList(props) {
                                         <div className="d-flex justify-content-around">
                                             <button className="btn btn-secondary rounded-0" onClick={e => {
                                                 e.target.blur();
-                                                getListString(props.list, props.fetchData);
+                                                getListString(props.list, props.fetchData[props.fetchLang]);
                                             }}><FontAwesomeIcon icon={faCopy} size="2x"/></button>
-                                            <WhatsappShareButton beforeOnClick={() => updateStringList(props.list, props.fetchData)} url={stringList}><WhatsappIcon size={60}/></WhatsappShareButton>
+                                            <WhatsappShareButton beforeOnClick={() => updateStringList(props.list, props.fetchData[props.fetchLang])} url={stringList}><WhatsappIcon size={60}/></WhatsappShareButton>
                                         </div>
                                     </Popup>
 
@@ -224,7 +229,7 @@ function MainList(props) {
                 changeFilterType(props.filterType, props.setFilterType, props.setFilterTypeHebrew);
             }} className="btn btn-danger my-2">חיפוש לפי: {props.filterTypeHebrew}</button>
             
-            {renderByFilter(props.filterText, props.filterType, props.fetchData, props.filterCategory, props.final, props.list)}
+            {renderByFilter(props.filterText, props.filterType, props.fetchData[props.fetchLang], props.filterCategory, props.final, props.list)}
 
         </div>
         :
@@ -244,6 +249,7 @@ const mapStateToProps = state => {
         fetchLoading: state.api.loading,
         fetchData: state.api.data,
         fetchError: state.api.error,
+        fetchLang: state.api.lang,
 
         list: state.list,
         notes: state.notes
@@ -261,7 +267,8 @@ const mapDispatchToProps = dispatch => {
         setFinalHebrew: val => dispatch(setFinalHebrew(val)),
         setList: val => dispatch(setList(val)),
         setImagesSize: val => dispatch(setImagesSize(val)),
-        setTitlesSize: val => dispatch(setTitlesSize(val))
+        setTitlesSize: val => dispatch(setTitlesSize(val)),
+        setLangauge: val => dispatch(setLangauge(val))
     }
 }
 

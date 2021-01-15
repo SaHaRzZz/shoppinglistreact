@@ -1,9 +1,10 @@
-import {FETCH_REQUEST, FETCH_SUCCESS, FETCH_FAILURE} from './types';
+import {FETCH_REQUEST, FETCH_SUCCESS, FETCH_FAILURE, SET_LANGAUGE} from './types';
 
 const initialState = {
     loading: true,
     data: '',
-    error: ''
+    error: '',
+    lang: 'en'
 }
 
 const reducer = (state = initialState, action) => {
@@ -23,6 +24,10 @@ const reducer = (state = initialState, action) => {
             loading: false,
             data: '',
             error: action.payload
+        }
+        case SET_LANGAUGE: return {
+            ...state,
+            lang: action.payload
         }
         default: return state;
     }

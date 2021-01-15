@@ -1,4 +1,4 @@
-import {FETCH_REQUEST, FETCH_SUCCESS, FETCH_FAILURE} from './types';
+import {FETCH_REQUEST, FETCH_SUCCESS, FETCH_FAILURE, SET_LANGAUGE} from './types';
 
 import axios from 'axios';
 
@@ -22,14 +22,21 @@ export const fetchFailure = error => {
     }
 }
 
+export const setLangauge = lang => {
+    return {
+        type: SET_LANGAUGE,
+        payload: lang
+    }
+}
+
 export const fetch = () => {
     return function(dispatch) {
         axios.get('https://raw.githubusercontent.com/SaHaRzZz/test/main/json/Data.json')
              .then(response => {
-                let temp = response.data.food;
+                let temp = response.data;
                 temp = JSON.stringify(temp);
                 localStorage.setItem('items-database', temp);
-                return dispatch(fetchSuccess(response.data.food));
+                return dispatch(fetchSuccess(response.data));
             })
              .catch(error => {
                  if(localStorage.getItem('items-database')) {
