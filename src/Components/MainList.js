@@ -50,10 +50,15 @@ const getListString = (list, fetchData, successMsg, noteMsg) => {
     let listKeys = Object.keys(list);
     let listValues = Object.values(list).map(item => item[0]);
     listKeys = listKeys.map((listKey, index) => {
-        const specificItem = fetchData.find(item => item.img.split("").reverse().join("").slice(8).split("").reverse().join("") == listKey);
-        specificItem.title = specificItem.title.replace(/(^\w{1})|(\s{1}\w{1})/g, match => match.toUpperCase());
-        const note = list[specificItem.img.split("").reverse().join("").slice(8).split("").reverse().join("")][1];
-        return `${specificItem.title}: ${listValues[index]}${note ? `, ${noteMsg}: ${note}` : ''}`;
+        try {
+            const specificItem = fetchData.find(item => item.img.split("").reverse().join("").slice(8).split("").reverse().join("") == listKey);
+            specificItem.title = specificItem.title.replace(/(^\w{1})|(\s{1}\w{1})/g, match => match.toUpperCase());
+            const note = list[specificItem.img.split("").reverse().join("").slice(8).split("").reverse().join("")][1];
+            return `${specificItem.title}: ${listValues[index]}${note ? `, ${noteMsg}: ${note}` : ''}`;
+        }
+        catch {
+            return;
+        }
     });
     listKeys = listKeys.join('\n');
     setClipboard(listKeys);
