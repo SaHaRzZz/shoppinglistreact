@@ -47,17 +47,18 @@ const getBase64Code = (list, msg) => {
     alert(`${msg}!`);
 }
 
-const getListString = (list, fetchData, msg) => {
+const getListString = (list, fetchData, successMsg, noteMsg) => {
     let listKeys = Object.keys(list);
     let listValues = Object.values(list).map(item => item[0]);
     listKeys = listKeys.map((listKey, index) => {
         const specificItem = fetchData.find(item => item.img.split("").reverse().join("").slice(8).split("").reverse().join("") == listKey);
         specificItem.title = specificItem.title.replace(/(^\w{1})|(\s{1}\w{1})/g, match => match.toUpperCase());
-        return `${specificItem.title}: ${listValues[index]}`;
+        const note = list[specificItem.img.split("").reverse().join("").slice(8).split("").reverse().join("")][1];
+        return `${specificItem.title}: ${listValues[index]}${note ? `, ${noteMsg}: ${note}` : ''}`;
     });
     listKeys = listKeys.join('\n');
     setClipboard(listKeys);
-    alert(`${msg}!`);
+    alert(`${successMsg}!`);
 }
 
 const updateStringList = (list, fetchData) => {
@@ -165,7 +166,7 @@ function MainList(props) {
                                         <div className="d-flex justify-content-around">
                                             <button className="btn btn-secondary rounded-0" onClick={e => {
                                                 e.target.blur();
-                                                getListString(props.list, props.fetchData[props.lang].items, props.fetchData[props.lang].strings[14]);
+                                                getListString(props.list, props.fetchData[props.lang].items, props.fetchData[props.lang].strings[14], props.fetchData[props.lang].strings[26]);
                                             }}><FontAwesomeIcon icon={faCopy} size="2x"/></button>
                                             <WhatsappShareButton beforeOnClick={() => updateStringList(props.list, props.fetchData[props.lang].items)} url={stringList}><WhatsappIcon size={60}/></WhatsappShareButton>
                                         </div>
