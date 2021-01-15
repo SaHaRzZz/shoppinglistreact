@@ -48,7 +48,8 @@ const getBase64Code = (list, msg) => {
 
 const getListString = (list, fetchData, successMsg, noteMsg) => {
     let listKeys = Object.keys(list);
-    let listValues = Object.values(list).map(item => item[0]);
+    console.log(listKeys);
+    let listValues = Object.values(list).map(item => item[0] != undefined ? item[0] : item);
     listKeys = listKeys.map((listKey, index) => {
         try {
             const specificItem = fetchData.find(item => item.img.split("").reverse().join("").slice(8).split("").reverse().join("") == listKey);
@@ -86,7 +87,7 @@ const DynamicWhatsappShareCode = list => {
 const DynamicWhatsappShareString = (list, fetchData, noteMsg) => {
     const getUrl = async () => {
         let listKeys = Object.keys(list);
-        let listValues = Object.values(list).map(item => item[0]);
+        let listValues = Object.values(list).map(item => item[0] != undefined ? item[0] : item);
         listKeys = listKeys.map((listKey, index) => {
             const specificItem = fetchData.find(item => item.img.split("").reverse().join("").slice(8).split("").reverse().join("") == listKey);
             if(specificItem && listValues[index]) {
