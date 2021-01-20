@@ -7,7 +7,6 @@ import {encode, decode} from 'js-base64';
 import {WhatsappShareButton, WhatsappIcon} from '@kashuab/react-share';
 import Popup from 'reactjs-popup';
 import * as uuid from 'uuid';
-import mongoose from 'mongoose';
 import axios from 'axios';
 
 import ListItem from './ListItem';
@@ -21,7 +20,6 @@ let dListState;
 let dListInterval;
 let dListID;
 let dListGot;
-
 const renderByFilter = (filtering, filteringType, fetchData, filterCategory, final, list) => {
     if(filterCategory)
         fetchData = fetchData.filter(item => item.filter == filterCategory);
@@ -115,7 +113,7 @@ const DynamicWhatsappShareString = (list, fetchData, noteMsg) => {
 };
 
 const sharedListStart = (id, setList, promptMsg, errorMsg) => {
-    axios.get(`http://127.0.0.1:5000/dlist?id=${id}`)
+    axios.get(`https://tabby-simplistic-router.glitch.me/dlist?id=${id}`)
     .then(json => {
         dListGot = json.data;
         setList(json.data, promptMsg, errorMsg);
@@ -127,7 +125,7 @@ const sharedListStart = (id, setList, promptMsg, errorMsg) => {
 
 const sharedListGet = (id, setList, promptMsg, errorMsg) => {
     console.log('in');
-    axios.get(`http://127.0.0.1:5000/dlist?id=${id}`)
+    axios.get(`https://tabby-simplistic-router.glitch.me/dlist?id=${id}`)
     .then(json => {
         dListGot = json.data;
         setList(json.data, promptMsg, errorMsg);
@@ -135,7 +133,7 @@ const sharedListGet = (id, setList, promptMsg, errorMsg) => {
 }
 
 const sharedListPost = (id, list) => {
-    axios.post(`http://127.0.0.1:5000/dlist?id=${id}`, list);
+    axios.post(`https://tabby-simplistic-router.glitch.me/dlist?id=${id}`, list);
 }
 
 
@@ -147,6 +145,7 @@ const setPasteCode = (setList, promptMsg, errorMsg) => {
         }
         if(dListInterval) {
             clearInterval(dListInterval);
+            console.log('cleared one');
             dListInterval = undefined;
             dListState = false;
         }
