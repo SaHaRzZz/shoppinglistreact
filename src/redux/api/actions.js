@@ -1,4 +1,4 @@
-import {FETCH_REQUEST, FETCH_SUCCESS, FETCH_FAILURE} from './types';
+import {FETCH_REQUEST, FETCH_SUCCESS, FETCH_FAILURE, SET_ONLINE, SET_ID, SKIP_GET} from './types';
 
 import axios from 'axios';
 
@@ -19,6 +19,27 @@ export const fetchFailure = error => {
     return {
         type: FETCH_FAILURE,
         payload: error
+    }
+}
+
+export const setOnline = bool => {
+    return {
+        type: SET_ONLINE,
+        payload: bool
+    }
+}
+
+export const setId = bool => {
+    return {
+        type: SET_ID,
+        payload: bool
+    }
+}
+
+export const setSkipGet = bool => {
+    return {
+        type: SKIP_GET,
+        payload: bool
     }
 }
 

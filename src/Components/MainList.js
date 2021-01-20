@@ -10,16 +10,14 @@ import * as uuid from 'uuid';
 import axios from 'axios';
 
 import ListItem from './ListItem';
-import {setFilterText, setFilterType, fetch, setFilterCategory, setFinal, setList, setImagesSize, setTitlesSize, setLangauge} from '../redux/';
+import {setFilterText, setFilterType, fetch, setFilterCategory, setFinal, setList, setImagesSize, setTitlesSize, setLangauge, setOnline, setId, setSkipGet} from '../redux/';
 import {updateOptions} from './Options';
 import heFlag from '../imgs/he_flag.png';
 import enFlag from '../imgs/en_flag.png';
 
 let updatingList;
-let dListState;
 let dListInterval;
-let dListID;
-let dListGot;
+
 const renderByFilter = (filtering, filteringType, fetchData, filterCategory, final, list) => {
     if(filterCategory)
         fetchData = fetchData.filter(item => item.filter == filterCategory);
@@ -112,32 +110,37 @@ const DynamicWhatsappShareString = (list, fetchData, noteMsg) => {
     );
 };
 
-const sharedListStart = (id, setList, promptMsg, errorMsg) => {
+const sharedListStart = (id, setList, promptMsg, errorMsg, setOnline, setId, skipGet, setSkipGet) => {
     axios.get(`https://tabby-simplistic-router.glitch.me/dlist?id=${id}`)
     .then(json => {
-        dListGot = json.data;
         setList(json.data, promptMsg, errorMsg);
-        dListID = id;
-        dListState = true;
-        dListInterval = setInterval(() => sharedListGet(id, setList, promptMsg, errorMsg), 1000);
+        setId(id);
+        setOnline(true);
+        // dListInterval = setInterval(() => sharedListGet(id, setList, promptMsg, errorMsg, skipGet, setSkipGet), 1000);
     });
 }
 
-const sharedListGet = (id, setList, promptMsg, errorMsg) => {
+const sharedListGet = (id, setList, promptMsg, errorMsg, skipGet, setSkipGet) => {
     console.log('in');
-    axios.get(`https://tabby-simplistic-router.glitch.me/dlist?id=${id}`)
-    .then(json => {
-        dListGot = json.data;
-        setList(json.data, promptMsg, errorMsg);
-    });
+    console.log(skipGet);
+    if(!skipGet) {
+        axios.get(`https://tabby-simplistic-router.glitch.me/dlist?id=${id}`)
+        .then(json => {
+            setList(json.data, promptMsg, errorMsg);
+        });
+    } else {
+        setSkipGet(false);
+        console.log('gothere');
+    }
 }
 
-const sharedListPost = (id, list) => {
+export const sharedListPost = (id, list) => {
     axios.post(`https://tabby-simplistic-router.glitch.me/dlist?id=${id}`, list);
+    console.log('post');
 }
 
 
-const setPasteCode = (setList, promptMsg, errorMsg) => {
+const setPasteCode = (setList, promptMsg, errorMsg, setOnline, setId, skipGet, setSkipGet) => {
     try {
         let list = prompt(`${promptMsg}`);
         if(list == null) {
@@ -145,12 +148,11 @@ const setPasteCode = (setList, promptMsg, errorMsg) => {
         }
         if(dListInterval) {
             clearInterval(dListInterval);
-            console.log('cleared one');
             dListInterval = undefined;
-            dListState = false;
+            setOnline(false);
         }
         if(uuid.validate(list)) {
-            sharedListStart(list, setList, promptMsg, errorMsg);
+            sharedListStart(list, setList, promptMsg, errorMsg, setOnline, setId, skipGet, setSkipGet);
         } else{            
             list = decode(list);
             list = JSON.parse(list);
@@ -202,11 +204,6 @@ function MainList(props) {
         updatingList = encode(updatingList);
         localStorage.setItem('saved-list', updatingList);
 
-        if(dListState && JSON.stringify(dListGot) != JSON.stringify(props.list)) {
-            console.log('did');
-            sharedListPost(dListID, props.list);
-        }
-
         function clean(obj) {
             for (const propName in obj) {
               if (obj[propName] == '') {
@@ -242,7 +239,7 @@ function MainList(props) {
                             <div className="col text-center">
                                 <button className="btn btn-secondary rounded-0 col-12" onClick={e => {
                                     e.target.blur();
-                                    setPasteCode(props.setList, props.fetchData[props.lang].strings[15], props.fetchData[props.lang].strings[16]);
+                                    setPasteCode(props.setList, props.fetchData[props.lang].strings[15], props.fetchData[props.lang].strings[16], props.setOnline, props.setId, props.skipGet, props.setSkipGet);
                                 }}>{props.fetchData[props.lang].strings[5]}</button>
                                 <Popup closeOnDocumentClick={false} trigger={<div className="btn btn-primary rounded-0 col-12">{props.fetchData[props.lang].strings[6]}</div>}>
 
@@ -288,6 +285,8 @@ function MainList(props) {
                 props.setFilterType(!props.filterType);
             }} className="btn btn-danger my-2">{`${props.fetchData[props.lang].strings[0]}: ${props.filterType ? props.fetchData[props.lang].strings[2] : props.fetchData[props.lang].strings[1]}`}</button>
             
+            {props.isOnline && <div>ONLINE</div>}
+
             {renderByFilter(props.filterText, props.filterType, props.fetchData[props.lang].items, props.filterCategory, props.final, props.list)}
             
         </div>
@@ -306,6 +305,10 @@ const mapStateToProps = state => {
         fetchLoading: state.api.loading,
         fetchData: state.api.data,
         fetchError: state.api.error,
+        isOnline: state.api.online,
+        id: state.api.id,
+        skipGet: state.api.skipGet,
+
 
         list: state.list,
         notes: state.notes,
@@ -325,7 +328,10 @@ const mapDispatchToProps = dispatch => {
         setList: val => dispatch(setList(val)),
         setImagesSize: val => dispatch(setImagesSize(val)),
         setTitlesSize: val => dispatch(setTitlesSize(val)),
-        setLangauge: val => dispatch(setLangauge(val))
+        setLangauge: val => dispatch(setLangauge(val)),
+        setOnline: val => dispatch(setOnline(val)),
+        setId: val => dispatch(setId(val)),
+        setSkipGet: val => dispatch(setSkipGet(val))
     }
 }
 
