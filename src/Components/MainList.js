@@ -115,7 +115,6 @@ const sharedListStart = (id, setList, promptMsg, errorMsg, setOnline, setId) => 
         setList(json.data, promptMsg, errorMsg);
         setId(id);
         setOnline(true);
-        console.log('setting online');
         dListInterval = setInterval(() => sharedListGet(id, setList, promptMsg, errorMsg), 1000);
     });
 }
@@ -132,7 +131,7 @@ export const sharedListPost = (id, list) => {
 }
 
 
-const setPasteCode = (setList, promptMsg, errorMsg, setOnline, setId, id) => {
+const setPasteCode = (setList, promptMsg, errorMsg, setOnline, setId, id, isOnline) => {
     try {
         let list = prompt(`${promptMsg}`);
         if(list == null) {
@@ -148,7 +147,9 @@ const setPasteCode = (setList, promptMsg, errorMsg, setOnline, setId, id) => {
         } else{            
             list = decode(list);
             list = JSON.parse(list);
-            sharedListPost(id, list);
+            if(isOnline) {
+                sharedListPost(id, list);
+            }
             setList(list);
         }
     }
@@ -157,8 +158,10 @@ const setPasteCode = (setList, promptMsg, errorMsg, setOnline, setId, id) => {
     }
 }
 
-const resetList = (setList, id) => {
-    sharedListPost(id, {});
+const resetList = (setList, id, isOnline) => {
+    if(isOnline) {
+        sharedListPost(id, {});
+    }
     setList(JSON.parse(atob('e30=')));
 }
 
@@ -210,8 +213,14 @@ function MainList(props) {
           }
 
           clean(props.list);
-        
     });
+
+    useEffect(() => {
+        if(dListInterval) {
+            clearInterval(dListInterval);
+            dListInterval = setInterval(() => sharedListGet(props.id, props.setList, props.fetchData[props.lang].strings[15], props.fetchData[props.lang].strings[16]), 1000);
+        }
+    }, [props.list])
 
     return (
         !props.fetchLoading ?
@@ -235,7 +244,7 @@ function MainList(props) {
                             <div className="col text-center">
                                 <button className="btn btn-secondary rounded-0 col-12" onClick={e => {
                                     e.target.blur();
-                                    setPasteCode(props.setList, props.fetchData[props.lang].strings[15], props.fetchData[props.lang].strings[16], props.setOnline, props.setId, props.id);
+                                    setPasteCode(props.setList, props.fetchData[props.lang].strings[15], props.fetchData[props.lang].strings[16], props.setOnline, props.setId, props.id, props.isOnline);
                                 }}>{props.fetchData[props.lang].strings[5]}</button>
                                 <Popup closeOnDocumentClick={false} trigger={<div className="btn btn-primary rounded-0 col-12">{props.fetchData[props.lang].strings[6]}</div>}>
 
@@ -262,7 +271,7 @@ function MainList(props) {
                                 </Popup>
                                 <button className="btn btn-danger rounded-0 col-12" onClick={e => {
                                     e.target.blur();
-                                    window.confirm(`${props.fetchData[props.lang].strings[17]}?`) && resetList(props.setList, props.id);
+                                    window.confirm(`${props.fetchData[props.lang].strings[17]}?`) && resetList(props.setList, props.id, props.isOnline);
                                 }}>{props.fetchData[props.lang].strings[9]}</button>
                             </div>
                         </Popup>
