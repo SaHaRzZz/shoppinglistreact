@@ -10,7 +10,7 @@ import * as uuid from 'uuid';
 import axios from 'axios';
 
 import ListItem from './ListItem';
-import {setFilterText, setFilterType, fetch, setFilterCategory, setFinal, setList, setImagesSize, setTitlesSize, setLangauge, setOnline, setId, setSkipGet} from '../redux/';
+import {setFilterText, setFilterType, fetch, setFilterCategory, setFinal, setList, setImagesSize, setTitlesSize, setLangauge, setOnline, setId} from '../redux/';
 import {updateOptions} from './Options';
 import heFlag from '../imgs/he_flag.png';
 import enFlag from '../imgs/en_flag.png';
@@ -51,7 +51,6 @@ const getBase64Code = (list, msg) => {
 
 const getListString = (list, fetchData, successMsg, noteMsg) => {
     let listKeys = Object.keys(list);
-    console.log(listKeys);
     let listValues = Object.values(list).map(item => item[0] != undefined ? item[0] : item);
     listKeys = listKeys.map((listKey, index) => {
         try {
@@ -110,37 +109,29 @@ const DynamicWhatsappShareString = (list, fetchData, noteMsg) => {
     );
 };
 
-const sharedListStart = (id, setList, promptMsg, errorMsg, setOnline, setId, skipGet, setSkipGet) => {
+const sharedListStart = (id, setList, promptMsg, errorMsg, setOnline, setId) => {
     axios.get(`https://tabby-simplistic-router.glitch.me/dlist?id=${id}`)
     .then(json => {
         setList(json.data, promptMsg, errorMsg);
         setId(id);
         setOnline(true);
-        // dListInterval = setInterval(() => sharedListGet(id, setList, promptMsg, errorMsg, skipGet, setSkipGet), 1000);
+        dListInterval = setInterval(() => sharedListGet(id, setList, promptMsg, errorMsg), 1000);
     });
 }
 
-const sharedListGet = (id, setList, promptMsg, errorMsg, skipGet, setSkipGet) => {
-    console.log('in');
-    console.log(skipGet);
-    if(!skipGet) {
-        axios.get(`https://tabby-simplistic-router.glitch.me/dlist?id=${id}`)
-        .then(json => {
-            setList(json.data, promptMsg, errorMsg);
-        });
-    } else {
-        setSkipGet(false);
-        console.log('gothere');
-    }
+const sharedListGet = (id, setList, promptMsg, errorMsg) => {
+    axios.get(`https://tabby-simplistic-router.glitch.me/dlist?id=${id}`)
+    .then(json => {
+        setList(json.data, promptMsg, errorMsg);
+    });
 }
 
 export const sharedListPost = (id, list) => {
     axios.post(`https://tabby-simplistic-router.glitch.me/dlist?id=${id}`, list);
-    console.log('post');
 }
 
 
-const setPasteCode = (setList, promptMsg, errorMsg, setOnline, setId, skipGet, setSkipGet) => {
+const setPasteCode = (setList, promptMsg, errorMsg, setOnline, setId) => {
     try {
         let list = prompt(`${promptMsg}`);
         if(list == null) {
@@ -152,7 +143,7 @@ const setPasteCode = (setList, promptMsg, errorMsg, setOnline, setId, skipGet, s
             setOnline(false);
         }
         if(uuid.validate(list)) {
-            sharedListStart(list, setList, promptMsg, errorMsg, setOnline, setId, skipGet, setSkipGet);
+            sharedListStart(list, setList, promptMsg, errorMsg, setOnline, setId);
         } else{            
             list = decode(list);
             list = JSON.parse(list);
@@ -239,7 +230,7 @@ function MainList(props) {
                             <div className="col text-center">
                                 <button className="btn btn-secondary rounded-0 col-12" onClick={e => {
                                     e.target.blur();
-                                    setPasteCode(props.setList, props.fetchData[props.lang].strings[15], props.fetchData[props.lang].strings[16], props.setOnline, props.setId, props.skipGet, props.setSkipGet);
+                                    setPasteCode(props.setList, props.fetchData[props.lang].strings[15], props.fetchData[props.lang].strings[16], props.setOnline, props.setId);
                                 }}>{props.fetchData[props.lang].strings[5]}</button>
                                 <Popup closeOnDocumentClick={false} trigger={<div className="btn btn-primary rounded-0 col-12">{props.fetchData[props.lang].strings[6]}</div>}>
 
@@ -307,7 +298,6 @@ const mapStateToProps = state => {
         fetchError: state.api.error,
         isOnline: state.api.online,
         id: state.api.id,
-        skipGet: state.api.skipGet,
 
 
         list: state.list,
@@ -330,8 +320,7 @@ const mapDispatchToProps = dispatch => {
         setTitlesSize: val => dispatch(setTitlesSize(val)),
         setLangauge: val => dispatch(setLangauge(val)),
         setOnline: val => dispatch(setOnline(val)),
-        setId: val => dispatch(setId(val)),
-        setSkipGet: val => dispatch(setSkipGet(val))
+        setId: val => dispatch(setId(val))
     }
 }
 

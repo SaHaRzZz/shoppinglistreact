@@ -1,12 +1,11 @@
-import {FETCH_REQUEST, FETCH_SUCCESS, FETCH_FAILURE, SET_ONLINE, SET_ID, SKIP_GET} from './types';
+import {FETCH_REQUEST, FETCH_SUCCESS, FETCH_FAILURE, SET_ONLINE, SET_ID} from './types';
 
 const initialState = {
     loading: true,
     data: '',
     error: '',
     isOnline: false,
-    id: '',
-    skipGet: false
+    id: ''
 }
 
 const reducer = (state = initialState, action) => {
@@ -34,10 +33,6 @@ const reducer = (state = initialState, action) => {
         case SET_ID: return {
             ...state,
             id: action.payload
-        }
-        case SKIP_GET: return {
-            ...state,
-            skipGet: action.payload
         }
         default: return state;
     }

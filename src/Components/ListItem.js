@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {connect} from 'react-redux';
-import {addItemToList, removeItemFromList, createItemInList, resetItemFromList, setNote, setSkipGet} from '../redux/';
+import {addItemToList, removeItemFromList, createItemInList, resetItemFromList, setNote} from '../redux/';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faPlusCircle, faMinusCircle, faStickyNote} from '@fortawesome/free-solid-svg-icons';
 import {faStickyNote as farStickyNote} from '@fortawesome/free-regular-svg-icons';
@@ -12,7 +12,7 @@ import placeholderImg from '../imgs/_400.png';
 
 export const API_IMG_SRC = 'https://raw.githubusercontent.com/SaHaRzZz/test/main/imgs/';
 
-const itemAdd = (id, list, addItemToListFunc, createItemInListFunc, apiID, isOnline, setSkipGet) => {
+const itemAdd = (id, list, addItemToListFunc, createItemInListFunc, apiID, isOnline) => {
     if(list[id]) {
         if(list[id][0] == 80) {
             alert('מקסימום 80 יחידות למוצר!');
@@ -21,7 +21,6 @@ const itemAdd = (id, list, addItemToListFunc, createItemInListFunc, apiID, isOnl
             addItemToListFunc(id);
             if(isOnline) {
                 sharedListPost(apiID, {...list, [id]: [list[id][0] + 1, list[id][1]]});
-                setSkipGet(true);
             }
         }
     }
@@ -29,41 +28,36 @@ const itemAdd = (id, list, addItemToListFunc, createItemInListFunc, apiID, isOnl
         createItemInListFunc(id);
         if(isOnline) {
             sharedListPost(apiID, {...list, [id]: [1, '']});
-            setSkipGet(true);
         }
     }
 }
 
-const itemRemove = (id, list, removeItemFromListFunc, resetItemFromListFunc, apiID, isOnline, setSkipGet) => {
+const itemRemove = (id, list, removeItemFromListFunc, resetItemFromListFunc, apiID, isOnline) => {
     if(list[id][0] == 1) {
         resetItemFromListFunc(id);
         if(isOnline) {
             sharedListPost(apiID, {...list, [id]: ''});
-            setSkipGet(true);
         }
     }
     else if(list[id][0]) {
         removeItemFromListFunc(id);
         if(isOnline) {
             sharedListPost(apiID, {...list, [id]: [list[id][0] - 1, list[id][1]]});
-            setSkipGet(true);
         }
     }
 }
 
-const itemReset = (resetItemFromListFunc, id, apiID, isOnline, list, setSkipGet) => {
+const itemReset = (resetItemFromListFunc, id, apiID, isOnline, list) => {
     resetItemFromListFunc(id);
     if(isOnline) {
         sharedListPost(apiID, {...list, [id]: ''});
-        setSkipGet(true);
     }
 }
 
-const modifyNote = (setNote, id, content, apiID, isOnline, list, setSkipGet) => {
+const modifyNote = (setNote, id, content, apiID, isOnline, list) => {
     setNote(id, content);
     if(isOnline) {
         sharedListPost(apiID, {...list, [id]: [list[id][0], content]});
-        setSkipGet(true);
     }
 }
 
@@ -166,20 +160,20 @@ function ListItem(props) {
                 
                 {props.list[props.id] ? [
                     <div className="align-self-center">
-                        <div className="col-1" style={{zIndex: 3}} onClick={() => itemAdd(props.id, props.list, props.addItemToList, props.createItemInList, props.apiID, props.isOnline, props.setSkipGet)}><FontAwesomeIcon size="2x" icon={faPlusCircle}/></div>
-                        <div className="col-1" style={{zIndex: 3}} onClick={() => itemRemove(props.id, props.list, props.removeItemFromList, props.resetItemFromList, props.apiID, props.isOnline, props.setSkipGet)}><FontAwesomeIcon size="2x" icon={faMinusCircle}/></div>
+                        <div className="col-1" style={{zIndex: 3}} onClick={() => itemAdd(props.id, props.list, props.addItemToList, props.createItemInList, props.apiID, props.isOnline)}><FontAwesomeIcon size="2x" icon={faPlusCircle}/></div>
+                        <div className="col-1" style={{zIndex: 3}} onClick={() => itemRemove(props.id, props.list, props.removeItemFromList, props.resetItemFromList, props.apiID, props.isOnline)}><FontAwesomeIcon size="2x" icon={faMinusCircle}/></div>
                     </div>,
-                    <div className="mx-2 font-italic user-select-none align-self-center" style={{fontSize: "2rem", zIndex: 3, fontFamily: 'numberpile'}} onClick={() => window.confirm("לאפס את המוצר?") && itemReset(props.resetItemFromList, props.id, props.apiID, props.isOnline, props.list, props.setSkipGet)}>{numToFont(props.list[props.id][0])}</div>,
+                    <div className="mx-2 font-italic user-select-none align-self-center" style={{fontSize: "2rem", zIndex: 3, fontFamily: 'numberpile'}} onClick={() => window.confirm("לאפס את המוצר?") && itemReset(props.resetItemFromList, props.id, props.apiID, props.isOnline, props.list)}>{numToFont(props.list[props.id][0])}</div>,
                     <Popup trigger={<div className="align-self-center mx-2" style={{zIndex: 4}}><FontAwesomeIcon icon={props.list[props.id][1] ? faStickyNote : farStickyNote} size="2x"/></div>} position="left center">
                         <div className="text-center">
                             <div className="font-weight-bold">{props.title}</div>
                             <div>{props.list[props.id][1]}</div>
                             {props.list[props.id][1] ? [
-                                <button className="btn btn-primary rounded-0" onClick={() => modifyNote(props.setNote, props.id, prompt(`הערה ל${props.title}:`, props.list[props.id][1]), props.apiID, props.isOnline, props.list, props.setSkipGet)}>שנה</button>,
-                                <button className="btn btn-danger rounded-0" onClick={() => modifyNote(props.setNote, props.id, '', props.apiID, props.isOnline, props.list, props.setSkipGet)}>מחק</button>
+                                <button className="btn btn-primary rounded-0" onClick={() => modifyNote(props.setNote, props.id, prompt(`הערה ל${props.title}:`, props.list[props.id][1]), props.apiID, props.isOnline, props.list)}>שנה</button>,
+                                <button className="btn btn-danger rounded-0" onClick={() => modifyNote(props.setNote, props.id, '', props.apiID, props.isOnline, props.list)}>מחק</button>
                             ]
                             :
-                            <button className="btn btn-primary rounded-0" onClick={() => modifyNote(props.setNote, props.id, prompt(`הערה ל${props.title}:`), props.apiID, props.isOnline, props.list, props.setSkipGet)}>הכן הערה</button>}
+                            <button className="btn btn-primary rounded-0" onClick={() => modifyNote(props.setNote, props.id, prompt(`הערה ל${props.title}:`), props.apiID, props.isOnline, props.list)}>הכן הערה</button>}
                         </div>
                     </Popup>
                     
@@ -192,7 +186,7 @@ function ListItem(props) {
                     ]
                     :
                     <div className="rounded-circle shadow-lg col-1 font-italic mx-2">
-                        <div className="mr-2 position-absolute" style={{transform: "translate(-50%, -40%)"}} onClick={() => itemAdd(props.id, props.list, props.addItemToList, props.createItemInList, props.apiID, props.isOnline, props.setSkipGet)}><FontAwesomeIcon size="2x"  icon={faPlusCircle}/></div>
+                        <div className="mr-2 position-absolute" style={{transform: "translate(-50%, -40%)"}} onClick={() => itemAdd(props.id, props.list, props.addItemToList, props.createItemInList, props.apiID, props.isOnline)}><FontAwesomeIcon size="2x"  icon={faPlusCircle}/></div>
                     </div>}
                 </div>
                 <div className="card-title h-100 text-muted m-0 user-select-none align-self-center position-absolute text-capitalize" style={{right: '10px'}}>{props.category}</div>
@@ -216,8 +210,7 @@ const mapDispatchToProps = dispatch => {
         removeItemFromList: val => dispatch(removeItemFromList(val)),
         createItemInList: val => dispatch(createItemInList(val)),
         resetItemFromList: val => dispatch(resetItemFromList(val)),
-        setNote: (val1, val2) => dispatch(setNote(val1, val2)),
-        setSkipGet: val => dispatch(setSkipGet(val))
+        setNote: (val1, val2) => dispatch(setNote(val1, val2))
     }
 }
 
