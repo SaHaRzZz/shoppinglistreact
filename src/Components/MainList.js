@@ -6,6 +6,9 @@ import {Link} from 'react-router-dom';
 import {encode, decode} from 'js-base64';
 import {WhatsappShareButton, WhatsappIcon} from '@kashuab/react-share';
 import Popup from 'reactjs-popup';
+import * as uuid from 'uuid';
+import mongoose from 'mongoose';
+import axios from 'axios';
 
 import ListItem from './ListItem';
 import {setFilterText, setFilterType, fetch, setFilterCategory, setFinal, setList, setImagesSize, setTitlesSize, setLangauge} from '../redux/';
@@ -14,6 +17,10 @@ import heFlag from '../imgs/he_flag.png';
 import enFlag from '../imgs/en_flag.png';
 
 let updatingList;
+let dListState;
+let dListInterval;
+let dListID;
+let dListGot;
 
 const renderByFilter = (filtering, filteringType, fetchData, filterCategory, final, list) => {
     if(filterCategory)
@@ -107,16 +114,49 @@ const DynamicWhatsappShareString = (list, fetchData, noteMsg) => {
     );
 };
 
-const setBase64Code = (setList, promptMsg, errorMsg) => {
-    try {
+const sharedListStart = (id, setList, promptMsg, errorMsg) => {
+    axios.get(`http://127.0.0.1:5000/dlist?id=${id}`)
+    .then(json => {
+        dListGot = json.data;
+        setList(json.data, promptMsg, errorMsg);
+        dListID = id;
+        dListState = true;
+        dListInterval = setInterval(() => sharedListGet(id, setList, promptMsg, errorMsg), 1000);
+    });
+}
 
+const sharedListGet = (id, setList, promptMsg, errorMsg) => {
+    console.log('in');
+    axios.get(`http://127.0.0.1:5000/dlist?id=${id}`)
+    .then(json => {
+        dListGot = json.data;
+        setList(json.data, promptMsg, errorMsg);
+    });
+}
+
+const sharedListPost = (id, list) => {
+    axios.post(`http://127.0.0.1:5000/dlist?id=${id}`, list);
+}
+
+
+const setPasteCode = (setList, promptMsg, errorMsg) => {
+    try {
         let list = prompt(`${promptMsg}`);
         if(list == null) {
             return;
         }
-        list = decode(list);
-        list = JSON.parse(list);
-        setList(list);
+        if(dListInterval) {
+            clearInterval(dListInterval);
+            dListInterval = undefined;
+            dListState = false;
+        }
+        if(uuid.validate(list)) {
+            sharedListStart(list, setList, promptMsg, errorMsg);
+        } else{            
+            list = decode(list);
+            list = JSON.parse(list);
+            setList(list);
+        }
     }
     catch {
         alert(`${errorMsg}!`);
@@ -163,6 +203,11 @@ function MainList(props) {
         updatingList = encode(updatingList);
         localStorage.setItem('saved-list', updatingList);
 
+        if(dListState && JSON.stringify(dListGot) != JSON.stringify(props.list)) {
+            console.log('did');
+            sharedListPost(dListID, props.list);
+        }
+
         function clean(obj) {
             for (const propName in obj) {
               if (obj[propName] == '') {
@@ -198,7 +243,7 @@ function MainList(props) {
                             <div className="col text-center">
                                 <button className="btn btn-secondary rounded-0 col-12" onClick={e => {
                                     e.target.blur();
-                                    setBase64Code(props.setList, props.fetchData[props.lang].strings[15], props.fetchData[props.lang].strings[16]);
+                                    setPasteCode(props.setList, props.fetchData[props.lang].strings[15], props.fetchData[props.lang].strings[16]);
                                 }}>{props.fetchData[props.lang].strings[5]}</button>
                                 <Popup closeOnDocumentClick={false} trigger={<div className="btn btn-primary rounded-0 col-12">{props.fetchData[props.lang].strings[6]}</div>}>
 
