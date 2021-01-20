@@ -1,27 +1,27 @@
 {
   "files": {
     "main.css": "/ShoppingListReact/static/css/main.a171ac15.chunk.css",
-    "main.js": "/ShoppingListReact/static/js/main.b8837eed.chunk.js",
-    "main.js.map": "/ShoppingListReact/static/js/main.b8837eed.chunk.js.map",
-    "runtime-main.js": "/ShoppingListReact/static/js/runtime-main.0ea3d153.js",
-    "runtime-main.js.map": "/ShoppingListReact/static/js/runtime-main.0ea3d153.js.map",
+    "main.js": "/ShoppingListReact/static/js/main.061802f8.chunk.js",
+    "main.js.map": "/ShoppingListReact/static/js/main.061802f8.chunk.js.map",
+    "runtime-main.js": "/ShoppingListReact/static/js/runtime-main.cb5b81f4.js",
+    "runtime-main.js.map": "/ShoppingListReact/static/js/runtime-main.cb5b81f4.js.map",
     "static/css/2.a2f223cd.chunk.css": "/ShoppingListReact/static/css/2.a2f223cd.chunk.css",
-    "static/js/2.b46dcb8a.chunk.js": "/ShoppingListReact/static/js/2.b46dcb8a.chunk.js",
-    "static/js/2.b46dcb8a.chunk.js.map": "/ShoppingListReact/static/js/2.b46dcb8a.chunk.js.map",
-    "static/js/3.20083152.chunk.js": "/ShoppingListReact/static/js/3.20083152.chunk.js",
-    "static/js/3.20083152.chunk.js.map": "/ShoppingListReact/static/js/3.20083152.chunk.js.map",
+    "static/js/2.25402c87.chunk.js": "/ShoppingListReact/static/js/2.25402c87.chunk.js",
+    "static/js/2.25402c87.chunk.js.map": "/ShoppingListReact/static/js/2.25402c87.chunk.js.map",
+    "static/js/3.f149de30.chunk.js": "/ShoppingListReact/static/js/3.f149de30.chunk.js",
+    "static/js/3.f149de30.chunk.js.map": "/ShoppingListReact/static/js/3.f149de30.chunk.js.map",
     "index.html": "/ShoppingListReact/index.html",
     "static/css/2.a2f223cd.chunk.css.map": "/ShoppingListReact/static/css/2.a2f223cd.chunk.css.map",
     "static/css/main.a171ac15.chunk.css.map": "/ShoppingListReact/static/css/main.a171ac15.chunk.css.map",
-    "static/js/2.b46dcb8a.chunk.js.LICENSE.txt": "/ShoppingListReact/static/js/2.b46dcb8a.chunk.js.LICENSE.txt",
+    "static/js/2.25402c87.chunk.js.LICENSE.txt": "/ShoppingListReact/static/js/2.25402c87.chunk.js.LICENSE.txt",
     "static/media/logo.6ce24c58.svg": "/ShoppingListReact/static/media/logo.6ce24c58.svg",
     "static/media/index.css": "/ShoppingListReact/static/media/numberpile.4d30a68a.ttf"
   },
   "entrypoints": [
-    "static/js/runtime-main.0ea3d153.js",
+    "static/js/runtime-main.cb5b81f4.js",
     "static/css/2.a2f223cd.chunk.css",
-    "static/js/2.b46dcb8a.chunk.js",
+    "static/js/2.25402c87.chunk.js",
     "static/css/main.a171ac15.chunk.css",
-    "static/js/main.b8837eed.chunk.js"
+    "static/js/main.061802f8.chunk.js"
   ]
 }
