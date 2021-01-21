@@ -16,7 +16,8 @@ import heFlag from '../imgs/he_flag.png';
 import enFlag from '../imgs/en_flag.png';
 
 let updatingList;
-let dListInterval;
+let dListGetTimeout;
+let dListPostTimeout;
 
 const renderByFilter = (filtering, filteringType, fetchData, filterCategory, final, list) => {
     if(filterCategory)
@@ -115,7 +116,7 @@ const sharedListStart = (id, setList, promptMsg, errorMsg, setOnline, setId) => 
         setList(json.data, promptMsg, errorMsg);
         setId(id);
         setOnline(true);
-        dListInterval = setInterval(() => sharedListGet(id, setList, promptMsg, errorMsg), 1000);
+        dListGetTimeout = setTimeout(() => sharedListGet(id, setList, promptMsg, errorMsg), 1000);
     });
 }
 
@@ -127,7 +128,13 @@ const sharedListGet = (id, setList, promptMsg, errorMsg) => {
 }
 
 export const sharedListPost = (id, list) => {
-    axios.post(`https://tabby-simplistic-router.glitch.me/dlist?id=${id}`, list);
+    if(dListPostTimeout) {
+        clearTimeout(dListPostTimeout);
+    }
+    dListPostTimeout = setTimeout(() => {
+        axios.post(`https://tabby-simplistic-router.glitch.me/dlist?id=${id}`, list);
+        dListPostTimeout = undefined;
+    }, 500);
 }
 
 
@@ -138,9 +145,9 @@ const setPasteCode = (setList, promptMsg, errorMsg, setOnline, setId, id, isOnli
             return;
         }
         if(uuid.validate(list)) {
-            if(dListInterval) {
-                clearInterval(dListInterval);
-                dListInterval = undefined;
+            if(dListGetTimeout) {
+                clearInterval(dListGetTimeout);
+                dListGetTimeout = undefined;
                 setOnline(false);
             }
             sharedListStart(list, setList, promptMsg, errorMsg, setOnline, setId);
@@ -216,9 +223,9 @@ function MainList(props) {
     });
 
     useEffect(() => {
-        if(dListInterval) {
-            clearInterval(dListInterval);
-            dListInterval = setInterval(() => sharedListGet(props.id, props.setList, props.fetchData[props.lang].strings[15], props.fetchData[props.lang].strings[16]), 1000);
+        if(dListGetTimeout) {
+            clearInterval(dListGetTimeout);
+            dListGetTimeout = setTimeout(() => sharedListGet(props.id, props.setList, props.fetchData[props.lang].strings[15], props.fetchData[props.lang].strings[16]), dListPostTimeout ? 1500 : 1000);
         }
     }, [props.list])
 
@@ -292,8 +299,8 @@ function MainList(props) {
             
             {props.isOnline ? <div dir={`${props.lang == "en" ? 'ltr' : 'rtl'}`} className="btn d-block" onClick={() => {
                 if(window.confirm(`${props.fetchData[props.lang].strings[28]}?`)) {
-                    clearInterval(dListInterval);
-                    dListInterval = undefined;
+                    clearInterval(dListGetTimeout);
+                    dListGetTimeout = undefined;
                     props.setOnline(false);
                 }
             }}><FontAwesomeIcon icon={faGlobe} size="2x"/><div>{props.fetchData[props.lang].strings[27]}</div></div> : ''}
