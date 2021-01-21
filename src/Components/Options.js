@@ -4,7 +4,7 @@ import {faHome} from '@fortawesome/free-solid-svg-icons';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {Link} from 'react-router-dom';
 
-import {setImagesSize, setTitlesSize, setLangauge} from '../redux/';
+import {setImagesSize, setTitlesSize, setLangauge, setLastConnected} from '../redux/';
 import {API_IMG_SRC} from './ListItem';
 import heFlag from '../imgs/he_flag.png';
 import enFlag from '../imgs/en_flag.png';
@@ -19,7 +19,7 @@ const makeSetTitlesSize = (setTitlesSizeFunc, payload) => {
     localStorage.setItem('options-titles-size', payload);
 }
 
-export const updateOptions = (setImagesSizeFunc, setTitlesSizeFunc, setLangaugeFunc) => {
+export const updateOptions = (setImagesSizeFunc, setTitlesSizeFunc, setLangaugeFunc, setLastConnectedFunc) => {
     if(localStorage.getItem('options-images-size'))
         setImagesSizeFunc(localStorage.getItem('options-images-size'));
     if(localStorage.getItem('options-titles-size'))
@@ -30,6 +30,8 @@ export const updateOptions = (setImagesSizeFunc, setTitlesSizeFunc, setLangaugeF
         setLangaugeFunc('en');
         localStorage.setItem('options-langauge', 'en');
     }
+    if(localStorage.getItem('options-last-connected'))
+        setLastConnectedFunc(localStorage.getItem('options-last-connected'));
 }
 
 const changeLangauge = (setLangaugeFunc, langauge) => {
@@ -89,7 +91,8 @@ const mapDispatchToProps = dispatch => {
     return {
         setImagesSize: val => dispatch(setImagesSize(val)),
         setTitlesSize: val => dispatch(setTitlesSize(val)),
-        setLangauge: val => dispatch(setLangauge(val))
+        setLangauge: val => dispatch(setLangauge(val)),
+        setLastConnected: val => dispatch(setLastConnected(val))
     }
 }
 
