@@ -6,6 +6,8 @@ import {Link} from 'react-router-dom';
 
 import {setImagesSize, setTitlesSize, setLangauge} from '../redux/';
 import {API_IMG_SRC} from './ListItem';
+import heFlag from '../imgs/he_flag.png';
+import enFlag from '../imgs/en_flag.png';
 
 const makeSetImagesSize = (setImagesSizeFunc, payload) => {
     setImagesSizeFunc(payload);
@@ -30,12 +32,18 @@ export const updateOptions = (setImagesSizeFunc, setTitlesSizeFunc, setLangaugeF
     }
 }
 
+const changeLangauge = (setLangaugeFunc, langauge) => {
+    setLangaugeFunc(langauge);
+    localStorage.setItem('options-langauge', langauge);
+}
+
 function Options(props) {
     return (
         <div className="text-center">
             <Link to="/ShoppingListReact">
                 <FontAwesomeIcon type="button" icon={faHome} size="4x" className="position-absolute border-right border-bottom" style={{left: 0, zIndex: 1}}/>
             </Link>
+            <img type="button" onClick={() => changeLangauge(props.setLangauge, props.lang == 'en' ? 'he' : 'en')} src={props.lang == 'en' ? enFlag : heFlag} className="position-absolute" style={{right: 0, zIndex: 1}}></img>
             <div className="mb-2">
                 <div className="dropdown">
                     <button className="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -64,6 +72,7 @@ function Options(props) {
                 </div>
                 <div className="h5" style={{fontSize: props.options.titlesSize}}>{props.fetchData[props.lang].strings[25]}</div>
             </div>
+            <div className="h2 font-weight-bold position-absolute" style={{bottom: 1}}>Ver 1</div>
         </div>
     )
 }
