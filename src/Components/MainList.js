@@ -118,7 +118,7 @@ const sharedListStart = (id, setList, promptMsg, errorMsg, setOnline, setId, set
         setOnline(true);
         setLastConnected(id);
         localStorage.setItem('options-last-connected', id);
-        dListGetTimeout = setTimeout(() => sharedListGet(id, setList, promptMsg, errorMsg), 1000);
+        dListGetTimeout = setTimeout(() => sharedListGet(id, setList, promptMsg, errorMsg, fetchData), 1000);
     });
 }
 
@@ -227,7 +227,7 @@ function MainList(props) {
     useEffect(() => {
         if(dListGetTimeout) {
             clearInterval(dListGetTimeout);
-            dListGetTimeout = setTimeout(() => sharedListGet(props.id, props.setList, props.fetchData[props.lang].strings[15], props.fetchData[props.lang].strings[16]), dListPostTimeout ? 1500 : 1000);
+            dListGetTimeout = setTimeout(() => sharedListGet(props.id, props.setList, props.fetchData[props.lang].strings[15], props.fetchData[props.lang].strings[16], props.fetchData), dListPostTimeout ? 1500 : 1000);
         }
     }, [props.list])
 

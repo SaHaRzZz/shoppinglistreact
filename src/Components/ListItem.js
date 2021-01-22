@@ -160,20 +160,20 @@ function ListItem(props) {
                 
                 {props.list[props.id] ? [
                     <div className="align-self-center">
-                        <div className="col-1" style={{zIndex: 3}} onClick={() => itemAdd(props.id, props.list, props.addItemToList, props.createItemInList, props.apiID, props.isOnline)}><FontAwesomeIcon size="2x" icon={faPlusCircle}/></div>
-                        <div className="col-1" style={{zIndex: 3}} onClick={() => itemRemove(props.id, props.list, props.removeItemFromList, props.resetItemFromList, props.apiID, props.isOnline)}><FontAwesomeIcon size="2x" icon={faMinusCircle}/></div>
+                        <div className="col-1" style={{zIndex: 3}} onClick={() => itemAdd(props.id, props.list, props.addItemToList, props.createItemInList, props.apiID, props.isOnline, props.fetchData)}><FontAwesomeIcon size="2x" icon={faPlusCircle}/></div>
+                        <div className="col-1" style={{zIndex: 3}} onClick={() => itemRemove(props.id, props.list, props.removeItemFromList, props.resetItemFromList, props.apiID, props.isOnline, props.fetchData)}><FontAwesomeIcon size="2x" icon={faMinusCircle}/></div>
                     </div>,
-                    <div className="mx-2 font-italic user-select-none align-self-center" style={{fontSize: "2rem", zIndex: 3, fontFamily: 'numberpile'}} onClick={() => window.confirm("לאפס את המוצר?") && itemReset(props.resetItemFromList, props.id, props.apiID, props.isOnline, props.list)}>{numToFont(props.list[props.id][0])}</div>,
+                    <div className="mx-2 font-italic user-select-none align-self-center" style={{fontSize: "2rem", zIndex: 3, fontFamily: 'numberpile'}} onClick={() => window.confirm("לאפס את המוצר?") && itemReset(props.resetItemFromList, props.id, props.apiID, props.isOnline, props.list, props.fetchData)}>{numToFont(props.list[props.id][0])}</div>,
                     <Popup trigger={<div className="align-self-center mx-2" style={{zIndex: 4}}><FontAwesomeIcon icon={props.list[props.id][1] ? faStickyNote : farStickyNote} size="2x"/></div>} position="left center">
                         <div className="text-center">
                             <div className="font-weight-bold">{props.title}</div>
                             <div>{props.list[props.id][1]}</div>
                             {props.list[props.id][1] ? [
-                                <button className="btn btn-primary rounded-0" onClick={() => modifyNote(props.setNote, props.id, prompt(`הערה ל${props.title}:`, props.list[props.id][1]), props.apiID, props.isOnline, props.list)}>שנה</button>,
-                                <button className="btn btn-danger rounded-0" onClick={() => modifyNote(props.setNote, props.id, '', props.apiID, props.isOnline, props.list)}>מחק</button>
+                                <button className="btn btn-primary rounded-0" onClick={() => modifyNote(props.setNote, props.id, prompt(`הערה ל${props.title}:`, props.list[props.id][1]), props.apiID, props.isOnline, props.list, props.fetchData)}>שנה</button>,
+                                <button className="btn btn-danger rounded-0" onClick={() => modifyNote(props.setNote, props.id, '', props.apiID, props.isOnline, props.list, props.fetchData)}>מחק</button>
                             ]
                             :
-                            <button className="btn btn-primary rounded-0" onClick={() => modifyNote(props.setNote, props.id, prompt(`הערה ל${props.title}:`), props.apiID, props.isOnline, props.list)}>הכן הערה</button>}
+                            <button className="btn btn-primary rounded-0" onClick={() => modifyNote(props.setNote, props.id, prompt(`הערה ל${props.title}:`), props.apiID, props.isOnline, props.list, props.fetchData)}>הכן הערה</button>}
                         </div>
                     </Popup>
                     
@@ -186,7 +186,7 @@ function ListItem(props) {
                     ]
                     :
                     <div className="rounded-circle shadow-lg col-1 font-italic mx-2">
-                        <div className="mr-2 position-absolute" style={{transform: "translate(-50%, -40%)"}} onClick={() => itemAdd(props.id, props.list, props.addItemToList, props.createItemInList, props.apiID, props.isOnline)}><FontAwesomeIcon size="2x"  icon={faPlusCircle}/></div>
+                        <div className="mr-2 position-absolute" style={{transform: "translate(-50%, -40%)"}} onClick={() => itemAdd(props.id, props.list, props.addItemToList, props.createItemInList, props.apiID, props.isOnline, props.fetchData)}><FontAwesomeIcon size="2x"  icon={faPlusCircle}/></div>
                     </div>}
                 </div>
                 <div className="card-title h-100 text-muted m-0 user-select-none align-self-center position-absolute text-capitalize" style={{right: '10px'}}>{props.category}</div>
