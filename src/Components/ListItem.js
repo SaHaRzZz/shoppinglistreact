@@ -12,7 +12,7 @@ import placeholderImg from '../imgs/_400.png';
 
 export const API_IMG_SRC = 'https://raw.githubusercontent.com/SaHaRzZz/test/main/imgs/';
 
-const itemAdd = (id, list, addItemToListFunc, createItemInListFunc, apiID, isOnline) => {
+const itemAdd = (id, list, addItemToListFunc, createItemInListFunc, apiID, isOnline, fetchData) => {
     if(list[id]) {
         if(list[id][0] == 80) {
             alert('מקסימום 80 יחידות למוצר!');
@@ -20,44 +20,44 @@ const itemAdd = (id, list, addItemToListFunc, createItemInListFunc, apiID, isOnl
         else {
             addItemToListFunc(id);
             if(isOnline) {
-                sharedListPost(apiID, {...list, [id]: [list[id][0] + 1, list[id][1]]});
+                sharedListPost(apiID, {...list, [id]: [list[id][0] + 1, list[id][1]]}, fetchData);
             }
         }
     }
     else {
         createItemInListFunc(id);
         if(isOnline) {
-            sharedListPost(apiID, {...list, [id]: [1, '']});
+            sharedListPost(apiID, {...list, [id]: [1, '']}, fetchData);
         }
     }
 }
 
-const itemRemove = (id, list, removeItemFromListFunc, resetItemFromListFunc, apiID, isOnline) => {
+const itemRemove = (id, list, removeItemFromListFunc, resetItemFromListFunc, apiID, isOnline, fetchData) => {
     if(list[id][0] == 1) {
         resetItemFromListFunc(id);
         if(isOnline) {
-            sharedListPost(apiID, {...list, [id]: ''});
+            sharedListPost(apiID, {...list, [id]: ''}, fetchData);
         }
     }
     else if(list[id][0]) {
         removeItemFromListFunc(id);
         if(isOnline) {
-            sharedListPost(apiID, {...list, [id]: [list[id][0] - 1, list[id][1]]});
+            sharedListPost(apiID, {...list, [id]: [list[id][0] - 1, list[id][1]]}, fetchData);
         }
     }
 }
 
-const itemReset = (resetItemFromListFunc, id, apiID, isOnline, list) => {
+const itemReset = (resetItemFromListFunc, id, apiID, isOnline, list, fetchData) => {
     resetItemFromListFunc(id);
     if(isOnline) {
-        sharedListPost(apiID, {...list, [id]: ''});
+        sharedListPost(apiID, {...list, [id]: ''}, fetchData);
     }
 }
 
-const modifyNote = (setNote, id, content, apiID, isOnline, list) => {
+const modifyNote = (setNote, id, content, apiID, isOnline, list, fetchData) => {
     setNote(id, content);
     if(isOnline) {
-        sharedListPost(apiID, {...list, [id]: [list[id][0], content]});
+        sharedListPost(apiID, {...list, [id]: [list[id][0], content]}, fetchData);
     }
 }
 
@@ -200,7 +200,8 @@ const mapStateToProps = state => {
         list: state.list,
         options: state.options,
         isOnline: state.api.isOnline,
-        apiID: state.api.id
+        apiID: state.api.id,
+        fetchData: state.api.data
     }
 }
 

@@ -110,8 +110,8 @@ const DynamicWhatsappShareString = (list, fetchData, noteMsg) => {
     );
 };
 
-const sharedListStart = (id, setList, promptMsg, errorMsg, setOnline, setId, setLastConnected) => {
-    axios.get(`https://tabby-simplistic-router.glitch.me/dlist?id=${id}`)
+const sharedListStart = (id, setList, promptMsg, errorMsg, setOnline, setId, setLastConnected, fetchData) => {
+    axios.get(`${fetchData.general.server}/dlist?id=${id}`)
     .then(json => {
         setList(json.data, promptMsg, errorMsg);
         setId(id);
@@ -122,25 +122,25 @@ const sharedListStart = (id, setList, promptMsg, errorMsg, setOnline, setId, set
     });
 }
 
-const sharedListGet = (id, setList, promptMsg, errorMsg) => {
-    axios.get(`https://tabby-simplistic-router.glitch.me/dlist?id=${id}`)
+const sharedListGet = (id, setList, promptMsg, errorMsg, fetchData) => {
+    axios.get(`${fetchData.general.server}/dlist?id=${id}`)
     .then(json => {
         setList(json.data, promptMsg, errorMsg);
     });
 }
 
-export const sharedListPost = (id, list) => {
+export const sharedListPost = (id, list, fetchData) => {
     if(dListPostTimeout) {
         clearTimeout(dListPostTimeout);
     }
     dListPostTimeout = setTimeout(() => {
-        axios.post(`https://tabby-simplistic-router.glitch.me/dlist?id=${id}`, list);
+        axios.post(`${fetchData.general.server}/dlist?id=${id}`, list);
         dListPostTimeout = undefined;
     }, 500);
 }
 
 
-const setPasteCode = (setList, promptMsg, errorMsg, setOnline, setId, id, isOnline, setLastConnected) => {
+const setPasteCode = (setList, promptMsg, errorMsg, setOnline, setId, id, isOnline, setLastConnected, fetchData) => {
     try {
         let list = prompt(`${promptMsg}`);
         if(list == null) {
@@ -152,12 +152,12 @@ const setPasteCode = (setList, promptMsg, errorMsg, setOnline, setId, id, isOnli
                 dListGetTimeout = undefined;
                 setOnline(false);
             }
-            sharedListStart(list, setList, promptMsg, errorMsg, setOnline, setId, setLastConnected);
+            sharedListStart(list, setList, promptMsg, errorMsg, setOnline, setId, setLastConnected, fetchData);
         } else{            
             list = decode(list);
             list = JSON.parse(list);
             if(isOnline) {
-                sharedListPost(id, list);
+                sharedListPost(id, list, fetchData);
             }
             setList(list);
         }
@@ -167,9 +167,9 @@ const setPasteCode = (setList, promptMsg, errorMsg, setOnline, setId, id, isOnli
     }
 }
 
-const resetList = (setList, id, isOnline) => {
+const resetList = (setList, id, isOnline, fetchData) => {
     if(isOnline) {
-        sharedListPost(id, {});
+        sharedListPost(id, {}, fetchData);
     }
     setList(JSON.parse(atob('e30=')));
 }
@@ -253,7 +253,7 @@ function MainList(props) {
                             <div className="col text-center">
                                 <button className="btn btn-secondary rounded-0 col-12" onClick={e => {
                                     e.target.blur();
-                                    setPasteCode(props.setList, props.fetchData[props.lang].strings[15], props.fetchData[props.lang].strings[16], props.setOnline, props.setId, props.id, props.isOnline, props.setLastConnected);
+                                    setPasteCode(props.setList, props.fetchData[props.lang].strings[15], props.fetchData[props.lang].strings[16], props.setOnline, props.setId, props.id, props.isOnline, props.setLastConnected, props.fetchData);
                                 }}>{props.fetchData[props.lang].strings[5]}</button>
                                 <Popup closeOnDocumentClick={false} trigger={<div className="btn btn-primary rounded-0 col-12">{props.fetchData[props.lang].strings[6]}</div>}>
 
@@ -280,7 +280,7 @@ function MainList(props) {
                                 </Popup>
                                 <button className="btn btn-danger rounded-0 col-12" onClick={e => {
                                     e.target.blur();
-                                    window.confirm(`${props.fetchData[props.lang].strings[17]}?`) && resetList(props.setList, props.id, props.isOnline);
+                                    window.confirm(`${props.fetchData[props.lang].strings[17]}?`) && resetList(props.setList, props.id, props.isOnline, props.fetchData);
                                 }}>{props.fetchData[props.lang].strings[9]}</button>
                             </div>
                         </Popup>
