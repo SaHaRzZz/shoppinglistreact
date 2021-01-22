@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {connect} from 'react-redux';
 import {faCog, faCopy, faList, faGlobe} from '@fortawesome/free-solid-svg-icons';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
@@ -10,7 +10,7 @@ import * as uuid from 'uuid';
 import axios from 'axios';
 
 import ListItem from './ListItem';
-import {setFilterText, setFilterType, fetch, setFilterCategory, setFinal, setList, setImagesSize, setTitlesSize, setLangauge, setOnline, setId, setLastConnected} from '../redux/';
+import {setFilterText, setFilterType, fetch, setFilterCategory, setFinal, setList, setImagesSize, setTitlesSize, setLangauge, setOnline, setId, setLastConnected, setListLength} from '../redux/';
 import {updateOptions} from './Options';
 import heFlag from '../imgs/he_flag.png';
 import enFlag from '../imgs/en_flag.png';
@@ -19,7 +19,7 @@ let updatingList;
 let dListGetTimeout;
 let dListPostTimeout;
 
-const renderByFilter = (filtering, filteringType, fetchData, filterCategory, final, list) => {
+const renderByFilter = (filtering, filteringType, fetchData, filterCategory, final, list, currentPage, listLength, setLimitPage, limitPage) => {
     if(filterCategory)
         fetchData = fetchData.filter(item => item.filter == filterCategory);
         
@@ -39,7 +39,17 @@ const renderByFilter = (filtering, filteringType, fetchData, filterCategory, fin
     if(final)
         fetchData = fetchData.filter(item => list[item.img.split("").reverse().join("").slice(8).split("").reverse().join("")]);
 
-    fetchData = fetchData.map(item => <ListItem logo={item.img} title={item.title} category={item.category} id={item.img.split("").reverse().join("").slice(8).split("").reverse().join("")}/>);
+    if(fetchData.length <= listLength + currentPage * listLength && !limitPage) {
+        setLimitPage(true);
+    } else if(!(fetchData.length <= listLength + currentPage * listLength) && limitPage) {
+        setLimitPage(false);
+    }
+    fetchData = fetchData.map((item, index)=> {
+        if(index < listLength + currentPage * listLength && index >= currentPage * listLength)
+            return <ListItem logo={item.img} title={item.title} category={item.category} id={item.img.split("").reverse().join("").slice(8).split("").reverse().join("")}/>;
+        else
+            return;
+    });
     return fetchData;
 }
 
@@ -229,7 +239,10 @@ function MainList(props) {
             clearInterval(dListGetTimeout);
             dListGetTimeout = setTimeout(() => sharedListGet(props.id, props.setList, props.fetchData[props.lang].strings[15], props.fetchData[props.lang].strings[16], props.fetchData), dListPostTimeout ? 1500 : 1000);
         }
-    }, [props.list])
+    }, [props.list]);
+
+    const [currentPage, setCurrentPage] = useState(0);
+    const [limitPage, setLimitPage] = useState(false);
 
     return (
         !props.fetchLoading ?
@@ -307,8 +320,11 @@ function MainList(props) {
                 }
             }}><FontAwesomeIcon icon={faGlobe} size="2x"/><div>{props.fetchData[props.lang].strings[27]}</div></div> : props.lastConnected ? [<br/>, <btn dir={`${props.lang == "en" ? 'ltr' : 'rtl'}`} className="btn btn-info" onClick={() => sharedListStart(props.lastConnected, props.setList, props.fetchData[props.lang].strings[15], props.fetchData[props.lang].strings[16], props.setOnline, props.setId, props.setLastConnected, props.fetchData)}>{`${props.fetchData[props.lang].strings[29]}: ${props.lastConnected}`}</btn>] : ''}
 
-            {renderByFilter(props.filterText, props.filterType, props.fetchData[props.lang].items, props.filterCategory, props.final, props.list)}
-            
+            {renderByFilter(props.filterText, props.filterType, props.fetchData[props.lang].items, props.filterCategory, props.final, props.list, currentPage, props.listLength, setLimitPage, limitPage)}
+            <div className="d-block">
+                <div className={`btn btn-primary col-6 rounded-0 ${limitPage ? 'disabled' : ''}`} onClick={() => !limitPage ? setCurrentPage(currentPage + 1) : ''}>{props.fetchData[props.lang].strings[30]}</div>
+                <div className={`btn btn-primary col-6 rounded-0 ${!currentPage ? 'disabled' : ''}`}  onClick={() => currentPage ? setCurrentPage(currentPage - 1) : ''}>{props.fetchData[props.lang].strings[31]}</div>
+            </div>
         </div>
         :
         <div className="text-center display-2">{props.lang == 'en' ? 'Loading' : 'טוען'}</div>
@@ -321,6 +337,7 @@ const mapStateToProps = state => {
         filterType: state.filtering.filterType,
         filterCategory: state.filtering.filterCategory,
         final: state.filtering.final,
+        listLength: state.filtering.listLength,
 
         fetchLoading: state.api.loading,
         fetchData: state.api.data,
@@ -351,7 +368,8 @@ const mapDispatchToProps = dispatch => {
         setLangauge: val => dispatch(setLangauge(val)),
         setOnline: val => dispatch(setOnline(val)),
         setId: val => dispatch(setId(val)),
-        setLastConnected: val => dispatch(setLastConnected(val))
+        setLastConnected: val => dispatch(setLastConnected(val)),
+        setListLength: val => dispatch(setListLength(val))
     }
 }
 

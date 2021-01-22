@@ -1,4 +1,4 @@
-import {SET_TEXT_TO_FILTER, SET_TYPE_TO_FILTER, SET_CATEGORY_TO_FILTER, SET_FINAL} from './types';
+import {SET_TEXT_TO_FILTER, SET_TYPE_TO_FILTER, SET_CATEGORY_TO_FILTER, SET_FINAL, SET_LIST_LENGTH} from './types';
 
 export const setFilterText = text => {
     return {
@@ -25,5 +25,12 @@ export const setFinal = final => {
     return {
         type: SET_FINAL,
         payload: final
+    }
+}
+
+export const setListLength = length => {
+    return {
+        type: SET_LIST_LENGTH,
+        payload: length
     }
 }
