@@ -252,7 +252,7 @@ function MainList(props) {
 
     useEffect(() => {
         setCurrentPage(0);
-    }, [props.filterText, props.filterCategory, props.final, props.filterType])
+    }, [props.filterText, props.filterCategory, props.final, props.filterType]);
 
     return (
         !props.fetchLoading ?
