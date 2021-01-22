@@ -157,8 +157,8 @@ function ListItem(props) {
 
     return (
         <div className="card flex-row my-1 shadow text-center" style={{backgroundColor: props.list[props.id] ? "rgb(0, 0, 255, 0.5)" : "rgb(255, 0, 0, 0.5)"}}>
-            <div className="card-header border-0">
-                <img src={placeholderImg} onError={e => e.target.src = placeholderImg} onLoad={() => setImageLoaded(true)} className="user-select-none" style={{width: props.options.imagesSize, display: imageLoaded ? 'none' : 'block'}}/>
+            <div className="card-header border-0" style={{height: `${parseInt(props.options.imagesSize.split("").reverse().join("").slice(2).split("").reverse().join("")) + 24}px`}}>
+                <img src={placeholderImg} onLoad={() => setImageLoaded(true)} className="user-select-none" style={{width: props.options.imagesSize, display: imageLoaded ? 'none' : 'block'}}/>
                 <img src={`${props.fetchData.general.images}${props.logo}`} onError={e => e.target.src = placeholderImg} className="user-select-none" style={{width: props.options.imagesSize, display: imageLoaded ? 'block' : 'none'}}/>
             </div>
             <div className="card-body row p-0 m-0 text-wrap">
