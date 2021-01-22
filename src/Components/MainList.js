@@ -14,6 +14,7 @@ import {setFilterText, setFilterType, fetch, setFilterCategory, setFinal, setLis
 import {updateOptions} from './Options';
 import heFlag from '../imgs/he_flag.png';
 import enFlag from '../imgs/en_flag.png';
+import loadingGif from '../imgs/loading.svg';
 
 let updatingList;
 let dListGetTimeout;
@@ -207,7 +208,6 @@ const changeLangauge = (setLangaugeFunc, langauge) => {
     localStorage.setItem('options-langauge', langauge);
 }
 
-
 function MainList(props) {
     useEffect(props.fetch, []);
     useEffect(() => updateOptions(props.setImagesSize, props.setTitlesSize, props.setLangauge, props.setLastConnected), []);
@@ -337,7 +337,7 @@ function MainList(props) {
             </div>
         </div>
         :
-        <div className="text-center display-2">{props.lang == 'en' ? 'Loading' : 'טוען'}</div>
+        <div className="text-center display-2"><img src={loadingGif}/></div>
     )
 }
 
