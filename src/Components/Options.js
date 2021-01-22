@@ -5,9 +5,9 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {Link} from 'react-router-dom';
 
 import {setImagesSize, setTitlesSize, setLangauge, setLastConnected} from '../redux/';
-import {API_IMG_SRC} from './ListItem';
 import heFlag from '../imgs/he_flag.png';
 import enFlag from '../imgs/en_flag.png';
+import placeholderImg from '../imgs/_400.png';
 
 const makeSetImagesSize = (setImagesSizeFunc, payload) => {
     setImagesSizeFunc(payload);
@@ -57,7 +57,7 @@ function Options(props) {
                         <a className="dropdown-item" onClick={() => makeSetImagesSize(props.setImagesSize, '128px')}>{props.fetchData[props.lang].strings[21]}</a>
                     </div>
                 </div>
-                <img src={`${API_IMG_SRC}_400.png`} style={{width: props.options.imagesSize}}/>
+                <img src={placeholderImg} style={{width: props.options.imagesSize}}/>
             </div>
             <div className="my-2">
                 <div className="dropdown">

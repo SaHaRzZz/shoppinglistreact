@@ -7,10 +7,13 @@ import {faStickyNote as farStickyNote} from '@fortawesome/free-regular-svg-icons
 import Popup from 'reactjs-popup';
 import '../../node_modules/reactjs-popup/dist/index.css';
 import {sharedListPost} from './MainList';
+// import axios from 'axios';
 
 import placeholderImg from '../imgs/_400.png';
 
-export const API_IMG_SRC = 'https://raw.githubusercontent.com/SaHaRzZz/test/main/imgs/';
+// const AnalyticsPut = (item, fetchData) => {
+//     axios.put(`${fetchData.general.server}/analytics`, item);
+// }
 
 const itemAdd = (id, list, addItemToListFunc, createItemInListFunc, apiID, isOnline, fetchData) => {
     if(list[id]) {
@@ -22,6 +25,7 @@ const itemAdd = (id, list, addItemToListFunc, createItemInListFunc, apiID, isOnl
             if(isOnline) {
                 sharedListPost(apiID, {...list, [id]: [list[id][0] + 1, list[id][1]]}, fetchData);
             }
+            // AnalyticsPut({id}, fetchData);
         }
     }
     else {
@@ -29,6 +33,7 @@ const itemAdd = (id, list, addItemToListFunc, createItemInListFunc, apiID, isOnl
         if(isOnline) {
             sharedListPost(apiID, {...list, [id]: [1, '']}, fetchData);
         }
+        // AnalyticsPut({id}, fetchData);
     }
 }
 
@@ -149,11 +154,12 @@ const numToFont = num => {
 
 function ListItem(props) {
     const [imageLoaded, setImageLoaded] = useState(false);
+
     return (
         <div className="card flex-row my-1 shadow text-center" style={{backgroundColor: props.list[props.id] ? "rgb(0, 0, 255, 0.5)" : "rgb(255, 0, 0, 0.5)"}}>
             <div className="card-header border-0">
                 <img src={placeholderImg} onError={e => e.target.src = placeholderImg} onLoad={() => setImageLoaded(true)} className="user-select-none" style={{width: props.options.imagesSize, display: imageLoaded ? 'none' : 'block'}}/>
-                <img src={`${API_IMG_SRC}${props.logo}`} onError={e => e.target.src = placeholderImg} className="user-select-none" style={{width: props.options.imagesSize, display: imageLoaded ? 'block' : 'none'}}/>
+                <img src={`${props.fetchData.general.images}${props.logo}`} onError={e => e.target.src = placeholderImg} className="user-select-none" style={{width: props.options.imagesSize, display: imageLoaded ? 'block' : 'none'}}/>
             </div>
             <div className="card-body row p-0 m-0 text-wrap">
                 <div className="card-title text-decoration-underline font-weight-bold col-5 h5 m-0 user-select-none align-self-center text-capitalize" style={{fontSize: props.options.titlesSize}}>{props.title}</div>
