@@ -305,7 +305,7 @@ function MainList(props) {
                     dListGetTimeout = undefined;
                     props.setOnline(false);
                 }
-            }}><FontAwesomeIcon icon={faGlobe} size="2x"/><div>{props.fetchData[props.lang].strings[27]}</div></div> : props.lastConnected ? [<br/>, <btn dir={`${props.lang == "en" ? 'ltr' : 'rtl'}`} className="btn btn-info" onClick={() => sharedListStart(props.lastConnected, props.setList, props.fetchData[props.lang].strings[15], props.fetchData[props.lang].strings[16], props.setOnline, props.setId, props.setLastConnected)}>{`${props.fetchData[props.lang].strings[29]}: ${props.lastConnected}`}</btn>] : ''}
+            }}><FontAwesomeIcon icon={faGlobe} size="2x"/><div>{props.fetchData[props.lang].strings[27]}</div></div> : props.lastConnected ? [<br/>, <btn dir={`${props.lang == "en" ? 'ltr' : 'rtl'}`} className="btn btn-info" onClick={() => sharedListStart(props.lastConnected, props.setList, props.fetchData[props.lang].strings[15], props.fetchData[props.lang].strings[16], props.setOnline, props.setId, props.setLastConnected, props.fetchData)}>{`${props.fetchData[props.lang].strings[29]}: ${props.lastConnected}`}</btn>] : ''}
 
             {renderByFilter(props.filterText, props.filterType, props.fetchData[props.lang].items, props.filterCategory, props.final, props.list)}
             
