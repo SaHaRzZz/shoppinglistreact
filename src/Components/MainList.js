@@ -19,7 +19,7 @@ let updatingList;
 let dListGetTimeout;
 let dListPostTimeout;
 
-const renderByFilter = (filtering, filteringType, fetchData, filterCategory, final, list, currentPage, listLength, setLimitPage, limitPage) => {
+const renderByFilter = (filtering, filteringType, fetchData, filterCategory, final, list, currentPage, listLength, setLimitPage, limitPage, setCurrentPage) => {
     if(filterCategory)
         fetchData = fetchData.filter(item => item.filter == filterCategory);
         
@@ -43,6 +43,11 @@ const renderByFilter = (filtering, filteringType, fetchData, filterCategory, fin
         setLimitPage(true);
     } else if(!(fetchData.length <= listLength + currentPage * listLength) && limitPage) {
         setLimitPage(false);
+    }
+    if(fetchData.length <= currentPage * listLength && currentPage > 0) {
+        setCurrentPage(currentPage - 1);
+        console.log(fetchData.length);
+        console.log('back');
     }
     fetchData = fetchData.map((item, index)=> {
         if(index < listLength + currentPage * listLength && index >= currentPage * listLength)
@@ -177,11 +182,12 @@ const setPasteCode = (setList, promptMsg, errorMsg, setOnline, setId, id, isOnli
     }
 }
 
-const resetList = (setList, id, isOnline, fetchData) => {
+const resetList = (setList, id, isOnline, fetchData, setCurrentPage) => {
     if(isOnline) {
         sharedListPost(id, {}, fetchData);
     }
     setList(JSON.parse(atob('e30=')));
+    setCurrentPage(0);
 }
 
 const setClipboard = (str) => {
@@ -244,6 +250,10 @@ function MainList(props) {
     const [currentPage, setCurrentPage] = useState(0);
     const [limitPage, setLimitPage] = useState(false);
 
+    useEffect(() => {
+        setCurrentPage(0);
+    }, [props.filterText, props.filterCategory, props.final, props.filterType])
+
     return (
         !props.fetchLoading ?
         <div className="text-center">
@@ -293,7 +303,7 @@ function MainList(props) {
                                 </Popup>
                                 <button className="btn btn-danger rounded-0 col-12" onClick={e => {
                                     e.target.blur();
-                                    window.confirm(`${props.fetchData[props.lang].strings[17]}?`) && resetList(props.setList, props.id, props.isOnline, props.fetchData);
+                                    window.confirm(`${props.fetchData[props.lang].strings[17]}?`) && resetList(props.setList, props.id, props.isOnline, props.fetchData, setCurrentPage);
                                 }}>{props.fetchData[props.lang].strings[9]}</button>
                             </div>
                         </Popup>
@@ -320,7 +330,7 @@ function MainList(props) {
                 }
             }}><FontAwesomeIcon icon={faGlobe} size="2x"/><div>{props.fetchData[props.lang].strings[27]}</div></div> : props.lastConnected ? [<br/>, <btn dir={`${props.lang == "en" ? 'ltr' : 'rtl'}`} className="btn btn-info" onClick={() => sharedListStart(props.lastConnected, props.setList, props.fetchData[props.lang].strings[15], props.fetchData[props.lang].strings[16], props.setOnline, props.setId, props.setLastConnected, props.fetchData)}>{`${props.fetchData[props.lang].strings[29]}: ${props.lastConnected}`}</btn>] : ''}
 
-            {renderByFilter(props.filterText, props.filterType, props.fetchData[props.lang].items, props.filterCategory, props.final, props.list, currentPage, props.listLength, setLimitPage, limitPage)}
+            {renderByFilter(props.filterText, props.filterType, props.fetchData[props.lang].items, props.filterCategory, props.final, props.list, currentPage, props.listLength, setLimitPage, limitPage, setCurrentPage)}
             <div className="d-block">
                 <div className={`btn btn-primary col-6 rounded-0 ${limitPage ? 'disabled' : ''}`} onClick={() => !limitPage ? setCurrentPage(currentPage + 1) : ''}>{props.fetchData[props.lang].strings[30]}</div>
                 <div className={`btn btn-primary col-6 rounded-0 ${!currentPage ? 'disabled' : ''}`}  onClick={() => currentPage ? setCurrentPage(currentPage - 1) : ''}>{props.fetchData[props.lang].strings[31]}</div>
