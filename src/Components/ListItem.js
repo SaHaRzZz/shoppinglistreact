@@ -173,7 +173,7 @@ function ListItem(props) {
                     <Popup trigger={<div className="align-self-center mx-2" style={{zIndex: 4}}><FontAwesomeIcon icon={props.list[props.id][1] ? faStickyNote : farStickyNote} size="2x"/></div>} position="left center">
                         <div className="text-center">
                             <div className="font-weight-bold">{props.title}</div>
-                            <div>{props.list[props.id][1]}</div>
+                            <div dir={`${props.options.lang == 'en' ? 'ltr' : 'rtl'}`}>{props.list[props.id][1]}</div>
                             {props.list[props.id][1] ? [
                                 <button className="btn btn-primary rounded-0" onClick={() => modifyNote(props.setNote, props.id, prompt(`הערה ל${props.title}:`, props.list[props.id][1]), props.apiID, props.isOnline, props.list, props.fetchData)}>שנה</button>,
                                 <button className="btn btn-danger rounded-0" onClick={() => modifyNote(props.setNote, props.id, '', props.apiID, props.isOnline, props.list, props.fetchData)}>מחק</button>
