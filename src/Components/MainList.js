@@ -20,6 +20,8 @@ let updatingList;
 let dListGetTimeout;
 let dListPostTimeout;
 
+axios.defaults.headers.post['Access-Control-Allow-Origin'] = '*';
+
 const renderByFilter = (filtering, filteringType, fetchData, filterCategory, final, list, currentPage, listLength, setLimitPage, limitPage, setCurrentPage) => {
     if(filterCategory)
         fetchData = fetchData.filter(item => item.filter == filterCategory);
@@ -47,8 +49,6 @@ const renderByFilter = (filtering, filteringType, fetchData, filterCategory, fin
     }
     if(fetchData.length <= currentPage * listLength && currentPage > 0) {
         setCurrentPage(currentPage - 1);
-        console.log(fetchData.length);
-        console.log('back');
     }
     fetchData = fetchData.map((item, index)=> {
         if(index < listLength + currentPage * listLength && index >= currentPage * listLength)
@@ -208,6 +208,24 @@ const changeLangauge = (setLangaugeFunc, langauge) => {
     localStorage.setItem('options-langauge', langauge);
 }
 
+const preloadImages =(fetchData, imagesHost) => {
+    if (!preloadImages.list) {
+        preloadImages.list = [];
+    }
+    const list = preloadImages.list;
+    for (let i = 0; i < fetchData.length; i++) {
+        const img = new Image();
+        img.onload = function() {
+            const index = list.indexOf(this);
+            if (index !== -1) {
+                list.splice(index, 1);
+            }
+        }
+        list.push(img);
+        img.src = `${imagesHost}${fetchData[i].img}`;
+    }
+}
+
 function MainList(props) {
     useEffect(props.fetch, []);
     useEffect(() => updateOptions(props.setImagesSize, props.setTitlesSize, props.setLangauge, props.setLastConnected), []);
@@ -253,6 +271,9 @@ function MainList(props) {
     useEffect(() => {
         setCurrentPage(0);
     }, [props.filterText, props.filterCategory, props.final, props.filterType]);
+
+    useEffect(() => !props.fetchLoading ? preloadImages(props.fetchData.he.items, props.fetchData.general.images) : '', [props.fetchLoading]);
+    
 
     return (
         !props.fetchLoading ?

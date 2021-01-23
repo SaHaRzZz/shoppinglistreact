@@ -7,13 +7,29 @@ import {faStickyNote as farStickyNote} from '@fortawesome/free-regular-svg-icons
 import Popup from 'reactjs-popup';
 import '../../node_modules/reactjs-popup/dist/index.css';
 import {sharedListPost} from './MainList';
-// import axios from 'axios';
+import axios from 'axios';
 
 import placeholderImg from '../imgs/_400.png';
+let analyticsPutTimeout;
+let analyticsItems = {};
 
-// const AnalyticsPut = (item, fetchData) => {
-//     axios.put(`${fetchData.general.server}/analytics`, item);
-// }
+axios.defaults.headers.post['Access-Control-Allow-Origin'] = '*';
+
+const AnalyticsPut = (item, fetchData) => {
+    if(analyticsItems[item.id]) {
+        analyticsItems[item.id] += 1;
+    } else {
+        analyticsItems[item.id] = 1;
+    }
+    if(analyticsPutTimeout) {
+        clearTimeout(analyticsPutTimeout);
+    }
+    analyticsPutTimeout = setTimeout(() => {
+        axios.put(`${fetchData.general.server}/analytics`, analyticsItems);
+        analyticsPutTimeout = undefined;
+        analyticsItems = {};
+    }, 2000)
+}
 
 const itemAdd = (id, list, addItemToListFunc, createItemInListFunc, apiID, isOnline, fetchData) => {
     if(list[id]) {
@@ -25,7 +41,7 @@ const itemAdd = (id, list, addItemToListFunc, createItemInListFunc, apiID, isOnl
             if(isOnline) {
                 sharedListPost(apiID, {...list, [id]: [list[id][0] + 1, list[id][1]]}, fetchData);
             }
-            // AnalyticsPut({id}, fetchData);
+            AnalyticsPut({id}, fetchData);
         }
     }
     else {
