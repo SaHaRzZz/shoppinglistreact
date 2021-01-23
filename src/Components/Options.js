@@ -75,7 +75,7 @@ function Options(props) {
                 </div>
                 <div className="h5" style={{fontSize: props.options.titlesSize}}>{props.fetchData[props.lang].strings[25]}</div>
             </div>
-            <div className="h2 font-weight-bold position-absolute" style={{bottom: 1}}>Ver 5.1</div>
+            <div className="h2 font-weight-bold position-absolute" style={{bottom: 1}}>Ver 6</div>
         </div>
     )
 }
