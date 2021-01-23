@@ -5,7 +5,7 @@ const initialState = {
     filterType: false, //false == whole
     filterCategory: 0,
     final: false,
-    listLength: 8
+    listLength: 5
 }
 
 const reducer = (state = initialState, action) => {

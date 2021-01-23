@@ -22,7 +22,7 @@ let dListPostTimeout;
 
 axios.defaults.headers.post['Access-Control-Allow-Origin'] = '*';
 
-const renderByFilter = (filtering, filteringType, fetchData, filterCategory, final, list, currentPage, listLength, setLimitPage, limitPage, setCurrentPage) => {
+const renderByFilter = (filtering, filteringType, fetchData, filterCategory, final, list, currentPage, listLength, setLimitPage, limitPage, setCurrentPage, setItemsRendered, itemsRendered) => {
     if(filterCategory)
         fetchData = fetchData.filter(item => item.filter == filterCategory);
         
@@ -42,6 +42,7 @@ const renderByFilter = (filtering, filteringType, fetchData, filterCategory, fin
     if(final)
         fetchData = fetchData.filter(item => list[item.img.split("").reverse().join("").slice(8).split("").reverse().join("")]);
 
+    listLength = parseInt(listLength);
     if(fetchData.length <= listLength + currentPage * listLength && !limitPage) {
         setLimitPage(true);
     } else if(!(fetchData.length <= listLength + currentPage * listLength) && limitPage) {
@@ -50,12 +51,21 @@ const renderByFilter = (filtering, filteringType, fetchData, filterCategory, fin
     if(fetchData.length <= currentPage * listLength && currentPage > 0) {
         setCurrentPage(currentPage - 1);
     }
+    let currentLength = 0;
     fetchData = fetchData.map((item, index)=> {
-        if(index < listLength + currentPage * listLength && index >= currentPage * listLength)
+        if(index < listLength + currentPage * listLength && index >= currentPage * listLength) {
+            currentLength += 1;
             return <ListItem logo={item.img} title={item.title} category={item.category} id={item.img.split("").reverse().join("").slice(8).split("").reverse().join("")}/>;
-        else
+        }
+        else {
             return;
+        }
     });
+    console.log(`items: ${itemsRendered}, fetchLength: ${fetchData.length}`);
+    if(itemsRendered != currentLength) {
+        setItemsRendered(currentLength);
+        console.log('change to', itemsRendered);
+    }
     return fetchData;
 }
 
@@ -232,7 +242,7 @@ const scrollToTop = () => {
 
 function MainList(props) {
     useEffect(props.fetch, []);
-    useEffect(() => updateOptions(props.setImagesSize, props.setTitlesSize, props.setLangauge, props.setLastConnected), []);
+    useEffect(() => updateOptions(props.setImagesSize, props.setTitlesSize, props.setLangauge, props.setLastConnected, props.setListLength), []);
     useEffect(() => {
         if(localStorage.getItem('saved-list')) {
             updatingList = localStorage.getItem('saved-list');
@@ -282,6 +292,8 @@ function MainList(props) {
 
     window.addEventListener('scroll', () => setScrollY(window.scrollY));
 
+    const [itemsRendered, setItemsRendered] = useState();
+
     return (
         !props.fetchLoading ?
         <div className="text-center">
@@ -291,6 +303,7 @@ function MainList(props) {
             <img type="button" onClick={() => changeLangauge(props.setLangauge, props.lang == 'en' ? 'he' : 'en')} src={props.lang == 'en' ? enFlag : heFlag} className="position-absolute" style={{right: 0, zIndex: 1}}></img>
             <div className="w-100 position-fixed btn" onClick={scrollToTop} style={{zIndex: 4, left: '50%', transform: 'translateX(-50%)', backgroundColor: '#f6f6f6', opacity: 0.75, height: '50px', display: scrollY > 280 ? 'block' : 'none', fontSize: '30px'}}>{props.fetchData[props.lang].strings[32]}</div>
             <input name="filterText" placeholder={`${props.fetchData[props.lang].strings[0]}: ${props.filterType ? props.fetchData[props.lang].strings[2] : props.fetchData[props.lang].strings[1]}`} className="text-center" onChange={event => props.setFilterText(event.target.value)}></input>
+            {props.appVersion != props.fetchData.general.version ? <div className="text-danger">{props.fetchData[props.lang].strings[35]}!</div> : ''}
             <div className="dropdown mt-2">
                 <button className="btn btn-primary rounded-0 dropdown-toggle" dir="rtl" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     {props.fetchData[props.lang].strings[10+props.filterCategory]}
@@ -375,12 +388,12 @@ function MainList(props) {
                     props.setOnline(false);
                 }
             }}><FontAwesomeIcon icon={faGlobe} size="2x"/><div>{props.fetchData[props.lang].strings[27]}</div></div> : props.lastConnected ? [<br/>, <btn dir={`${props.lang == "en" ? 'ltr' : 'rtl'}`} className="btn btn-info mb-1" onClick={() => sharedListStart(props.lastConnected, props.setList, props.fetchData[props.lang].strings[15], props.fetchData[props.lang].strings[16], props.setOnline, props.setId, props.setLastConnected, props.fetchData)}>{`${props.fetchData[props.lang].strings[29]}: ${props.lastConnected}`}</btn>] : ''}
-            <div className="d-block">
+            <div className="w-100">
                 <div className={`btn btn-primary col-6 rounded-0 ${limitPage ? 'disabled' : ''}`} onClick={() => !limitPage ? setCurrentPage(currentPage + 1) : ''}>{props.fetchData[props.lang].strings[30]}</div>
                 <div className={`btn btn-primary col-6 rounded-0 ${!currentPage ? 'disabled' : ''}`}  onClick={() => currentPage ? setCurrentPage(currentPage - 1) : ''}>{props.fetchData[props.lang].strings[31]}</div>
             </div>
-            {renderByFilter(props.filterText, props.filterType, props.fetchData[props.lang].items, props.filterCategory, props.final, props.list, currentPage, props.listLength, setLimitPage, limitPage, setCurrentPage)}
-            <div className="d-block">
+            {renderByFilter(props.filterText, props.filterType, props.fetchData[props.lang].items, props.filterCategory, props.final, props.list, currentPage, props.listLength, setLimitPage, limitPage, setCurrentPage, setItemsRendered, itemsRendered)}
+            <div className="w-100" style={{display: itemsRendered > 5 ? 'block' : 'none'}}>
                 <div className={`btn btn-primary col-6 rounded-0 ${limitPage ? 'disabled' : ''}`} onClick={() => !limitPage ? [setCurrentPage(currentPage + 1), window.scroll(0, 0)] : ''}>{props.fetchData[props.lang].strings[30]}</div>
                 <div className={`btn btn-primary col-6 rounded-0 ${!currentPage ? 'disabled' : ''}`}  onClick={() => currentPage ? [setCurrentPage(currentPage - 1), window.scroll(0, 0)] : ''}>{props.fetchData[props.lang].strings[31]}</div>
             </div>
@@ -409,7 +422,8 @@ const mapStateToProps = state => {
         list: state.list,
         notes: state.notes,
 
-        lang: state.options.lang
+        lang: state.options.lang,
+        appVersion: state.options.appVersion
 
     }
 }
