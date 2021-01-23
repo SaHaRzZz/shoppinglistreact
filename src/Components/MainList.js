@@ -226,6 +226,10 @@ const preloadImages =(fetchData, imagesHost) => {
     }
 }
 
+const scrollToTop = () => {
+    document.getElementsByName('filterText')[0].scrollIntoView({behavior: 'smooth'});
+}
+
 function MainList(props) {
     useEffect(props.fetch, []);
     useEffect(() => updateOptions(props.setImagesSize, props.setTitlesSize, props.setLangauge, props.setLastConnected), []);
@@ -273,7 +277,10 @@ function MainList(props) {
     }, [props.filterText, props.filterCategory, props.final, props.filterType]);
 
     useEffect(() => !props.fetchLoading ? preloadImages(props.fetchData.he.items, props.fetchData.general.images) : '', [props.fetchLoading]);
-    
+
+    const [scrollY, setScrollY] = useState(0);
+
+    window.addEventListener('scroll', () => setScrollY(window.scrollY));
 
     return (
         !props.fetchLoading ?
@@ -282,6 +289,7 @@ function MainList(props) {
                 <FontAwesomeIcon type="button" icon={faCog} size="4x" className="position-absolute border-right border-bottom" style={{left: 0, zIndex: 1}}/>
             </Link>
             <img type="button" onClick={() => changeLangauge(props.setLangauge, props.lang == 'en' ? 'he' : 'en')} src={props.lang == 'en' ? enFlag : heFlag} className="position-absolute" style={{right: 0, zIndex: 1}}></img>
+            <div className="w-100 position-fixed btn" onClick={scrollToTop} style={{zIndex: 4, left: '50%', transform: 'translateX(-50%)', backgroundColor: '#f6f6f6', opacity: 0.75, height: '50px', display: scrollY > 280 ? 'block' : 'none', fontSize: '30px'}}>{props.fetchData[props.lang].strings[32]}</div>
             <input name="filterText" placeholder={`${props.fetchData[props.lang].strings[0]}: ${props.filterType ? props.fetchData[props.lang].strings[2] : props.fetchData[props.lang].strings[1]}`} className="text-center" onChange={event => props.setFilterText(event.target.value)}></input>
             <div className="dropdown mt-2">
                 <button className="btn btn-primary rounded-0 dropdown-toggle" dir="rtl" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -366,12 +374,15 @@ function MainList(props) {
                     dListGetTimeout = undefined;
                     props.setOnline(false);
                 }
-            }}><FontAwesomeIcon icon={faGlobe} size="2x"/><div>{props.fetchData[props.lang].strings[27]}</div></div> : props.lastConnected ? [<br/>, <btn dir={`${props.lang == "en" ? 'ltr' : 'rtl'}`} className="btn btn-info" onClick={() => sharedListStart(props.lastConnected, props.setList, props.fetchData[props.lang].strings[15], props.fetchData[props.lang].strings[16], props.setOnline, props.setId, props.setLastConnected, props.fetchData)}>{`${props.fetchData[props.lang].strings[29]}: ${props.lastConnected}`}</btn>] : ''}
-
-            {renderByFilter(props.filterText, props.filterType, props.fetchData[props.lang].items, props.filterCategory, props.final, props.list, currentPage, props.listLength, setLimitPage, limitPage, setCurrentPage)}
+            }}><FontAwesomeIcon icon={faGlobe} size="2x"/><div>{props.fetchData[props.lang].strings[27]}</div></div> : props.lastConnected ? [<br/>, <btn dir={`${props.lang == "en" ? 'ltr' : 'rtl'}`} className="btn btn-info mb-1" onClick={() => sharedListStart(props.lastConnected, props.setList, props.fetchData[props.lang].strings[15], props.fetchData[props.lang].strings[16], props.setOnline, props.setId, props.setLastConnected, props.fetchData)}>{`${props.fetchData[props.lang].strings[29]}: ${props.lastConnected}`}</btn>] : ''}
             <div className="d-block">
                 <div className={`btn btn-primary col-6 rounded-0 ${limitPage ? 'disabled' : ''}`} onClick={() => !limitPage ? setCurrentPage(currentPage + 1) : ''}>{props.fetchData[props.lang].strings[30]}</div>
                 <div className={`btn btn-primary col-6 rounded-0 ${!currentPage ? 'disabled' : ''}`}  onClick={() => currentPage ? setCurrentPage(currentPage - 1) : ''}>{props.fetchData[props.lang].strings[31]}</div>
+            </div>
+            {renderByFilter(props.filterText, props.filterType, props.fetchData[props.lang].items, props.filterCategory, props.final, props.list, currentPage, props.listLength, setLimitPage, limitPage, setCurrentPage)}
+            <div className="d-block">
+                <div className={`btn btn-primary col-6 rounded-0 ${limitPage ? 'disabled' : ''}`} onClick={() => !limitPage ? [setCurrentPage(currentPage + 1), window.scroll(0, 0)] : ''}>{props.fetchData[props.lang].strings[30]}</div>
+                <div className={`btn btn-primary col-6 rounded-0 ${!currentPage ? 'disabled' : ''}`}  onClick={() => currentPage ? [setCurrentPage(currentPage - 1), window.scroll(0, 0)] : ''}>{props.fetchData[props.lang].strings[31]}</div>
             </div>
         </div>
         :
