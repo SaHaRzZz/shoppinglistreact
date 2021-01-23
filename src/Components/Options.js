@@ -4,7 +4,7 @@ import {faHome} from '@fortawesome/free-solid-svg-icons';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {Link} from 'react-router-dom';
 
-import {setImagesSize, setTitlesSize, setLangauge, setLastConnected} from '../redux/';
+import {setImagesSize, setTitlesSize, setLangauge, setLastConnected, setFilterText} from '../redux/';
 import heFlag from '../imgs/he_flag.png';
 import enFlag from '../imgs/en_flag.png';
 import placeholderImg from '../imgs/_400.png';
@@ -40,6 +40,7 @@ const changeLangauge = (setLangaugeFunc, langauge) => {
 }
 
 function Options(props) {
+    props.setFilterText('');
     return (
         <div className="text-center">
             <Link to="/ShoppingListReact">
@@ -74,7 +75,7 @@ function Options(props) {
                 </div>
                 <div className="h5" style={{fontSize: props.options.titlesSize}}>{props.fetchData[props.lang].strings[25]}</div>
             </div>
-            <div className="h2 font-weight-bold position-absolute" style={{bottom: 1}}>Ver 5</div>
+            <div className="h2 font-weight-bold position-absolute" style={{bottom: 1}}>Ver 5.1</div>
         </div>
     )
 }
@@ -92,7 +93,8 @@ const mapDispatchToProps = dispatch => {
         setImagesSize: val => dispatch(setImagesSize(val)),
         setTitlesSize: val => dispatch(setTitlesSize(val)),
         setLangauge: val => dispatch(setLangauge(val)),
-        setLastConnected: val => dispatch(setLastConnected(val))
+        setLastConnected: val => dispatch(setLastConnected(val)),
+        setFilterText: val => dispatch(setFilterText(val))
     }
 }
 

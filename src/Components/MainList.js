@@ -282,14 +282,38 @@ function MainList(props) {
                 <FontAwesomeIcon type="button" icon={faCog} size="4x" className="position-absolute border-right border-bottom" style={{left: 0, zIndex: 1}}/>
             </Link>
             <img type="button" onClick={() => changeLangauge(props.setLangauge, props.lang == 'en' ? 'he' : 'en')} src={props.lang == 'en' ? enFlag : heFlag} className="position-absolute" style={{right: 0, zIndex: 1}}></img>
-            <input placeholder={`${props.fetchData[props.lang].strings[0]}: ${props.filterType ? props.fetchData[props.lang].strings[2] : props.fetchData[props.lang].strings[1]}`} className="text-center" onChange={event => props.setFilterText(event.target.value)}></input>
+            <input name="filterText" placeholder={`${props.fetchData[props.lang].strings[0]}: ${props.filterType ? props.fetchData[props.lang].strings[2] : props.fetchData[props.lang].strings[1]}`} className="text-center" onChange={event => props.setFilterText(event.target.value)}></input>
             <div className="dropdown mt-2">
                 <button className="btn btn-primary rounded-0 dropdown-toggle" dir="rtl" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     {props.fetchData[props.lang].strings[10+props.filterCategory]}
                 </button>
+                <div className="dropdown-menu bg-secondary" aria-labelledby="dropdownMenuButton">
+                    <a className="dropdown-item" href="#" onClick={() => {
+                        props.setFilterCategory(0);
+                        props.setFilterText('');
+                        document.getElementsByName('filterText')[0].value = '';
+                    }}>{props.fetchData[props.lang].strings[10]}</a>
+                    <a className="dropdown-item" href="#" onClick={() => {
+                        props.setFilterCategory(1);
+                        props.setFilterText('');
+                        document.getElementsByName('filterText')[0].value = '';
+                    }}>{props.fetchData[props.lang].strings[11]}</a>
+                    <a className="dropdown-item" href="#" onClick={() => {
+                        props.setFilterCategory(2);
+                        props.setFilterText('');
+                        document.getElementsByName('filterText')[0].value = '';
+                    }}>{props.fetchData[props.lang].strings[12]}</a>
+                    <a className="dropdown-item" href="#" onClick={() => {
+                        props.setFilterCategory(3);
+                        props.setFilterText('');
+                        document.getElementsByName('filterText')[0].value = '';
+                    }}>{props.fetchData[props.lang].strings[13]}</a>
+                </div>
                 <button className="btn btn-primary rounded-0" type="button" onClick={e => {
                     e.target.blur();
                     props.setFinal(!props.final);
+                    props.setFilterText('');
+                    document.getElementsByName('filterText')[0].value = '';
                 }}>{`${props.final ? props.fetchData[props.lang].strings[3] : props.fetchData[props.lang].strings[4]}`}</button>
                 <div>
                     <div>
@@ -329,13 +353,6 @@ function MainList(props) {
                             </div>
                         </Popup>
                     </div>
-                </div>
-                
-                <div className="dropdown-menu bg-secondary" aria-labelledby="dropdownMenuButton">
-                    <a className="dropdown-item" href="#" onClick={() => props.setFilterCategory(0)}>{props.fetchData[props.lang].strings[10]}</a>
-                    <a className="dropdown-item" href="#" onClick={() => props.setFilterCategory(1)}>{props.fetchData[props.lang].strings[11]}</a>
-                    <a className="dropdown-item" href="#" onClick={() => props.setFilterCategory(2)}>{props.fetchData[props.lang].strings[12]}</a>
-                    <a className="dropdown-item" href="#" onClick={() => props.setFilterCategory(3)}>{props.fetchData[props.lang].strings[13]}</a>
                 </div>
             </div>
             <button onClick={e => {
