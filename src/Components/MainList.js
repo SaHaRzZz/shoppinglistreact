@@ -20,7 +20,8 @@ let updatingList;
 let dListGetTimeout;
 let dListPostTimeout;
 
-axios.defaults.headers.post['Access-Control-Allow-Origin'] = '*';
+axios.defaults.headers.common['Access-Control-Allow-Origin'] = '*';
+axios.defaults.timeout = 1000;
 
 const renderByFilter = (filtering, filteringType, fetchData, filterCategory, final, list, currentPage, listLength, setLimitPage, limitPage, setCurrentPage, setItemsRendered, itemsRendered) => {
     if(filterCategory)
@@ -61,10 +62,8 @@ const renderByFilter = (filtering, filteringType, fetchData, filterCategory, fin
             return;
         }
     });
-    console.log(`items: ${itemsRendered}, fetchLength: ${fetchData.length}`);
     if(itemsRendered != currentLength) {
         setItemsRendered(currentLength);
-        console.log('change to', itemsRendered);
     }
     return fetchData;
 }
@@ -136,23 +135,26 @@ const DynamicWhatsappShareString = (list, fetchData, noteMsg) => {
     );
 };
 
-const sharedListStart = (id, setList, promptMsg, errorMsg, setOnline, setId, setLastConnected, fetchData) => {
+const sharedListStart = (id, setList, promptMsg, errorMsg, setOnline, setId, setLastConnected, fetchData, setOnlineLoading) => {
+    setOnlineLoading(true);
     axios.get(`${fetchData.general.server}/dlist?id=${id}`)
     .then(json => {
         setList(json.data, promptMsg, errorMsg);
         setId(id);
         setOnline(true);
         setLastConnected(id);
+        setOnlineLoading(false);
         localStorage.setItem('options-last-connected', id);
         dListGetTimeout = setTimeout(() => sharedListGet(id, setList, promptMsg, errorMsg, fetchData), 1000);
-    });
+    }).catch(() => {});
 }
 
 const sharedListGet = (id, setList, promptMsg, errorMsg, fetchData) => {
+    console.log('get');
     axios.get(`${fetchData.general.server}/dlist?id=${id}`)
     .then(json => {
         setList(json.data, promptMsg, errorMsg);
-    });
+    }).catch(() => {});
 }
 
 export const sharedListPost = (id, list, fetchData) => {
@@ -160,13 +162,14 @@ export const sharedListPost = (id, list, fetchData) => {
         clearTimeout(dListPostTimeout);
     }
     dListPostTimeout = setTimeout(() => {
-        axios.post(`${fetchData.general.server}/dlist?id=${id}`, list);
+        console.log('post');
+        axios.post(`${fetchData.general.server}/dlist?id=${id}`, list).catch(() => {});
         dListPostTimeout = undefined;
     }, 500);
 }
 
 
-const setPasteCode = (setList, promptMsg, errorMsg, setOnline, setId, id, isOnline, setLastConnected, fetchData) => {
+const setPasteCode = (setList, promptMsg, errorMsg, setOnline, setId, id, isOnline, setLastConnected, fetchData, setOnlineLoading) => {
     try {
         let list = prompt(`${promptMsg}`);
         if(list == null) {
@@ -178,7 +181,7 @@ const setPasteCode = (setList, promptMsg, errorMsg, setOnline, setId, id, isOnli
                 dListGetTimeout = undefined;
                 setOnline(false);
             }
-            sharedListStart(list, setList, promptMsg, errorMsg, setOnline, setId, setLastConnected, fetchData);
+            sharedListStart(list, setList, promptMsg, errorMsg, setOnline, setId, setLastConnected, fetchData, setOnlineLoading);
         } else{            
             list = decode(list);
             list = JSON.parse(list);
@@ -293,17 +296,18 @@ function MainList(props) {
     window.addEventListener('scroll', () => setScrollY(window.scrollY));
 
     const [itemsRendered, setItemsRendered] = useState();
+    const [onlineLoading, setOnlineLoading] = useState();
 
     return (
         !props.fetchLoading ?
         <div className="text-center">
             <Link to="/options">
-                <FontAwesomeIcon type="button" icon={faCog} size="4x" className="position-absolute border-right border-bottom" style={{left: 0, zIndex: 1}}/>
+                <FontAwesomeIcon type="button" onClick={() => console.log('tt')} icon={faCog} size="4x" className="position-absolute border-right border-bottom" style={{left: 0, zIndex: 1}}/>
             </Link>
             <img type="button" onClick={() => changeLangauge(props.setLangauge, props.lang == 'en' ? 'he' : 'en')} src={props.lang == 'en' ? enFlag : heFlag} className="position-absolute" style={{right: 0, zIndex: 1}}></img>
             <div className="w-100 position-fixed btn" onClick={scrollToTop} style={{zIndex: 4, left: '50%', transform: 'translateX(-50%)', backgroundColor: '#f6f6f6', opacity: 0.75, height: '50px', display: scrollY > 280 ? 'block' : 'none', fontSize: '30px'}}>{props.fetchData[props.lang].strings[32]}</div>
             <input name="filterText" placeholder={`${props.fetchData[props.lang].strings[0]}: ${props.filterType ? props.fetchData[props.lang].strings[2] : props.fetchData[props.lang].strings[1]}`} className="text-center" onChange={event => props.setFilterText(event.target.value)}></input>
-            {props.appVersion != props.fetchData.general.version ? <div className="text-danger">{props.fetchData[props.lang].strings[35]}!</div> : ''}
+            {props.appVersion != props.fetchData.general.version ? <div className="text-danger" dir={`${props.lang == 'en' ? 'ltr' : 'rtl'}`}>{props.fetchData[props.lang].strings[34]}!</div> : ''}
             <div className="dropdown mt-2">
                 <button className="btn btn-primary rounded-0 dropdown-toggle" dir="rtl" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     {props.fetchData[props.lang].strings[10+props.filterCategory]}
@@ -342,7 +346,7 @@ function MainList(props) {
                             <div className="col text-center">
                                 <button className="btn btn-secondary rounded-0 col-12" onClick={e => {
                                     e.target.blur();
-                                    setPasteCode(props.setList, props.fetchData[props.lang].strings[15], props.fetchData[props.lang].strings[16], props.setOnline, props.setId, props.id, props.isOnline, props.setLastConnected, props.fetchData);
+                                    setPasteCode(props.setList, props.fetchData[props.lang].strings[15], props.fetchData[props.lang].strings[16], props.setOnline, props.setId, props.id, props.isOnline, props.setLastConnected, props.fetchData, setOnlineLoading);
                                 }}>{props.fetchData[props.lang].strings[5]}</button>
                                 <Popup closeOnDocumentClick={false} trigger={<div className="btn btn-primary rounded-0 col-12">{props.fetchData[props.lang].strings[6]}</div>}>
 
@@ -380,14 +384,14 @@ function MainList(props) {
                 e.target.blur();
                 props.setFilterType(!props.filterType);
             }} className="btn btn-danger my-2">{`${props.fetchData[props.lang].strings[0]}: ${props.filterType ? props.fetchData[props.lang].strings[2] : props.fetchData[props.lang].strings[1]}`}</button>
-            
+            {onlineLoading ? [<br/>, <img src={loadingGif}/>] : ''}
             {props.isOnline ? <div dir={`${props.lang == "en" ? 'ltr' : 'rtl'}`} className="btn d-block" onClick={() => {
                 if(window.confirm(`${props.fetchData[props.lang].strings[28]}?`)) {
                     clearInterval(dListGetTimeout);
                     dListGetTimeout = undefined;
                     props.setOnline(false);
                 }
-            }}><FontAwesomeIcon icon={faGlobe} size="2x"/><div>{props.fetchData[props.lang].strings[27]}</div></div> : props.lastConnected ? [<br/>, <btn dir={`${props.lang == "en" ? 'ltr' : 'rtl'}`} className="btn btn-info mb-1" onClick={() => sharedListStart(props.lastConnected, props.setList, props.fetchData[props.lang].strings[15], props.fetchData[props.lang].strings[16], props.setOnline, props.setId, props.setLastConnected, props.fetchData)}>{`${props.fetchData[props.lang].strings[29]}: ${props.lastConnected}`}</btn>] : ''}
+            }}><FontAwesomeIcon icon={faGlobe} size="2x"/><div>{props.fetchData[props.lang].strings[27]}</div></div> : onlineLoading ? '' : props.lastConnected ? [<br/>, <btn dir={`${props.lang == "en" ? 'ltr' : 'rtl'}`} className="btn btn-info mb-1" onClick={() => sharedListStart(props.lastConnected, props.setList, props.fetchData[props.lang].strings[15], props.fetchData[props.lang].strings[16], props.setOnline, props.setId, props.setLastConnected, props.fetchData, setOnlineLoading)}>{`${props.fetchData[props.lang].strings[29]}: ${props.lastConnected}`}</btn>] : ''}
             <div className="w-100">
                 <div className={`btn btn-primary col-6 rounded-0 ${limitPage ? 'disabled' : ''}`} onClick={() => !limitPage ? setCurrentPage(currentPage + 1) : ''}>{props.fetchData[props.lang].strings[30]}</div>
                 <div className={`btn btn-primary col-6 rounded-0 ${!currentPage ? 'disabled' : ''}`}  onClick={() => currentPage ? setCurrentPage(currentPage - 1) : ''}>{props.fetchData[props.lang].strings[31]}</div>

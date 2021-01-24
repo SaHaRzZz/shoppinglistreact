@@ -4,7 +4,7 @@ const initialState = {
     imagesSize: '96px',
     titlesSize: '4vw',
     lang: '',
-    appVersion: 7
+    appVersion: 8
 };
 
 const reducer = (state = initialState, action) => {

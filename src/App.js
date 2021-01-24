@@ -1,4 +1,3 @@
-import logo from './logo.svg';
 import './App.css';
 import MainList from './Components/MainList';
 import Options from './Components/Options';

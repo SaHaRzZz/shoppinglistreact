@@ -13,7 +13,8 @@ import placeholderImg from '../imgs/_400.png';
 let analyticsPutTimeout;
 let analyticsItems = {};
 
-axios.defaults.headers.post['Access-Control-Allow-Origin'] = '*';
+axios.defaults.headers.common['Access-Control-Allow-Origin'] = '*';
+axios.defaults.timeout = 1000;
 
 const AnalyticsPut = (item, fetchData) => {
     if(analyticsItems[item.id]) {
@@ -25,7 +26,7 @@ const AnalyticsPut = (item, fetchData) => {
         clearTimeout(analyticsPutTimeout);
     }
     analyticsPutTimeout = setTimeout(() => {
-        axios.put(`${fetchData.general.server}/analytics`, analyticsItems);
+        axios.put(`${fetchData.general.server}/analytics`, analyticsItems).catch(() => {});
         analyticsPutTimeout = undefined;
         analyticsItems = {};
     }, 2000)
@@ -49,7 +50,7 @@ const itemAdd = (id, list, addItemToListFunc, createItemInListFunc, apiID, isOnl
         if(isOnline) {
             sharedListPost(apiID, {...list, [id]: [1, '']}, fetchData);
         }
-        // AnalyticsPut({id}, fetchData);
+        AnalyticsPut({id}, fetchData);
     }
 }
 
