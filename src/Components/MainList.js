@@ -150,7 +150,6 @@ const sharedListStart = (id, setList, promptMsg, errorMsg, setOnline, setId, set
 }
 
 const sharedListGet = (id, setList, promptMsg, errorMsg, fetchData) => {
-    console.log('get');
     axios.get(`${fetchData.general.server}/dlist?id=${id}`)
     .then(json => {
         setList(json.data, promptMsg, errorMsg);
@@ -162,7 +161,6 @@ export const sharedListPost = (id, list, fetchData) => {
         clearTimeout(dListPostTimeout);
     }
     dListPostTimeout = setTimeout(() => {
-        console.log('post');
         axios.post(`${fetchData.general.server}/dlist?id=${id}`, list).catch(() => {});
         dListPostTimeout = undefined;
     }, 500);
@@ -302,7 +300,13 @@ function MainList(props) {
         !props.fetchLoading ?
         <div className="text-center">
             <Link to="/options">
-                <FontAwesomeIcon type="button" onClick={() => console.log('tt')} icon={faCog} size="4x" className="position-absolute border-right border-bottom" style={{left: 0, zIndex: 1}}/>
+                <FontAwesomeIcon type="button" onClick={() => {
+                    if(props.isOnline) {
+                        clearInterval(dListGetTimeout);
+                        dListGetTimeout = undefined;
+                        props.setOnline(false);
+                    }
+                }} icon={faCog} size="4x" className="position-absolute border-right border-bottom" style={{left: 0, zIndex: 1}}/>
             </Link>
             <img type="button" onClick={() => changeLangauge(props.setLangauge, props.lang == 'en' ? 'he' : 'en')} src={props.lang == 'en' ? enFlag : heFlag} className="position-absolute" style={{right: 0, zIndex: 1}}></img>
             <div className="w-100 position-fixed btn" onClick={scrollToTop} style={{zIndex: 4, left: '50%', transform: 'translateX(-50%)', backgroundColor: '#f6f6f6', opacity: 0.75, height: '50px', display: scrollY > 280 ? 'block' : 'none', fontSize: '30px'}}>{props.fetchData[props.lang].strings[32]}</div>
