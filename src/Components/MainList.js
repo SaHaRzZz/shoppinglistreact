@@ -134,7 +134,7 @@ const DynamicWhatsappShareString = (list, fetchData, noteMsg) => {
 
 const sharedListStart = (id, setList, promptMsg, errorMsg, setOnline, setId, setLastConnected, fetchData, setOnlineLoading) => {
     setOnlineLoading(true);
-    axios.get(`${fetchData.general.server}/dlist?id=${id}`, {timeout: 1000})
+    axios.get(`${fetchData.general.server}/dlist?id=${id}`, {timeout: 15000})
     .then(json => {
         setList(json.data, promptMsg, errorMsg);
         setId(id);
