@@ -20,9 +20,6 @@ let updatingList;
 let dListGetTimeout;
 let dListPostTimeout;
 
-axios.defaults.headers.common['Access-Control-Allow-Origin'] = '*';
-axios.defaults.timeout = 1000;
-
 const renderByFilter = (filtering, filteringType, fetchData, filterCategory, final, list, currentPage, listLength, setLimitPage, limitPage, setCurrentPage, setItemsRendered, itemsRendered) => {
     if(filterCategory)
         fetchData = fetchData.filter(item => item.filter == filterCategory);
@@ -137,7 +134,7 @@ const DynamicWhatsappShareString = (list, fetchData, noteMsg) => {
 
 const sharedListStart = (id, setList, promptMsg, errorMsg, setOnline, setId, setLastConnected, fetchData, setOnlineLoading) => {
     setOnlineLoading(true);
-    axios.get(`${fetchData.general.server}/dlist?id=${id}`)
+    axios.get(`${fetchData.general.server}/dlist?id=${id}`, {timeout: 1000})
     .then(json => {
         setList(json.data, promptMsg, errorMsg);
         setId(id);
@@ -150,7 +147,7 @@ const sharedListStart = (id, setList, promptMsg, errorMsg, setOnline, setId, set
 }
 
 const sharedListGet = (id, setList, promptMsg, errorMsg, fetchData) => {
-    axios.get(`${fetchData.general.server}/dlist?id=${id}`)
+    axios.get(`${fetchData.general.server}/dlist?id=${id}`, {timeout: 1000})
     .then(json => {
         setList(json.data, promptMsg, errorMsg);
     }).catch(() => {});
@@ -161,7 +158,7 @@ export const sharedListPost = (id, list, fetchData) => {
         clearTimeout(dListPostTimeout);
     }
     dListPostTimeout = setTimeout(() => {
-        axios.post(`${fetchData.general.server}/dlist?id=${id}`, list).catch(() => {});
+        axios.post(`${fetchData.general.server}/dlist?id=${id}`, list, {timeout: 1000}).catch(() => {});
         dListPostTimeout = undefined;
     }, 500);
 }

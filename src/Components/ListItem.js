@@ -13,9 +13,6 @@ import placeholderImg from '../imgs/_400.png';
 let analyticsPutTimeout;
 let analyticsItems = {};
 
-axios.defaults.headers.common['Access-Control-Allow-Origin'] = '*';
-axios.defaults.timeout = 1000;
-
 const AnalyticsPut = (item, fetchData) => {
     if(analyticsItems[item.id]) {
         analyticsItems[item.id] += 1;
@@ -26,7 +23,7 @@ const AnalyticsPut = (item, fetchData) => {
         clearTimeout(analyticsPutTimeout);
     }
     analyticsPutTimeout = setTimeout(() => {
-        axios.put(`${fetchData.general.server}/analytics`, analyticsItems).catch(() => {});
+        axios.put(`${fetchData.general.server}/analytics`, analyticsItems, {timeout: 1000}).catch(() => {});
         analyticsPutTimeout = undefined;
         analyticsItems = {};
     }, 2000)

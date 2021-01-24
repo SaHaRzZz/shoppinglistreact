@@ -45,7 +45,7 @@ export const setLastConnected = id => {
 
 export const fetch = () => {
     return function(dispatch) {
-        axios.get('https://raw.githubusercontent.com/SaHaRzZz/test/main/json/Data.json')
+        axios.get('https://raw.githubusercontent.com/SaHaRzZz/test/main/json/Data.json', {timeout: 10000})
              .then(response => {
                 let temp = response.data;
                 temp = JSON.stringify(temp);
@@ -54,6 +54,7 @@ export const fetch = () => {
             })
              .catch(error => {
                  if(localStorage.getItem('items-database')) {
+                     console.log(error.message);
                     let temp = localStorage.getItem('items-database');
                     temp = JSON.parse(temp);
                     return dispatch(fetchSuccess(temp));
