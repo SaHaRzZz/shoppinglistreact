@@ -49,12 +49,12 @@ const changeLangauge = (setLangaugeFunc, langauge) => {
 function Options(props) {
     const history = useHistory();
     if(!props.fetchData) {
-        history.push('/ShoppingListReact');
+        history.push('/');
         return '';
     }
     return (
         <div className="text-center">
-            <Link to="/ShoppingListReact">
+            <Link to="/">
                 <FontAwesomeIcon type="button" icon={faHome} size="4x" className="position-absolute border-right border-bottom" style={{left: 0, zIndex: 1}}/>
             </Link>
             <img type="button" onClick={() => changeLangauge(props.setLangauge, props.lang == 'en' ? 'he' : 'en')} src={props.lang == 'en' ? enFlag : heFlag} className="position-absolute" style={{right: 0, zIndex: 1}}></img>

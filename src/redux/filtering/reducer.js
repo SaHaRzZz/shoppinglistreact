@@ -2,7 +2,7 @@ import {SET_TEXT_TO_FILTER, SET_TYPE_TO_FILTER, SET_CATEGORY_TO_FILTER, SET_FINA
 
 const initialState = {
     filterText: '',
-    filterType: false, //false == whole
+    filterType: true, //false == whole
     filterCategory: 0,
     final: false,
     listLength: 5

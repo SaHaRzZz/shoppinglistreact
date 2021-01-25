@@ -9,10 +9,10 @@ function App() {
 
   return (
     <Provider store={store}>
-      <BrowserRouter>
+      <BrowserRouter basename="/ShoppingListReact">
         <Switch>
           <Route component={Options} path="/options" exact />
-          <Route component={MainList} path="/ShoppingListReact" exact />
+          <Route component={MainList} path="/" exact />
         </Switch>
       </BrowserRouter>
     </Provider>
