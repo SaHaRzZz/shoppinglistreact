@@ -2,7 +2,7 @@ import React from 'react';
 import {connect} from 'react-redux';
 import {faHome} from '@fortawesome/free-solid-svg-icons';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {Link} from 'react-router-dom';
+import {Link, useHistory} from 'react-router-dom';
 
 import {setImagesSize, setTitlesSize, setLangauge, setLastConnected, setFilterText, setListLength} from '../redux/';
 import heFlag from '../imgs/he_flag.png';
@@ -47,7 +47,11 @@ const changeLangauge = (setLangaugeFunc, langauge) => {
 }
 
 function Options(props) {
-    props.setFilterText('');
+    const history = useHistory();
+    if(!props.fetchData) {
+        history.push('/ShoppingListReact');
+        return '';
+    }
     return (
         <div className="text-center">
             <Link to="/ShoppingListReact">

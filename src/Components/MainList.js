@@ -19,6 +19,7 @@ import loadingGif from '../imgs/loading.svg';
 let updatingList;
 let dListGetTimeout;
 let dListPostTimeout;
+let preLoadedImages;
 
 const renderByFilter = (filtering, filteringType, fetchData, filterCategory, final, list, currentPage, listLength, setLimitPage, limitPage, setCurrentPage, setItemsRendered, itemsRendered) => {
     if(filterCategory)
@@ -216,7 +217,8 @@ const changeLangauge = (setLangaugeFunc, langauge) => {
     localStorage.setItem('options-langauge', langauge);
 }
 
-const preloadImages =(fetchData, imagesHost) => {
+const preloadImages = (fetchData, imagesHost) => {
+    preLoadedImages = true;
     if (!preloadImages.list) {
         preloadImages.list = [];
     }
@@ -302,6 +304,7 @@ function MainList(props) {
                         clearInterval(dListGetTimeout);
                         dListGetTimeout = undefined;
                         props.setOnline(false);
+                        props.setFilterText('');
                     }
                 }} icon={faCog} size="4x" className="position-absolute border-right border-bottom" style={{left: 0, zIndex: 1}}/>
             </Link>
