@@ -23,7 +23,7 @@ const AnalyticsPut = (item, fetchData) => {
         clearTimeout(analyticsPutTimeout);
     }
     analyticsPutTimeout = setTimeout(() => {
-        axios.put(`${fetchData.general.server}/analytics`, analyticsItems, {timeout: 1000}).catch(() => {});
+        axios.put(`${fetchData.general.server2}/analytics`, analyticsItems, {timeout: 1000}).catch(() => {});
         analyticsPutTimeout = undefined;
         analyticsItems = {};
     }, 2000)

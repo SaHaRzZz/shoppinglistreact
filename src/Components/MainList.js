@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import {connect} from 'react-redux';
-import {faCog, faCopy, faList, faGlobe} from '@fortawesome/free-solid-svg-icons';
+import {faCog, faCopy, faList, faGlobe, faTimesCircle} from '@fortawesome/free-solid-svg-icons';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {Link} from 'react-router-dom';
 import {encode, decode} from 'js-base64';
@@ -133,65 +133,6 @@ const DynamicWhatsappShareString = (list, fetchData, noteMsg) => {
     );
 };
 
-const sharedListStart = (id, setList, promptMsg, errorMsg, setOnline, setId, setLastConnected, fetchData, setOnlineLoading) => {
-    setOnlineLoading(true);
-    axios.get(`${fetchData.general.server}/dlist?id=${id}`, {timeout: 15000})
-    .then(json => {
-        setList(json.data, promptMsg, errorMsg);
-        setId(id);
-        setOnline(true);
-        setLastConnected(id);
-        setOnlineLoading(false);
-        localStorage.setItem('options-last-connected', id);
-        dListGetTimeout = setTimeout(() => sharedListGet(id, setList, promptMsg, errorMsg, fetchData), 1000);
-    }).catch(() => {});
-}
-
-const sharedListGet = (id, setList, promptMsg, errorMsg, fetchData) => {
-    axios.get(`${fetchData.general.server}/dlist?id=${id}`, {timeout: 1000})
-    .then(json => {
-        setList(json.data, promptMsg, errorMsg);
-    }).catch(() => {});
-}
-
-export const sharedListPost = (id, list, fetchData) => {
-    if(dListPostTimeout) {
-        clearTimeout(dListPostTimeout);
-    }
-    dListPostTimeout = setTimeout(() => {
-        axios.post(`${fetchData.general.server}/dlist?id=${id}`, list, {timeout: 1000}).catch(() => {});
-        dListPostTimeout = undefined;
-    }, 500);
-}
-
-
-const setPasteCode = (setList, promptMsg, errorMsg, setOnline, setId, id, isOnline, setLastConnected, fetchData, setOnlineLoading) => {
-    try {
-        let list = prompt(`${promptMsg}`);
-        if(list == null) {
-            return;
-        }
-        if(uuid.validate(list)) {
-            if(dListGetTimeout) {
-                clearInterval(dListGetTimeout);
-                dListGetTimeout = undefined;
-                setOnline(false);
-            }
-            sharedListStart(list, setList, promptMsg, errorMsg, setOnline, setId, setLastConnected, fetchData, setOnlineLoading);
-        } else{            
-            list = decode(list);
-            list = JSON.parse(list);
-            if(isOnline) {
-                sharedListPost(id, list, fetchData);
-            }
-            setList(list);
-        }
-    }
-    catch {
-        alert(`${errorMsg}!`);
-    }
-}
-
 const resetList = (setList, id, isOnline, fetchData, setCurrentPage) => {
     if(isOnline) {
         sharedListPost(id, {}, fetchData);
@@ -237,11 +178,24 @@ const preloadImages = (fetchData, imagesHost) => {
 }
 
 const scrollToTop = () => {
-    document.getElementsByName('filterText')[0].scrollIntoView({behavior: 'smooth'});
+    document.getElementById('filterText').scrollIntoView({behavior: 'smooth'});
+}
+
+export const sharedListPost = (id, list, fetchData) => {
+    if(dListPostTimeout) {
+        clearTimeout(dListPostTimeout);
+    }
+    dListPostTimeout = setTimeout(() => {
+        axios.post(`${fetchData.general.server}/dlist?id=${id}`, list, {timeout: 1000}).catch(() => {});
+        dListPostTimeout = undefined;
+    }, 500);
 }
 
 function MainList(props) {
-    useEffect(props.fetch, []);
+    useEffect(() => {
+        props.fetch();
+        axios.get("https://shoppinglistsaharserver.glitch.me").then(() => {}).catch(() => {});
+    }, []);
     useEffect(() => updateOptions(props.setImagesSize, props.setTitlesSize, props.setLangauge, props.setLastConnected, props.setListLength), []);
     useEffect(() => {
         if(localStorage.getItem('saved-list')) {
@@ -295,6 +249,67 @@ function MainList(props) {
     const [itemsRendered, setItemsRendered] = useState();
     const [onlineLoading, setOnlineLoading] = useState();
 
+    const sharedListStart = (id, setList, promptMsg, errorMsg, setOnline, setId, setLastConnected, fetchData, setOnlineLoading) => {
+        setOnlineLoading(true);
+        axios.get(`${fetchData.general.server}/dlist?id=${id}`, {timeout: 15000})
+        .then(json => {
+            setList(json.data, promptMsg, errorMsg);
+            setId(id);
+            setOnline(true);
+            setLastConnected(id);
+            setOnlineLoading(false);
+            localStorage.setItem('options-last-connected', id);
+            dListGetTimeout = setTimeout(() => sharedListGet(id, setList, promptMsg, errorMsg, fetchData), 1000);
+        }).catch(e => {
+            if(e.message == 'Network Error') {
+                setOnlineLoading(false);
+                alert(`${props.fetchData[props.lang].strings[35]}, ${props.fetchData[props.lang].strings[36]}`);
+            }
+        });
+    }
+    
+    const sharedListGet = (id, setList, promptMsg, errorMsg, fetchData) => {
+        axios.get(`${fetchData.general.server}/dlist?id=${id}`, {timeout: 1000})
+        .then(json => {
+            setList(json.data, promptMsg, errorMsg);
+        }).catch(e => {
+            if(e.message == 'Network Error') {
+                props.setOnline(false);
+                dListGetTimeout = undefined;
+                clearInterval(dListGetTimeout);
+                alert(`${props.fetchData[props.lang].strings[35]}, ${props.fetchData[props.lang].strings[37]}`);
+            }
+        });
+    }
+    
+    
+    const setPasteCode = (setList, promptMsg, errorMsg, setOnline, setId, id, isOnline, setLastConnected, fetchData, setOnlineLoading) => {
+        try {
+            let list = prompt(`${promptMsg}`);
+            if(list == null) {
+                return;
+            }
+            if(uuid.validate(list)) {
+                if(dListGetTimeout) {
+                    clearInterval(dListGetTimeout);
+                    dListGetTimeout = undefined;
+                    setOnline(false);
+                }
+                sharedListStart(list, setList, promptMsg, errorMsg, setOnline, setId, setLastConnected, fetchData, setOnlineLoading);
+            } else{            
+                list = decode(list);
+                list = JSON.parse(list);
+                if(isOnline) {
+                    sharedListPost(id, list, fetchData);
+                }
+                setList(list);
+            }
+        }
+        catch {
+            alert(`${errorMsg}!`);
+        }
+    }
+
     return (
         !props.fetchLoading ?
         <div className="text-center">
@@ -310,7 +325,8 @@ function MainList(props) {
             </Link>
             <img type="button" onClick={() => changeLangauge(props.setLangauge, props.lang == 'en' ? 'he' : 'en')} src={props.lang == 'en' ? enFlag : heFlag} className="position-absolute" style={{right: 0, zIndex: 1}}></img>
             <div className="w-100 position-fixed btn" onClick={scrollToTop} style={{zIndex: 4, left: '50%', transform: 'translateX(-50%)', backgroundColor: '#f6f6f6', opacity: 0.75, height: '50px', display: scrollY > 280 ? 'block' : 'none', fontSize: '30px'}}>{props.fetchData[props.lang].strings[32]}</div>
-            <input name="filterText" placeholder={`${props.fetchData[props.lang].strings[0]}: ${props.filterType ? props.fetchData[props.lang].strings[2] : props.fetchData[props.lang].strings[1]}`} className="text-center" onChange={event => props.setFilterText(event.target.value)}></input>
+            {props.filterText ? <a href="#"><FontAwesomeIcon className="position-absolute" style={{transform: "translate(25%, 50%)"}} icon={faTimesCircle} size="1x" onClick={() => [props.setFilterText(''), document.getElementById('filterText').value = '']}/></a> : ''}
+            <input id="filterText" placeholder={`${props.fetchData[props.lang].strings[0]}: ${props.filterType ? props.fetchData[props.lang].strings[2] : props.fetchData[props.lang].strings[1]}`} className="text-center" onChange={event => props.setFilterText(event.target.value)}></input>
             {props.appVersion != props.fetchData.general.version ? <div className="text-danger" dir={`${props.lang == 'en' ? 'ltr' : 'rtl'}`}>{props.fetchData[props.lang].strings[34]}!</div> : ''}
             <div className="dropdown mt-2">
                 <button className="btn btn-primary rounded-0 dropdown-toggle" dir="rtl" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -320,29 +336,29 @@ function MainList(props) {
                     <a className="dropdown-item" href="#" onClick={() => {
                         props.setFilterCategory(0);
                         props.setFilterText('');
-                        document.getElementsByName('filterText')[0].value = '';
+                        document.getElementById('filterText').value = '';
                     }}>{props.fetchData[props.lang].strings[10]}</a>
                     <a className="dropdown-item" href="#" onClick={() => {
                         props.setFilterCategory(1);
                         props.setFilterText('');
-                        document.getElementsByName('filterText')[0].value = '';
+                        document.getElementById('filterText').value = '';
                     }}>{props.fetchData[props.lang].strings[11]}</a>
                     <a className="dropdown-item" href="#" onClick={() => {
                         props.setFilterCategory(2);
                         props.setFilterText('');
-                        document.getElementsByName('filterText')[0].value = '';
+                        document.getElementById('filterText').value = '';
                     }}>{props.fetchData[props.lang].strings[12]}</a>
                     <a className="dropdown-item" href="#" onClick={() => {
                         props.setFilterCategory(3);
                         props.setFilterText('');
-                        document.getElementsByName('filterText')[0].value = '';
+                        document.getElementById('filterText').value = '';
                     }}>{props.fetchData[props.lang].strings[13]}</a>
                 </div>
                 <button className="btn btn-primary rounded-0" type="button" onClick={e => {
                     e.target.blur();
                     props.setFinal(!props.final);
                     props.setFilterText('');
-                    document.getElementsByName('filterText')[0].value = '';
+                    document.getElementById('filterText').value = '';
                 }}>{`${props.final ? props.fetchData[props.lang].strings[3] : props.fetchData[props.lang].strings[4]}`}</button>
                 <div>
                     <div>
