@@ -4,7 +4,7 @@ import {faHome} from '@fortawesome/free-solid-svg-icons';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {Link, useHistory} from 'react-router-dom';
 
-import {setImagesSize, setTitlesSize, setLangauge, setLastConnected, setFilterText, setListLength} from '../redux/';
+import {setImagesSize, setTitlesSize, setLangauge, setLastConnected, setFilterText, setListLength, setCameFromOptions} from '../redux/';
 import heFlag from '../imgs/he_flag.png';
 import enFlag from '../imgs/en_flag.png';
 import placeholderImg from '../imgs/_400.png';
@@ -52,6 +52,7 @@ function Options(props) {
         history.push('/');
         return '';
     }
+    props.setCameFromOptions(true);
     return (
         <div className="text-center">
             <Link to="/">
@@ -110,7 +111,8 @@ const mapStateToProps = state => {
         options: state.options,
         lang: state.options.lang,
         fetchData: state.api.data,
-        listLength: state.filtering.listLength
+        listLength: state.filtering.listLength,
+        cameFromOptions: state.filtering.cameFromOptions
     }
 }
 
@@ -121,7 +123,8 @@ const mapDispatchToProps = dispatch => {
         setLangauge: val => dispatch(setLangauge(val)),
         setLastConnected: val => dispatch(setLastConnected(val)),
         setFilterText: val => dispatch(setFilterText(val)),
-        setListLength: val => dispatch(setListLength(val))
+        setListLength: val => dispatch(setListLength(val)),
+        setCameFromOptions: val => dispatch(setCameFromOptions(val))
     }
 }
 

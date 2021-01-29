@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import {connect} from 'react-redux';
-import {faCog, faCopy, faList, faGlobe, faTimesCircle} from '@fortawesome/free-solid-svg-icons';
+import {faCog, faCopy, faList, faGlobe, faTimesCircle, faUndo} from '@fortawesome/free-solid-svg-icons';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {Link} from 'react-router-dom';
 import {encode, decode} from 'js-base64';
@@ -10,7 +10,7 @@ import * as uuid from 'uuid';
 import axios from 'axios';
 
 import ListItem from './ListItem';
-import {setFilterText, setFilterType, fetch, setFilterCategory, setFinal, setList, setImagesSize, setTitlesSize, setLangauge, setOnline, setId, setLastConnected, setListLength} from '../redux/';
+import {setFilterText, setFilterType, fetch, setFilterCategory, setFinal, setList, setImagesSize, setTitlesSize, setLangauge, setOnline, setId, setLastConnected, setListLength, setCameFromOptions} from '../redux/';
 import {updateOptions} from './Options';
 import heFlag from '../imgs/he_flag.png';
 import enFlag from '../imgs/en_flag.png';
@@ -20,6 +20,8 @@ let updatingList;
 let dListGetTimeout;
 let dListPostTimeout;
 let preLoadedImages;
+let historyList = [];
+let callHistory = false;
 
 const renderByFilter = (filtering, filteringType, fetchData, filterCategory, final, list, currentPage, listLength, setLimitPage, limitPage, setCurrentPage, setItemsRendered, itemsRendered) => {
     if(filterCategory)
@@ -192,6 +194,10 @@ export const sharedListPost = (id, list, fetchData) => {
 }
 
 function MainList(props) {
+
+    const [rerender, setRerender] = useState(false);
+    const [firstLoad, setFirstLoad] = useState(false);
+
     useEffect(() => {
         props.fetch();
         axios.get("https://shoppinglistsaharserver.glitch.me").then(() => {}).catch(() => {});
@@ -209,6 +215,19 @@ function MainList(props) {
         }
     }, []);
     useEffect(() => {
+        if((JSON.stringify(historyList[historyList.length-1]) != JSON.stringify(props.list) && !callHistory && !props.fetchLoading) || props.cameFromOptions) {
+            if(props.cameFromOptions) {
+                props.setCameFromOptions(false);
+            }
+            if(!firstLoad) {
+                historyList = [];
+                setFirstLoad(true);
+            }
+            historyList.push(props.list);
+            setRerender(!rerender);
+        } else if(callHistory) {
+            callHistory = false;
+        }
         updatingList = props.list;
         updatingList = JSON.stringify(updatingList);
         updatingList = encode(updatingList);
@@ -323,7 +342,22 @@ function MainList(props) {
                     }
                 }} icon={faCog} size="4x" className="position-absolute border-right border-bottom" style={{left: 0, zIndex: 1}}/>
             </Link>
-            <img type="button" onClick={() => changeLangauge(props.setLangauge, props.lang == 'en' ? 'he' : 'en')} src={props.lang == 'en' ? enFlag : heFlag} className="position-absolute" style={{right: 0, zIndex: 1}}></img>
+            <div className="position-absolute" style={{right: 0}} dir="rtl">
+                <img type="button" onClick={() => changeLangauge(props.setLangauge, props.lang == 'en' ? 'he' : 'en')} src={props.lang == 'en' ? enFlag : heFlag} style={{zIndex: 1}}></img>
+                <br/>
+                {historyList.length > 1 && firstLoad ?
+                    <a href="#"><FontAwesomeIcon icon={faUndo} size="3x" className="mt-3" style={{transform: "translateY(25%)"}} onClick={() => {
+                        historyList.pop();
+                        const tempList = historyList[historyList.length-1];
+                        callHistory = true;
+                        props.setList(tempList);
+                        if(props.isOnline) {
+                            sharedListPost(props.id, tempList, props.fetchData);
+                        }
+                        setRerender(!rerender);
+                    }}/></a>
+                : ''}
+            </div>
             <div className="w-100 position-fixed btn" onClick={scrollToTop} style={{zIndex: 4, left: '50%', transform: 'translateX(-50%)', backgroundColor: '#f6f6f6', opacity: 0.75, height: '50px', display: scrollY > 280 ? 'block' : 'none', fontSize: '30px'}}>{props.fetchData[props.lang].strings[32]}</div>
             {props.filterText ? <a href="#"><FontAwesomeIcon className="position-absolute" style={{transform: "translate(25%, 50%)"}} icon={faTimesCircle} size="1x" onClick={() => [props.setFilterText(''), document.getElementById('filterText').value = '']}/></a> : ''}
             <input id="filterText" placeholder={`${props.fetchData[props.lang].strings[0]}: ${props.filterType ? props.fetchData[props.lang].strings[2] : props.fetchData[props.lang].strings[1]}`} className="text-center" onChange={event => props.setFilterText(event.target.value)}></input>
@@ -434,6 +468,7 @@ const mapStateToProps = state => {
         filterCategory: state.filtering.filterCategory,
         final: state.filtering.final,
         listLength: state.filtering.listLength,
+        cameFromOptions: state.filtering.cameFromOptions,
 
         fetchLoading: state.api.loading,
         fetchData: state.api.data,
@@ -466,7 +501,8 @@ const mapDispatchToProps = dispatch => {
         setOnline: val => dispatch(setOnline(val)),
         setId: val => dispatch(setId(val)),
         setLastConnected: val => dispatch(setLastConnected(val)),
-        setListLength: val => dispatch(setListLength(val))
+        setListLength: val => dispatch(setListLength(val)),
+        setCameFromOptions: val => dispatch(setCameFromOptions(val))
     }
 }
 

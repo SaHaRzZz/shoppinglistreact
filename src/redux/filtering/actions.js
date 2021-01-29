@@ -1,4 +1,4 @@
-import {SET_TEXT_TO_FILTER, SET_TYPE_TO_FILTER, SET_CATEGORY_TO_FILTER, SET_FINAL, SET_LIST_LENGTH} from './types';
+import {SET_TEXT_TO_FILTER, SET_TYPE_TO_FILTER, SET_CATEGORY_TO_FILTER, SET_FINAL, SET_LIST_LENGTH, SET_CAME_FROM_OPTIONS} from './types';
 
 export const setFilterText = text => {
     return {
@@ -32,5 +32,12 @@ export const setListLength = length => {
     return {
         type: SET_LIST_LENGTH,
         payload: length
+    }
+}
+
+export const setCameFromOptions = bool => {
+    return {
+        type: SET_CAME_FROM_OPTIONS,
+        payload: bool
     }
 }
