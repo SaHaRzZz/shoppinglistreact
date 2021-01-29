@@ -1,7 +1,7 @@
 import {SET_IMAGES_SIZE, SET_TITLES_SIZE, SET_LANGAUGE} from './types';
 
 const initialState = {
-    imagesSize: '96px',
+    imagesSize: '64px',
     titlesSize: '4vw',
     lang: '',
     appVersion: 9.1

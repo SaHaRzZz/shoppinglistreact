@@ -6,7 +6,7 @@ import {faPlusCircle, faMinusCircle, faStickyNote} from '@fortawesome/free-solid
 import {faStickyNote as farStickyNote} from '@fortawesome/free-regular-svg-icons';
 import Popup from 'reactjs-popup';
 import '../../node_modules/reactjs-popup/dist/index.css';
-import {sharedListPost} from './MainList';
+import {sharedListPut} from './MainList';
 import axios from 'axios';
 
 import placeholderImg from '../imgs/_400.png';
@@ -37,7 +37,7 @@ const itemAdd = (id, list, addItemToListFunc, createItemInListFunc, apiID, isOnl
         else {
             addItemToListFunc(id);
             if(isOnline) {
-                sharedListPost(apiID, {...list, [id]: [list[id][0] + 1, list[id][1]]}, fetchData);
+                sharedListPut(apiID, {...list, [id]: [list[id][0] + 1, list[id][1]]}, fetchData);
             }
             AnalyticsPut({id}, fetchData);
         }
@@ -45,7 +45,7 @@ const itemAdd = (id, list, addItemToListFunc, createItemInListFunc, apiID, isOnl
     else {
         createItemInListFunc(id);
         if(isOnline) {
-            sharedListPost(apiID, {...list, [id]: [1, '']}, fetchData);
+            sharedListPut(apiID, {...list, [id]: [1, '']}, fetchData);
         }
         AnalyticsPut({id}, fetchData);
     }
@@ -55,13 +55,13 @@ const itemRemove = (id, list, removeItemFromListFunc, resetItemFromListFunc, api
     if(list[id][0] == 1) {
         resetItemFromListFunc(id);
         if(isOnline) {
-            sharedListPost(apiID, {...list, [id]: ''}, fetchData);
+            sharedListPut(apiID, {...list, [id]: ''}, fetchData);
         }
     }
     else if(list[id][0]) {
         removeItemFromListFunc(id);
         if(isOnline) {
-            sharedListPost(apiID, {...list, [id]: [list[id][0] - 1, list[id][1]]}, fetchData);
+            sharedListPut(apiID, {...list, [id]: [list[id][0] - 1, list[id][1]]}, fetchData);
         }
     }
 }
@@ -69,14 +69,14 @@ const itemRemove = (id, list, removeItemFromListFunc, resetItemFromListFunc, api
 const itemReset = (resetItemFromListFunc, id, apiID, isOnline, list, fetchData) => {
     resetItemFromListFunc(id);
     if(isOnline) {
-        sharedListPost(apiID, {...list, [id]: ''}, fetchData);
+        sharedListPut(apiID, {...list, [id]: ''}, fetchData);
     }
 }
 
 const modifyNote = (setNote, id, content, apiID, isOnline, list, fetchData) => {
     setNote(id, content);
     if(isOnline) {
-        sharedListPost(apiID, {...list, [id]: [list[id][0], content]}, fetchData);
+        sharedListPut(apiID, {...list, [id]: [list[id][0], content]}, fetchData);
     }
 }
 

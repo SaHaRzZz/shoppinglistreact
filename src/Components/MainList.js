@@ -137,7 +137,7 @@ const DynamicWhatsappShareString = (list, fetchData, noteMsg) => {
 
 const resetList = (setList, id, isOnline, fetchData, setCurrentPage) => {
     if(isOnline) {
-        sharedListPost(id, {}, fetchData);
+        sharedListPut(id, {}, fetchData);
     }
     setList(JSON.parse(atob('e30=')));
     setCurrentPage(0);
@@ -183,12 +183,12 @@ const scrollToTop = () => {
     document.getElementById('filterText').scrollIntoView({behavior: 'smooth'});
 }
 
-export const sharedListPost = (id, list, fetchData) => {
+export const sharedListPut = (id, list, fetchData) => {
     if(dListPostTimeout) {
         clearTimeout(dListPostTimeout);
     }
     dListPostTimeout = setTimeout(() => {
-        axios.post(`${fetchData.general.server}/dlist?id=${id}`, list, {timeout: 1000}).catch(() => {});
+        axios.put(`${fetchData.general.server}/dlist?id=${id}`, list, {timeout: 1000}).catch(() => {});
         dListPostTimeout = undefined;
     }, 500);
 }
@@ -287,6 +287,26 @@ function MainList(props) {
             }
         });
     }
+
+    const sharedListMake = () => {
+        if(props.isOnline) {
+            clearInterval(dListGetTimeout);
+            dListGetTimeout = undefined;
+            props.setOnline(false);
+        }
+        setOnlineLoading(true);
+        axios.post(`${props.fetchData.general.server}/dlist`, {timeout: 2000})
+        .then(json => {
+            setClipboard(json.data.id);
+            sharedListStart(json.data.id, props.setList, props.fetchData[props.lang].strings[15], props.fetchData[props.lang].strings[16], props.setOnline, props.setId, props.setLastConnected, props.fetchData, setOnlineLoading);
+            alert(props.fetchData[props.lang].strings[14]);
+        }).catch(e => {
+            if(e.message == 'Network Error') {
+                setOnlineLoading(false);
+                alert(`${props.fetchData[props.lang].strings[35]}, ${props.fetchData[props.lang].strings[36]}`);
+            }
+        });
+    }
     
     const sharedListGet = (id, setList, promptMsg, errorMsg, fetchData) => {
         axios.get(`${fetchData.general.server}/dlist?id=${id}`, {timeout: 1000})
@@ -320,7 +340,7 @@ function MainList(props) {
                 list = decode(list);
                 list = JSON.parse(list);
                 if(isOnline) {
-                    sharedListPost(id, list, fetchData);
+                    sharedListPut(id, list, fetchData);
                 }
                 setList(list);
             }
@@ -347,13 +367,13 @@ function MainList(props) {
                 <img type="button" onClick={() => changeLangauge(props.setLangauge, props.lang == 'en' ? 'he' : 'en')} src={props.lang == 'en' ? enFlag : heFlag} style={{zIndex: 1}}></img>
                 <br/>
                 {historyList.length > 1 && firstLoad ?
-                    <a href="#"><FontAwesomeIcon icon={faUndo} size="3x" className="mt-3" style={{transform: "translateY(25%)"}} onClick={() => {
+                    <a className="h-100" href="#"><FontAwesomeIcon icon={faUndo} size="3x" className="mt-3" style={{transform: "translateY(25%)"}} onClick={() => {
                         historyList.pop();
                         const tempList = historyList[historyList.length-1];
                         callHistory = true;
                         props.setList(tempList);
                         if(props.isOnline) {
-                            sharedListPost(props.id, tempList, props.fetchData);
+                            sharedListPut(props.id, tempList, props.fetchData);
                         }
                         setRerender(!rerender);
                     }}/></a>
@@ -399,6 +419,10 @@ function MainList(props) {
                     <div>
                         <Popup closeOnDocumentClick={false} trigger={<div className="btn btn-info rounded-0"><FontAwesomeIcon icon={faList} size="1x"/></div>}>
                             <div className="col text-center">
+                                <button className="btn btn-info rounded-0 col-12 font-weight-bold" style={{fontSize: '14px'}} onClick={e => {
+                                    e.target.blur();
+                                    sharedListMake();
+                                }}>{props.fetchData[props.lang].strings[38]}</button>
                                 <button className="btn btn-secondary rounded-0 col-12" onClick={e => {
                                     e.target.blur();
                                     setPasteCode(props.setList, props.fetchData[props.lang].strings[15], props.fetchData[props.lang].strings[16], props.setOnline, props.setId, props.id, props.isOnline, props.setLastConnected, props.fetchData, setOnlineLoading);
