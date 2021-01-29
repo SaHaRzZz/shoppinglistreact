@@ -278,6 +278,7 @@ function MainList(props) {
             setLastConnected(id);
             setOnlineLoading(false);
             localStorage.setItem('options-last-connected', id);
+            historyList = [];
             dListGetTimeout = setTimeout(() => sharedListGet(id, setList, promptMsg, errorMsg, fetchData), 1000);
         }).catch(e => {
             if(e.message == 'Network Error') {
