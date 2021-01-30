@@ -372,10 +372,10 @@ function MainList(props) {
                 }} icon={faCog} size="4x" className="position-absolute border-right border-bottom" style={{left: 0, zIndex: 1}}/>
             </Link>
             <div className="position-absolute" style={{right: 0}} dir="rtl">
-                <img type="button" onClick={() => changeLangauge(props.setLangauge, props.lang == 'en' ? 'he' : 'en')} src={props.lang == 'en' ? enFlag : heFlag} style={{zIndex: 1}}></img>
+                <img type="button" onClick={() => changeLangauge(props.setLangauge, props.lang == 'en' ? 'he' : 'en')} src={props.lang == 'en' ? enFlag : heFlag} style={{zIndex: 2}}></img>
                 <br/>
                 {historyList.length > 1 && firstLoad ?
-                    <a className="h-100" href="#"><FontAwesomeIcon icon={faUndo} size="3x" className="mt-3" style={{transform: "translateY(25%)"}} onClick={() => {
+                    <a className="h-100" href="#"><FontAwesomeIcon icon={faUndo} size="3x" className="mt-3" style={{transform: "translateY(25%)", zIndex: 2}} onClick={() => {
                         historyList.pop();
                         const tempList = historyList[historyList.length-1];
                         callHistory = true;
@@ -391,7 +391,7 @@ function MainList(props) {
             {props.filterText ? <a href="#"><FontAwesomeIcon className="position-absolute" style={{transform: "translate(25%, 50%)"}} icon={faTimesCircle} size="1x" onClick={() => [props.setFilterText(''), document.getElementById('filterText').value = '']}/></a> : ''}
             <input id="filterText" placeholder={`${props.fetchData[props.lang].strings[0]}: ${props.filterType ? props.fetchData[props.lang].strings[2] : props.fetchData[props.lang].strings[1]}`} className="text-center" onChange={event => props.setFilterText(event.target.value)}></input>
             {props.appVersion != props.fetchData.general.version ? <div className="text-danger" dir={`${props.lang == 'en' ? 'ltr' : 'rtl'}`}>{props.fetchData[props.lang].strings[34]}!</div> : ''}
-            <div className="dropdown mt-2">
+            <div className="mt-2">
                 <button className="btn btn-primary rounded-0 dropdown-toggle" dir="rtl" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     {props.fetchData[props.lang].strings[10+props.filterCategory]}
                 </button>
