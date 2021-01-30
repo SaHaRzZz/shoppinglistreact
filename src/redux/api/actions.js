@@ -1,4 +1,4 @@
-import {FETCH_REQUEST, FETCH_SUCCESS, FETCH_FAILURE, SET_ONLINE, SET_ID, SET_LAST_CONNECTED} from './types';
+import {FETCH_REQUEST, FETCH_SUCCESS, FETCH_FAILURE, SET_ONLINE, SET_ID, SET_LAST_CONNECTED, SET_WAS_ONLINE} from './types';
 
 import axios from 'axios';
 
@@ -40,6 +40,13 @@ export const setLastConnected = id => {
     return {
         type: SET_LAST_CONNECTED,
         payload: id
+    }
+}
+
+export const setWasOnline = bool => {
+    return {
+        type: SET_WAS_ONLINE,
+        payload: bool
     }
 }
 

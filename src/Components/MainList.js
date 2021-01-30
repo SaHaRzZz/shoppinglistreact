@@ -11,7 +11,8 @@ import axios from 'axios';
 
 import ListItem from './ListItem';
 import {setFilterText, setFilterType, fetch, setFilterCategory, setFinal, setList, setImagesSize,
-    setTitlesSize, setLangauge, setOnline, setId, setLastConnected, setListLength, setCameFromOptions} from '../redux/';
+    setTitlesSize, setLangauge, setOnline, setId, setLastConnected, setListLength, setCameFromOptions,
+    setWasOnline} from '../redux/';
 import {updateOptions} from './Options';
 import heFlag from '../imgs/he_flag.png';
 import enFlag from '../imgs/en_flag.png';
@@ -203,6 +204,10 @@ function MainList(props) {
     useEffect(() => {
         props.fetch();
         axios.get("https://shoppinglistsaharserver.glitch.me").then(() => {}).catch(() => {});
+        if(props.wasOnline) {
+            props.setWasOnline(false);
+            sharedListStart(props.id, props.setList, props.fetchData[props.lang].strings[15], props.fetchData[props.lang].strings[16], props.setOnline, props.setId, props.setLastConnected, props.fetchData, setOnlineLoading);
+        }
     }, []);
     useEffect(() => updateOptions(props.setImagesSize, props.setTitlesSize, props.setLangauge, props.setLastConnected, props.setListLength), []);
     useEffect(() => {
@@ -293,23 +298,25 @@ function MainList(props) {
     }
 
     const sharedListMake = () => {
-        if(props.isOnline) {
-            clearInterval(dListGetTimeout);
-            dListGetTimeout = undefined;
-            props.setOnline(false);
-        }
-        setOnlineLoading(true);
-        axios.post(`${props.fetchData.general.server}/dlist`, {timeout: 2000})
-        .then(json => {
-            setClipboard(json.data.id);
-            sharedListStart(json.data.id, props.setList, props.fetchData[props.lang].strings[15], props.fetchData[props.lang].strings[16], props.setOnline, props.setId, props.setLastConnected, props.fetchData, setOnlineLoading);
-            alert(props.fetchData[props.lang].strings[14]);
-        }).catch(e => {
-            if(e.message == 'Network Error') {
-                setOnlineLoading(false);
-                alert(`${props.fetchData[props.lang].strings[35]}, ${props.fetchData[props.lang].strings[36]}`);
+        if(window.confirm(`${props.fetchData[props.lang].strings[44]}?`)) {
+            if(props.isOnline) {
+                clearInterval(dListGetTimeout);
+                dListGetTimeout = undefined;
+                props.setOnline(false);
             }
-        });
+            setOnlineLoading(true);
+            axios.post(`${props.fetchData.general.server}/dlist`, {timeout: 2000})
+            .then(json => {
+                setClipboard(json.data.id);
+                sharedListStart(json.data.id, props.setList, props.fetchData[props.lang].strings[15], props.fetchData[props.lang].strings[16], props.setOnline, props.setId, props.setLastConnected, props.fetchData, setOnlineLoading);
+                alert(props.fetchData[props.lang].strings[14]);
+            }).catch(e => {
+                if(e.message == 'Network Error') {
+                    setOnlineLoading(false);
+                    alert(`${props.fetchData[props.lang].strings[35]}, ${props.fetchData[props.lang].strings[36]}`);
+                }
+            });
+        }
     }
     
     const sharedListGet = (id, setList, promptMsg, errorMsg, fetchData) => {
@@ -367,8 +374,9 @@ function MainList(props) {
                         clearInterval(dListGetTimeout);
                         dListGetTimeout = undefined;
                         props.setOnline(false);
-                        props.setFilterText('');
+                        props.setWasOnline(true);
                     }
+                    props.setFilterText('');
                 }} icon={faCog} size="4x" className="position-absolute border-right border-bottom" style={{left: 0, zIndex: 1}}/>
             </Link>
             <div className="position-absolute" style={{right: 0}} dir="rtl">
@@ -509,6 +517,7 @@ const mapStateToProps = state => {
         isOnline: state.api.isOnline,
         id: state.api.id,
         lastConnected: state.api.lastConnected,
+        wasOnline: state.api.wasOnline,
 
         list: state.list,
         notes: state.notes,
@@ -534,7 +543,8 @@ const mapDispatchToProps = dispatch => {
         setId: val => dispatch(setId(val)),
         setLastConnected: val => dispatch(setLastConnected(val)),
         setListLength: val => dispatch(setListLength(val)),
-        setCameFromOptions: val => dispatch(setCameFromOptions(val))
+        setCameFromOptions: val => dispatch(setCameFromOptions(val)),
+        setWasOnline: val => dispatch(setWasOnline(val))
     }
 }
 

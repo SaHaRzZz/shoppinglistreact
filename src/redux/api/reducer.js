@@ -1,4 +1,4 @@
-import {FETCH_REQUEST, FETCH_SUCCESS, FETCH_FAILURE, SET_ONLINE, SET_ID, SET_LAST_CONNECTED} from './types';
+import {FETCH_REQUEST, FETCH_SUCCESS, FETCH_FAILURE, SET_ONLINE, SET_ID, SET_LAST_CONNECTED, SET_WAS_ONLINE} from './types';
 
 const initialState = {
     loading: true,
@@ -6,7 +6,8 @@ const initialState = {
     error: '',
     isOnline: false,
     id: '',
-    lastConnected: ''
+    lastConnected: '',
+    wasOnline: false
 }
 
 const reducer = (state = initialState, action) => {
@@ -38,6 +39,10 @@ const reducer = (state = initialState, action) => {
         case SET_LAST_CONNECTED: return {
             ...state,
             lastConnected: action.payload
+        }
+        case SET_WAS_ONLINE: return {
+            ...state,
+            wasOnline: action.payload
         }
         default: return state;
     }
