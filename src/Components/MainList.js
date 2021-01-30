@@ -10,7 +10,8 @@ import * as uuid from 'uuid';
 import axios from 'axios';
 
 import ListItem from './ListItem';
-import {setFilterText, setFilterType, fetch, setFilterCategory, setFinal, setList, setImagesSize, setTitlesSize, setLangauge, setOnline, setId, setLastConnected, setListLength, setCameFromOptions} from '../redux/';
+import {setFilterText, setFilterType, fetch, setFilterCategory, setFinal, setList, setImagesSize,
+    setTitlesSize, setLangauge, setOnline, setId, setLastConnected, setListLength, setCameFromOptions} from '../redux/';
 import {updateOptions} from './Options';
 import heFlag from '../imgs/he_flag.png';
 import enFlag from '../imgs/en_flag.png';
@@ -184,6 +185,7 @@ const scrollToTop = () => {
 }
 
 export const sharedListPut = (id, list, fetchData) => {
+
     if(dListPostTimeout) {
         clearTimeout(dListPostTimeout);
     }
@@ -309,17 +311,21 @@ function MainList(props) {
     }
     
     const sharedListGet = (id, setList, promptMsg, errorMsg, fetchData) => {
-        axios.get(`${fetchData.general.server}/dlist?id=${id}`, {timeout: 1000})
-        .then(json => {
-            setList(json.data, promptMsg, errorMsg);
-        }).catch(e => {
-            if(e.message == 'Network Error') {
-                props.setOnline(false);
-                dListGetTimeout = undefined;
-                clearInterval(dListGetTimeout);
-                alert(`${props.fetchData[props.lang].strings[35]}, ${props.fetchData[props.lang].strings[37]}`);
-            }
-        });
+        if(!dListPostTimeout) {
+            axios.get(`${fetchData.general.server}/dlist?id=${id}`, {timeout: 1000})
+            .then(json => {
+                if(!dListPostTimeout) {
+                    setList(json.data, promptMsg, errorMsg);
+                }
+            }).catch(e => {
+                if(e.message == 'Network Error') {
+                    props.setOnline(false);
+                    dListGetTimeout = undefined;
+                    clearInterval(dListGetTimeout);
+                    alert(`${props.fetchData[props.lang].strings[35]}, ${props.fetchData[props.lang].strings[37]}`);
+                }
+            });
+        }
     }
     
     
@@ -501,7 +507,6 @@ const mapStateToProps = state => {
         isOnline: state.api.isOnline,
         id: state.api.id,
         lastConnected: state.api.lastConnected,
-
 
         list: state.list,
         notes: state.notes,
