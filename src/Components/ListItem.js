@@ -23,7 +23,7 @@ const AnalyticsPut = (item, fetchData) => {
         clearTimeout(analyticsPutTimeout);
     }
     analyticsPutTimeout = setTimeout(() => {
-        axios.put(`${fetchData.general.server2}/analytics`, analyticsItems, {timeout: 1000}).catch(() => {});
+        axios.put(`${fetchData.general.server}/analytics`, analyticsItems, {timeout: 1000}).catch(() => {});
         analyticsPutTimeout = undefined;
         analyticsItems = {};
     }, 2000)
@@ -73,10 +73,19 @@ const itemReset = (resetItemFromListFunc, id, apiID, isOnline, list, fetchData) 
     }
 }
 
-const modifyNote = (setNote, id, content, apiID, isOnline, list, fetchData) => {
-    setNote(id, content);
-    if(isOnline) {
-        sharedListPut(apiID, {...list, [id]: [list[id][0], content]}, fetchData);
+const modifyNote = (setNote, id, content, apiID, isOnline, list, fetchData, deleteBool) => {
+    if(deleteBool) {
+        setNote(id, content);
+        if(isOnline) {
+            sharedListPut(apiID, {...list, [id]: [list[id][0], content]}, fetchData);
+        }
+    }
+    else if(content) {
+        console.log('set', content);
+        setNote(id, content);
+        if(isOnline) {
+            sharedListPut(apiID, {...list, [id]: [list[id][0], content]}, fetchData);
+        }
     }
 }
 
@@ -183,17 +192,18 @@ function ListItem(props) {
                         <div className="col-1" style={{zIndex: 3}} onClick={() => itemAdd(props.id, props.list, props.addItemToList, props.createItemInList, props.apiID, props.isOnline, props.fetchData)}><FontAwesomeIcon size="2x" icon={faPlusCircle}/></div>
                         <div className="col-1" style={{zIndex: 3}} onClick={() => itemRemove(props.id, props.list, props.removeItemFromList, props.resetItemFromList, props.apiID, props.isOnline, props.fetchData)}><FontAwesomeIcon size="2x" icon={faMinusCircle}/></div>
                     </div>,
-                    <div className="mx-2 font-italic user-select-none align-self-center" style={{fontSize: "2rem", zIndex: 3, fontFamily: 'numberpile'}} onClick={() => window.confirm("לאפס את המוצר?") && itemReset(props.resetItemFromList, props.id, props.apiID, props.isOnline, props.list, props.fetchData)}>{numToFont(props.list[props.id][0])}</div>,
+                    <div className="mx-2 font-italic user-select-none align-self-center" style={{fontSize: "2rem", zIndex: 3, fontFamily: 'numberpile'}} onClick={() => window.confirm(`${props.fetchData[props.lang].strings[39]}?`) && itemReset(props.resetItemFromList, props.id, props.apiID, props.isOnline, props.list, props.fetchData)}>{numToFont(props.list[props.id][0])}</div>,
                     <Popup trigger={<div className="align-self-center mx-2" style={{zIndex: 4}}><FontAwesomeIcon icon={props.list[props.id][1] ? faStickyNote : farStickyNote} size="2x"/></div>} position="left center">
                         <div className="text-center">
                             <div className="font-weight-bold">{props.title}</div>
                             <div dir={`${props.options.lang == 'en' ? 'ltr' : 'rtl'}`}>{props.list[props.id][1]}</div>
                             {props.list[props.id][1] ? [
-                                <button className="btn btn-primary rounded-0" onClick={() => modifyNote(props.setNote, props.id, prompt(`הערה ל${props.title}:`, props.list[props.id][1]), props.apiID, props.isOnline, props.list, props.fetchData)}>שנה</button>,
-                                <button className="btn btn-danger rounded-0" onClick={() => modifyNote(props.setNote, props.id, '', props.apiID, props.isOnline, props.list, props.fetchData)}>מחק</button>
+                                <button className="btn btn-primary rounded-0" onClick={() => modifyNote(props.setNote, props.id, prompt(`${props.fetchData[props.lang].strings[40]}${props.title}:`, props.list[props.id][1]), props.apiID, props.isOnline, props.list, props.fetchData)}>{props.fetchData[props.lang].strings[41]}</button>,
+                                <button className="btn btn-danger rounded-0" onClick={() => modifyNote(props.setNote, props.id, '', props.apiID, props.isOnline, props.list, props.fetchData, true)}>{props.fetchData[props.lang].strings[42]}</button>
                             ]
                             :
-                            <button className="btn btn-primary rounded-0" onClick={() => modifyNote(props.setNote, props.id, prompt(`הערה ל${props.title}:`), props.apiID, props.isOnline, props.list, props.fetchData)}>הכן הערה</button>}
+                            <button className="btn btn-primary rounded-0" onClick={() => modifyNote(props.setNote, props.id, prompt(`${props.fetchData[props.lang].strings[40]}${props.title}:`), props.apiID, props.isOnline, props.list, props.fetchData)}>{props.fetchData[props.lang].strings[43]}</button>
+                        }
                         </div>
                     </Popup>
                     
@@ -218,10 +228,14 @@ function ListItem(props) {
 const mapStateToProps = state => {
     return {
         list: state.list,
-        options: state.options,
+        
         isOnline: state.api.isOnline,
         apiID: state.api.id,
-        fetchData: state.api.data
+        fetchData: state.api.data,
+        fetchLoading: state.api.loading,
+
+        options: state.options,
+        lang: state.options.lang
     }
 }
 

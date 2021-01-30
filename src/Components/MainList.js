@@ -257,6 +257,7 @@ function MainList(props) {
     const [currentPage, setCurrentPage] = useState(0);
     const [limitPage, setLimitPage] = useState(false);
 
+    //Desktop Section START
     useEffect(() => {
         setCurrentPage(0);
     }, [props.filterText, props.filterCategory, props.final, props.filterType]);
@@ -267,6 +268,7 @@ function MainList(props) {
 
     window.addEventListener('scroll', () => setScrollY(window.scrollY));
 
+    //Desktop Section END
     const [itemsRendered, setItemsRendered] = useState();
     const [onlineLoading, setOnlineLoading] = useState();
 
