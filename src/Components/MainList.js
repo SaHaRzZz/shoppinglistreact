@@ -137,9 +137,9 @@ const DynamicWhatsappShareString = (list, fetchData, noteMsg) => {
     );
 };
 
-const resetList = (setList, id, isOnline, fetchData, setCurrentPage, setOnline, lang) => {
+const resetList = (setList, id, isOnline, fetchData, setCurrentPage) => {
     if(isOnline) {
-        sharedListPut(id, {}, fetchData, setOnline, lang);
+        sharedListPut(id, {}, fetchData);
     }
     setList(JSON.parse(atob('e30=')));
     setCurrentPage(0);
@@ -185,26 +185,13 @@ const scrollToTop = () => {
     document.getElementById('filterText').scrollIntoView({behavior: 'smooth'});
 }
 
-export const sharedListPut = (id, list, fetchData, setOnline, lang) => {
+export const sharedListPut = (id, list, fetchData) => {
 
     if(dListPostTimeout) {
         clearTimeout(dListPostTimeout);
     }
     dListPostTimeout = setTimeout(() => {
-        axios.put(`${fetchData.general.server}/dlist?id=${id}`, list, {timeout: 1000})
-        .catch(e => {
-            if(e.message == 'Network Error') {
-                setOnline(false);
-                clearInterval(dListPostTimeout);
-                dListPostTimeout = undefined;
-                alert(`${fetchData[lang].strings[35]}, ${fetchData[lang].strings[37]}`);
-            } else {
-                setOnline(false);
-                clearInterval(dListPostTimeout);
-                dListPostTimeout = undefined;
-                alert(`${fetchData[lang].strings[45]}, ${fetchData[lang].strings[37]}`);
-            }
-        });
+        axios.put(`${fetchData.general.server}/dlist?id=${id}`, list, {timeout: 1000}).catch(() => {});
         dListPostTimeout = undefined;
     }, 500);
 }
@@ -376,7 +363,7 @@ function MainList(props) {
                 list = decode(list);
                 list = JSON.parse(list);
                 if(isOnline) {
-                    sharedListPut(id, list, fetchData, props.setOnline, props.lang);
+                    sharedListPut(id, list, fetchData);
                 }
                 setList(list);
             }
@@ -410,7 +397,7 @@ function MainList(props) {
                         callHistory = true;
                         props.setList(tempList);
                         if(props.isOnline) {
-                            sharedListPut(props.id, tempList, props.fetchData, props.setOnline, props.lang);
+                            sharedListPut(props.id, tempList, props.fetchData);
                         }
                         setRerender(!rerender);
                     }}/></a>
@@ -489,7 +476,7 @@ function MainList(props) {
                                 </Popup>
                                 <button className="btn btn-danger rounded-0 col-12" onClick={e => {
                                     e.target.blur();
-                                    window.confirm(`${props.fetchData[props.lang].strings[17]}?`) && resetList(props.setList, props.id, props.isOnline, props.fetchData, setCurrentPage, props.setOnline, props.lang);
+                                    window.confirm(`${props.fetchData[props.lang].strings[17]}?`) && resetList(props.setList, props.id, props.isOnline, props.fetchData, setCurrentPage);
                                 }}>{props.fetchData[props.lang].strings[9]}</button>
                             </div>
                         </Popup>
