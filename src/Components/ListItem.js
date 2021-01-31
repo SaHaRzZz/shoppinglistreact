@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {connect} from 'react-redux';
-import {addItemToList, removeItemFromList, createItemInList, resetItemFromList, setNote} from '../redux/';
+import {addItemToList, removeItemFromList, createItemInList, resetItemFromList, setNote, setOnline, lang} from '../redux/';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faPlusCircle, faMinusCircle, faStickyNote} from '@fortawesome/free-solid-svg-icons';
 import {faStickyNote as farStickyNote} from '@fortawesome/free-regular-svg-icons';
@@ -23,13 +23,13 @@ const AnalyticsPut = (item, fetchData) => {
         clearTimeout(analyticsPutTimeout);
     }
     analyticsPutTimeout = setTimeout(() => {
-        axios.put(`${fetchData.general.server}/analytics`, analyticsItems, {timeout: 1000}).catch(() => {});
+        axios.put(`${fetchData.general.server2}/analytics`, analyticsItems, {timeout: 1000}).catch(() => {});
         analyticsPutTimeout = undefined;
         analyticsItems = {};
-    }, 2000)
+    }, 2000);
 }
 
-const itemAdd = (id, list, addItemToListFunc, createItemInListFunc, apiID, isOnline, fetchData) => {
+const itemAdd = (id, list, addItemToListFunc, createItemInListFunc, apiID, isOnline, fetchData, setOnline, lang) => {
     if(list[id]) {
         if(list[id][0] == 80) {
             alert('מקסימום 80 יחידות למוצר!');
@@ -37,7 +37,7 @@ const itemAdd = (id, list, addItemToListFunc, createItemInListFunc, apiID, isOnl
         else {
             addItemToListFunc(id);
             if(isOnline) {
-                sharedListPut(apiID, {...list, [id]: [list[id][0] + 1, list[id][1]]}, fetchData);
+                sharedListPut(apiID, {...list, [id]: [list[id][0] + 1, list[id][1]]}, fetchData, setOnline, lang);
             }
             AnalyticsPut({id}, fetchData);
         }
@@ -45,46 +45,46 @@ const itemAdd = (id, list, addItemToListFunc, createItemInListFunc, apiID, isOnl
     else {
         createItemInListFunc(id);
         if(isOnline) {
-            sharedListPut(apiID, {...list, [id]: [1, '']}, fetchData);
+            sharedListPut(apiID, {...list, [id]: [1, '']}, fetchData, setOnline, lang);
         }
         AnalyticsPut({id}, fetchData);
     }
 }
 
-const itemRemove = (id, list, removeItemFromListFunc, resetItemFromListFunc, apiID, isOnline, fetchData) => {
+const itemRemove = (id, list, removeItemFromListFunc, resetItemFromListFunc, apiID, isOnline, fetchData, setOnline, lang) => {
     if(list[id][0] == 1) {
         resetItemFromListFunc(id);
         if(isOnline) {
-            sharedListPut(apiID, {...list, [id]: ''}, fetchData);
+            sharedListPut(apiID, {...list, [id]: ''}, fetchData, setOnline, lang);
         }
     }
     else if(list[id][0]) {
         removeItemFromListFunc(id);
         if(isOnline) {
-            sharedListPut(apiID, {...list, [id]: [list[id][0] - 1, list[id][1]]}, fetchData);
+            sharedListPut(apiID, {...list, [id]: [list[id][0] - 1, list[id][1]]}, fetchData, setOnline, lang);
         }
     }
 }
 
-const itemReset = (resetItemFromListFunc, id, apiID, isOnline, list, fetchData) => {
+const itemReset = (resetItemFromListFunc, id, apiID, isOnline, list, fetchData, setOnline, lang) => {
     resetItemFromListFunc(id);
     if(isOnline) {
-        sharedListPut(apiID, {...list, [id]: ''}, fetchData);
+        sharedListPut(apiID, {...list, [id]: ''}, fetchData, setOnline, lang);
     }
 }
 
-const modifyNote = (setNote, id, content, apiID, isOnline, list, fetchData, deleteBool) => {
+const modifyNote = (setNote, id, content, apiID, isOnline, list, fetchData, deleteBool, setOnline, lang) => {
     if(deleteBool) {
         setNote(id, content);
         if(isOnline) {
-            sharedListPut(apiID, {...list, [id]: [list[id][0], content]}, fetchData);
+            sharedListPut(apiID, {...list, [id]: [list[id][0], content]}, fetchData, setOnline, lang);
         }
     }
     else if(content) {
         console.log('set', content);
         setNote(id, content);
         if(isOnline) {
-            sharedListPut(apiID, {...list, [id]: [list[id][0], content]}, fetchData);
+            sharedListPut(apiID, {...list, [id]: [list[id][0], content]}, fetchData, setOnline, lang);
         }
     }
 }
@@ -189,20 +189,20 @@ function ListItem(props) {
                 
                 {props.list[props.id] ? [
                     <div className="align-self-center">
-                        <div className="col-1" style={{zIndex: 3}} onClick={() => itemAdd(props.id, props.list, props.addItemToList, props.createItemInList, props.apiID, props.isOnline, props.fetchData)}><FontAwesomeIcon size="2x" icon={faPlusCircle}/></div>
-                        <div className="col-1" style={{zIndex: 3}} onClick={() => itemRemove(props.id, props.list, props.removeItemFromList, props.resetItemFromList, props.apiID, props.isOnline, props.fetchData)}><FontAwesomeIcon size="2x" icon={faMinusCircle}/></div>
+                        <div className="col-1" style={{zIndex: 3}} onClick={() => itemAdd(props.id, props.list, props.addItemToList, props.createItemInList, props.apiID, props.isOnline, props.fetchData, props.setOnline, props.lang)}><FontAwesomeIcon size="2x" icon={faPlusCircle}/></div>
+                        <div className="col-1" style={{zIndex: 3}} onClick={() => itemRemove(props.id, props.list, props.removeItemFromList, props.resetItemFromList, props.apiID, props.isOnline, props.fetchData, props.setOnline, props.lang)}><FontAwesomeIcon size="2x" icon={faMinusCircle}/></div>
                     </div>,
-                    <div className="mx-2 font-italic user-select-none align-self-center" style={{fontSize: "2rem", zIndex: 3, fontFamily: 'numberpile'}} onClick={() => window.confirm(`${props.fetchData[props.lang].strings[39]}?`) && itemReset(props.resetItemFromList, props.id, props.apiID, props.isOnline, props.list, props.fetchData)}>{numToFont(props.list[props.id][0])}</div>,
+                    <div className="mx-2 font-italic user-select-none align-self-center" style={{fontSize: "2rem", zIndex: 3, fontFamily: 'numberpile'}} onClick={() => window.confirm(`${props.fetchData[props.lang].strings[39]}?`) && itemReset(props.resetItemFromList, props.id, props.apiID, props.isOnline, props.list, props.fetchData, props.setOnline, props.lang)}>{numToFont(props.list[props.id][0])}</div>,
                     <Popup trigger={<div className="align-self-center mx-2" style={{zIndex: 4}}><FontAwesomeIcon icon={props.list[props.id][1] ? faStickyNote : farStickyNote} size="2x"/></div>} position="left center">
                         <div className="text-center">
                             <div className="font-weight-bold">{props.title}</div>
                             <div dir={`${props.options.lang == 'en' ? 'ltr' : 'rtl'}`}>{props.list[props.id][1]}</div>
                             {props.list[props.id][1] ? [
-                                <button className="btn btn-primary rounded-0" onClick={() => modifyNote(props.setNote, props.id, prompt(`${props.fetchData[props.lang].strings[40]}${props.title}:`, props.list[props.id][1]), props.apiID, props.isOnline, props.list, props.fetchData)}>{props.fetchData[props.lang].strings[41]}</button>,
-                                <button className="btn btn-danger rounded-0" onClick={() => modifyNote(props.setNote, props.id, '', props.apiID, props.isOnline, props.list, props.fetchData, true)}>{props.fetchData[props.lang].strings[42]}</button>
+                                <button className="btn btn-primary rounded-0" onClick={() => modifyNote(props.setNote, props.id, prompt(`${props.fetchData[props.lang].strings[40]}${props.title}:`, props.list[props.id][1]), props.apiID, props.isOnline, props.list, props.fetchData, false, props.setOnline, props.lang)}>{props.fetchData[props.lang].strings[41]}</button>,
+                                <button className="btn btn-danger rounded-0" onClick={() => modifyNote(props.setNote, props.id, '', props.apiID, props.isOnline, props.list, props.fetchData, true, props.setOnline, props.lang)}>{props.fetchData[props.lang].strings[42]}</button>
                             ]
                             :
-                            <button className="btn btn-primary rounded-0" onClick={() => modifyNote(props.setNote, props.id, prompt(`${props.fetchData[props.lang].strings[40]}${props.title}:`), props.apiID, props.isOnline, props.list, props.fetchData)}>{props.fetchData[props.lang].strings[43]}</button>
+                            <button className="btn btn-primary rounded-0" onClick={() => modifyNote(props.setNote, props.id, prompt(`${props.fetchData[props.lang].strings[40]}${props.title}:`), props.apiID, props.isOnline, props.list, props.fetchData, false, props.setOnline, props.lang)}>{props.fetchData[props.lang].strings[43]}</button>
                         }
                         </div>
                     </Popup>
@@ -216,7 +216,7 @@ function ListItem(props) {
                     ]
                     :
                     <div className="rounded-circle shadow-lg col-1 font-italic mx-2">
-                        <div className="mr-2 position-absolute" style={{transform: "translate(-50%, -40%)"}} onClick={() => itemAdd(props.id, props.list, props.addItemToList, props.createItemInList, props.apiID, props.isOnline, props.fetchData)}><FontAwesomeIcon size="2x"  icon={faPlusCircle}/></div>
+                        <div className="mr-2 position-absolute" style={{transform: "translate(-50%, -40%)"}} onClick={() => itemAdd(props.id, props.list, props.addItemToList, props.createItemInList, props.apiID, props.isOnline, props.fetchData, props.setOnline, props.lang)}><FontAwesomeIcon size="2x"  icon={faPlusCircle}/></div>
                     </div>}
                 </div>
                 <div className="card-title h-100 text-muted m-0 user-select-none align-self-center position-absolute text-capitalize" style={{right: '10px'}}>{props.category}</div>
@@ -245,7 +245,8 @@ const mapDispatchToProps = dispatch => {
         removeItemFromList: val => dispatch(removeItemFromList(val)),
         createItemInList: val => dispatch(createItemInList(val)),
         resetItemFromList: val => dispatch(resetItemFromList(val)),
-        setNote: (val1, val2) => dispatch(setNote(val1, val2))
+        setNote: (val1, val2) => dispatch(setNote(val1, val2)),
+        setOnline: val => dispatch(setOnline(val))
     }
 }
 

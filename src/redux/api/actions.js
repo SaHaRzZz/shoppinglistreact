@@ -52,7 +52,7 @@ export const setWasOnline = bool => {
 
 export const fetch = () => {
     return function(dispatch) {
-        axios.get('https://raw.githubusercontent.com/SaHaRzZz/test/main/json/Data.json', {timeout: 10000})
+        axios.get('https://raw.githubusercontent.com/SaHaRzZz/api/master/shoppinglistreact/json/Data.json', {timeout: 10000})
              .then(response => {
                 let temp = response.data;
                 temp = JSON.stringify(temp);
