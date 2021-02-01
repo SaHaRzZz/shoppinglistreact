@@ -390,19 +390,18 @@ function MainList(props) {
     return (
         !props.fetchLoading ?
         <div className="text-center">
-            <Link to="/options">
-                <FontAwesomeIcon type="button" onClick={() => {
-                    if(props.isOnline) {
-                        clearInterval(dListGetTimeout);
-                        dListGetTimeout = undefined;
-                        props.setOnline(false);
-                        props.setWasOnline(true);
-                    }
-                    props.setFilterText('');
-                }} icon={faCog} size="4x" className="position-absolute border-right border-bottom" style={{left: 0, zIndex: 1}}/>
-            </Link>
-            <div className="position-absolute" style={{right: 0}} dir="rtl">
-                <img type="button" onClick={() => changeLangauge(props.setLangauge, props.lang == 'en' ? 'he' : 'en')} src={props.lang == 'en' ? enFlag : heFlag} style={{zIndex: 2}}></img>
+            <div className="position-absolute" style={{left: 0}}>
+                <Link to="/options">
+                    <FontAwesomeIcon type="button" onClick={() => {
+                        if(props.isOnline) {
+                            clearInterval(dListGetTimeout);
+                            dListGetTimeout = undefined;
+                            props.setOnline(false);
+                            props.setWasOnline(true);
+                        }
+                        props.setFilterText('');
+                    }} icon={faCog} size="4x" className="border-right border-bottom" style={{zIndex: 1}}/>
+                </Link>
                 <br/>
                 {historyList.length > 1 && firstLoad ?
                     <a className="h-100" href="#"><FontAwesomeIcon icon={faUndo} size="3x" className="mt-3" style={{transform: "translateY(25%)", zIndex: 2}} onClick={() => {
@@ -416,6 +415,10 @@ function MainList(props) {
                         setRerender(!rerender);
                     }}/></a>
                 : ''}
+            </div>
+            
+            <div className="position-absolute" style={{right: 0}}>
+                <img type="button" onClick={() => changeLangauge(props.setLangauge, props.lang == 'en' ? 'he' : 'en')} src={props.lang == 'en' ? enFlag : heFlag} style={{zIndex: 2}}></img>
             </div>
             <div className="w-100 position-fixed btn" onClick={scrollToTop} style={{zIndex: 4, left: '50%', transform: 'translateX(-50%)', backgroundColor: '#f6f6f6', opacity: 0.75, height: '50px', display: scrollY > 280 ? 'block' : 'none', fontSize: '30px'}}>{props.fetchData[props.lang].strings[32]}</div>
             {props.filterText ? <a href="#"><FontAwesomeIcon className="position-absolute" style={{transform: "translate(25%, 50%)"}} icon={faTimesCircle} size="1x" onClick={() => [props.setFilterText(''), document.getElementById('filterText').value = '']}/></a> : ''}
