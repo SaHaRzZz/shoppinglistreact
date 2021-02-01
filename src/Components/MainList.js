@@ -377,8 +377,10 @@ function MainList(props) {
     const {transcript, resetTranscript, listening} = useSpeechRecognition();
 
     useEffect(() => {
-        props.setFilterText(transcript);
-        document.getElementById('filterText').value = transcript;
+        if(listening) {
+            props.setFilterText(transcript);
+            document.getElementById('filterText').value = transcript;
+        }
     }, [transcript]);
 
     return (
