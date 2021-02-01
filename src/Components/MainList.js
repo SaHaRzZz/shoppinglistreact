@@ -8,7 +8,9 @@ import {WhatsappShareButton, WhatsappIcon} from '@kashuab/react-share';
 import Popup from 'reactjs-popup';
 import * as uuid from 'uuid';
 import axios from 'axios';
+//Desktop Section START
 import SpeechRecognition, {useSpeechRecognition} from 'react-speech-recognition';
+//Desktop Section END
 
 import ListItem from './ListItem';
 import {setFilterText, setFilterType, fetch, setFilterCategory, setFinal, setList, setImagesSize,
@@ -273,8 +275,8 @@ function MainList(props) {
     const [scrollY, setScrollY] = useState(0);
 
     window.addEventListener('scroll', () => setScrollY(window.scrollY));
-
     //Desktop Section END
+
     const [itemsRendered, setItemsRendered] = useState();
     const [onlineLoading, setOnlineLoading] = useState();
 
@@ -374,14 +376,16 @@ function MainList(props) {
         }
     }
 
-    const {transcript, resetTranscript, listening} = useSpeechRecognition();
+    //Desktop Section START
+    const {transcript, listening} = useSpeechRecognition();
 
     useEffect(() => {
-        if(listening) {
+        if(document.getElementById('filterText')) {
             props.setFilterText(transcript);
             document.getElementById('filterText').value = transcript;
         }
     }, [transcript]);
+    //Desktop Section END
 
     return (
         !props.fetchLoading ?
@@ -416,7 +420,9 @@ function MainList(props) {
             <div className="w-100 position-fixed btn" onClick={scrollToTop} style={{zIndex: 4, left: '50%', transform: 'translateX(-50%)', backgroundColor: '#f6f6f6', opacity: 0.75, height: '50px', display: scrollY > 280 ? 'block' : 'none', fontSize: '30px'}}>{props.fetchData[props.lang].strings[32]}</div>
             {props.filterText ? <a href="#"><FontAwesomeIcon className="position-absolute" style={{transform: "translate(25%, 50%)"}} icon={faTimesCircle} size="1x" onClick={() => [props.setFilterText(''), document.getElementById('filterText').value = '']}/></a> : ''}
             <input id="filterText" placeholder={`${props.fetchData[props.lang].strings[0]}: ${props.filterType ? props.fetchData[props.lang].strings[2] : props.fetchData[props.lang].strings[1]}`} className="text-center" onChange={event => props.setFilterText(event.target.value)}></input>
-            {SpeechRecognition.browserSupportsSpeechRecognition() ? <a href="#"><FontAwesomeIcon onClick={() => listening ? SpeechRecognition.abortListening() : SpeechRecognition.startListening({language: props.lang == 'en' ? 'en-US' : 'he'})} className="position-absolute" icon={listening ? faMicrophone : faMicrophoneSlash} size="3x" style={{transform: `translate(${listening ? '86%' : '25%'}, 200%)`}}/></a> : ''}
+            {/* Desktop Section START */}
+            <a className={`position-absolute btn ${SpeechRecognition.browserSupportsSpeechRecognition() ? '' : 'disabled'} ${listening ? 'text-primary' : 'text-danger'}`} style={{transform: `translate(${listening ? '23%' : '0%'}, 150%)`}} onClick={() => listening ? SpeechRecognition.abortListening() : SpeechRecognition.startListening({language: props.lang == 'en' ? 'en-US' : 'he'})}><FontAwesomeIcon icon={listening ? faMicrophone : faMicrophoneSlash} size="3x"/></a>
+            {/* Desktop Section END */}
             {props.appVersion != props.fetchData.general.version ? <div className="text-danger" dir={`${props.lang == 'en' ? 'ltr' : 'rtl'}`}>{props.fetchData[props.lang].strings[34]}!</div> : ''}
             <div className="mt-2">
                 <button className="btn btn-primary rounded-0 dropdown-toggle" dir="rtl" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
