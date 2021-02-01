@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import {connect} from 'react-redux';
-import {faCog, faCopy, faList, faGlobe, faTimesCircle, faUndo} from '@fortawesome/free-solid-svg-icons';
+import {faCog, faCopy, faList, faGlobe, faTimesCircle, faUndo, faMicrophone, faMicrophoneSlash} from '@fortawesome/free-solid-svg-icons';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {Link} from 'react-router-dom';
 import {encode, decode} from 'js-base64';
@@ -8,6 +8,7 @@ import {WhatsappShareButton, WhatsappIcon} from '@kashuab/react-share';
 import Popup from 'reactjs-popup';
 import * as uuid from 'uuid';
 import axios from 'axios';
+import SpeechRecognition, {useSpeechRecognition} from 'react-speech-recognition';
 
 import ListItem from './ListItem';
 import {setFilterText, setFilterType, fetch, setFilterCategory, setFinal, setList, setImagesSize,
@@ -373,6 +374,13 @@ function MainList(props) {
         }
     }
 
+    const {transcript, resetTranscript, listening} = useSpeechRecognition();
+
+    useEffect(() => {
+        props.setFilterText(transcript);
+        document.getElementById('filterText').value = transcript;
+    }, [transcript]);
+
     return (
         !props.fetchLoading ?
         <div className="text-center">
@@ -406,6 +414,7 @@ function MainList(props) {
             <div className="w-100 position-fixed btn" onClick={scrollToTop} style={{zIndex: 4, left: '50%', transform: 'translateX(-50%)', backgroundColor: '#f6f6f6', opacity: 0.75, height: '50px', display: scrollY > 280 ? 'block' : 'none', fontSize: '30px'}}>{props.fetchData[props.lang].strings[32]}</div>
             {props.filterText ? <a href="#"><FontAwesomeIcon className="position-absolute" style={{transform: "translate(25%, 50%)"}} icon={faTimesCircle} size="1x" onClick={() => [props.setFilterText(''), document.getElementById('filterText').value = '']}/></a> : ''}
             <input id="filterText" placeholder={`${props.fetchData[props.lang].strings[0]}: ${props.filterType ? props.fetchData[props.lang].strings[2] : props.fetchData[props.lang].strings[1]}`} className="text-center" onChange={event => props.setFilterText(event.target.value)}></input>
+            {SpeechRecognition.browserSupportsSpeechRecognition() ? <a href="#"><FontAwesomeIcon onClick={() => SpeechRecognition.startListening({language: props.lang == 'en' ? 'en-US' : 'he'})} className="position-absolute" icon={listening ? faMicrophone : faMicrophoneSlash} size="lg" style={{transform: `translate(${listening ? '88%' : '25%'}, 25%)`}}/></a> : ''}
             {props.appVersion != props.fetchData.general.version ? <div className="text-danger" dir={`${props.lang == 'en' ? 'ltr' : 'rtl'}`}>{props.fetchData[props.lang].strings[34]}!</div> : ''}
             <div className="mt-2">
                 <button className="btn btn-primary rounded-0 dropdown-toggle" dir="rtl" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
