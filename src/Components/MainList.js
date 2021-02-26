@@ -506,7 +506,7 @@ function MainList(props) {
             <button onClick={e => {
                 e.target.blur();
                 props.setFilterType(!props.filterType);
-            }} className="btn btn-danger my-2">{`${props.fetchData[props.lang].strings[0]}: ${props.filterType ? props.fetchData[props.lang].strings[2] : props.fetchData[props.lang].strings[1]}`}</button>
+            }} className="btn btn-danger my-2" style={{borderRadius: '20px', width: '10rem'}}>{`${props.fetchData[props.lang].strings[0]}: ${props.filterType ? props.fetchData[props.lang].strings[2] : props.fetchData[props.lang].strings[1]}`}</button>
             {onlineLoading ? [<br/>, <img src={loadingGif}/>] : ''}
             {props.isOnline ? <div dir={`${props.lang == "en" ? 'ltr' : 'rtl'}`} className="btn d-block" onClick={() => {
                 if(window.confirm(`${props.fetchData[props.lang].strings[28]}?`)) {
@@ -514,7 +514,7 @@ function MainList(props) {
                     dListGetTimeout = undefined;
                     props.setOnline(false);
                 }
-            }}><FontAwesomeIcon icon={faGlobe} size="2x"/><div>{props.fetchData[props.lang].strings[27]}</div></div> : onlineLoading ? '' : props.lastConnected ? [<br/>, <btn dir={`${props.lang == "en" ? 'ltr' : 'rtl'}`} className="btn btn-info mb-1" onClick={() => sharedListStart(props.lastConnected, props.setList, props.fetchData[props.lang].strings[15], props.fetchData[props.lang].strings[16], props.setOnline, props.setId, props.setLastConnected, props.fetchData, setOnlineLoading)}>{`${props.fetchData[props.lang].strings[29]}: ${props.lastConnected}`}</btn>] : ''}
+            }}><FontAwesomeIcon icon={faGlobe} size="2x"/><div>{props.fetchData[props.lang].strings[27]}</div></div> : onlineLoading ? '' : props.lastConnected ? [<br/>, <btn dir={`${props.lang == "en" ? 'ltr' : 'rtl'}`} className="btn btn-info mb-1 rounded-0" onClick={() => sharedListStart(props.lastConnected, props.setList, props.fetchData[props.lang].strings[15], props.fetchData[props.lang].strings[16], props.setOnline, props.setId, props.setLastConnected, props.fetchData, setOnlineLoading)}>{`${props.fetchData[props.lang].strings[29]}: ${props.lastConnected}`}</btn>] : ''}
             <div className="w-100">
                 <div className={`btn btn-primary col-6 rounded-0 ${limitPage ? 'disabled' : ''}`} onClick={() => !limitPage ? setCurrentPage(currentPage + 1) : ''}>{props.fetchData[props.lang].strings[30]}</div>
                 <div className={`btn btn-primary col-6 rounded-0 ${!currentPage ? 'disabled' : ''}`}  onClick={() => currentPage ? setCurrentPage(currentPage - 1) : ''}>{props.fetchData[props.lang].strings[31]}</div>
