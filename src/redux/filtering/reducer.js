@@ -1,4 +1,4 @@
-import {SET_TEXT_TO_FILTER, SET_TYPE_TO_FILTER, SET_CATEGORY_TO_FILTER, SET_FINAL, SET_LIST_LENGTH, SET_CAME_FROM_OPTIONS} from './types';
+import {SET_TEXT_TO_FILTER, SET_TYPE_TO_FILTER, SET_CATEGORY_TO_FILTER, SET_FINAL, SET_LIST_LENGTH, SET_CAME_FROM_OPTIONS, SET_SUBFILTER1} from './types';
 
 const initialState = {
     filterText: '',
@@ -6,7 +6,8 @@ const initialState = {
     filterCategory: 0,
     final: false,
     listLength: 5,
-    cameFromOptions: false
+    cameFromOptions: false,
+    subFilter1: ''
 }
 
 const reducer = (state = initialState, action) => {
@@ -34,6 +35,10 @@ const reducer = (state = initialState, action) => {
         case SET_CAME_FROM_OPTIONS: return {
             ...state,
             cameFromOptions: action.payload
+        }
+        case SET_SUBFILTER1: return {
+            ...state,
+            subFilter1: action.payload
         }
         default: return state;
     }
