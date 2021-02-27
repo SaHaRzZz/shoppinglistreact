@@ -428,11 +428,11 @@ function MainList(props) {
             </div>
             {filterEdit ? 
             <div>
-                <btn className="btn btn-info" onClick={() => setFilterEdit(false)}>חזרה מסינון</btn>
+                <btn className="btn btn-info" onClick={() => setFilterEdit(false)}>{props.fetchData[props.lang].strings[52]}</btn>
                 <div className="container w-50">
                     <div class="input-group mt-2" dir={`${props.lang == 'en' ? 'ltr' : 'rtl'}`}>
                         <div class="input-group-prepend">
-                            <label class="input-group-text" style={{borderRadius: `${props.lang == 'en' ? '3px 0 0 3px' : '0 3px 3px 0'}`}} for="inputGroupSelect01">כשרות</label>
+                            <label class="input-group-text" style={{borderRadius: `${props.lang == 'en' ? '3px 0 0 3px' : '0 3px 3px 0'}`}} for="inputGroupSelect01">{props.fetchData[props.lang].strings[50]}</label>
                         </div>
                         <select style={{borderRadius: `${props.lang == 'en' ? '0 3px 3px 0' : '3px 0 0 3px'}`}} dir={`${props.lang == 'en' ? 'ltr' : 'rtl'}`} onChange={e => props.setSubFilter1(e.target.value)} class="custom-select" id="inputGroupSelect01">
                             <option value="" selected={props.subFilter1 == '' ? true : false}>{props.fetchData[props.lang].strings[10]}</option>
@@ -453,7 +453,7 @@ function MainList(props) {
                 {/* Desktop Section END */}
                 {props.appVersion != props.fetchData.general.version ? <div className="text-danger" dir={`${props.lang == 'en' ? 'ltr' : 'rtl'}`}>{props.fetchData[props.lang].strings[34]}!</div> : ''}
                 <div className="mt-2">
-                    <button className="btn btn-info rounded-0" onClick={() => [props.setFilterText(''), document.getElementById('filterText').value = '', setFilterEdit(true)]}>סינון</button>
+                    <button className="btn btn-info rounded-0" onClick={() => [props.setFilterText(''), document.getElementById('filterText').value = '', setFilterEdit(true)]}>{props.fetchData[props.lang].strings[51]}</button>
                     <button className="btn btn-primary rounded-0" type="button" onClick={e => {
                         e.target.blur();
                         props.setFinal(!props.final);

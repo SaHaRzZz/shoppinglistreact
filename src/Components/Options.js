@@ -56,52 +56,52 @@ function Options(props) {
     return (
         <div className="text-center">
             <Link to="/">
-                <FontAwesomeIcon type="button" icon={faHome} size="4x" className="position-absolute border-right border-bottom" style={{left: 0, zIndex: 1}}/>
+                <FontAwesomeIcon type="button" icon={faHome} size="4x" className="position-absolute border-right border-bottom" style={{left: 0, top: 0, zIndex: 1}}/>
             </Link>
-            <img type="button" onClick={() => changeLangauge(props.setLangauge, props.lang == 'en' ? 'he' : 'en')} src={props.lang == 'en' ? enFlag : heFlag} className="position-absolute" style={{right: 0, zIndex: 1}}></img>
-            <div className="mb-2">
-                <div className="dropdown">
-                    <button className="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        {`${props.fetchData[props.lang].strings[23]}: ${props.options.imagesSize == '64px' ? props.fetchData[props.lang].strings[19] : props.options.imagesSize == '96px' ? props.fetchData[props.lang].strings[20] : props.fetchData[props.lang].strings[21]}`}
-                    </button>
-                    <div className="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                        <a className="dropdown-item" onClick={() => makeSetImagesSize(props.setImagesSize, '64px')}>{props.fetchData[props.lang].strings[19]}</a>
-                        <a className="dropdown-item" onClick={() => makeSetImagesSize(props.setImagesSize, '96px')}>{props.fetchData[props.lang].strings[20]}</a>
-                        <a className="dropdown-item" onClick={() => makeSetImagesSize(props.setImagesSize, '128px')}>{props.fetchData[props.lang].strings[21]}</a>
+            <img type="button" onClick={() => changeLangauge(props.setLangauge, props.lang == 'en' ? 'he' : 'en')} src={props.lang == 'en' ? enFlag : heFlag} className="position-absolute" style={{right: 0, top: 0, zIndex: 1}}></img>
+            <div style={{marginTop: '80px'}}><hr/></div>
+            <div className="container w-75 p-0">
+                <div class="input-group mt-2" dir={`${props.lang == 'en' ? 'ltr' : 'rtl'}`}>
+                    <div class="input-group-prepend">
+                        <label class="input-group-text" style={{borderRadius: `${props.lang == 'en' ? '3px 0 0 3px' : '0 3px 3px 0'}`, width: '10rem'}} for="inputGroupSelect01">{props.fetchData[props.lang].strings[23]}</label>
                     </div>
+                    <select style={{borderRadius: `${props.lang == 'en' ? '0 3px 3px 0' : '3px 0 0 3px'}`}} dir={`${props.lang == 'en' ? 'ltr' : 'rtl'}`} onChange={e => makeSetImagesSize(props.setImagesSize, e.target.value)} class="custom-select" id="inputGroupSelect01">
+                        <option value="64px" selected={props.options.imagesSize == '64px' ? true : false}>{props.fetchData[props.lang].strings[19]}</option>
+                        <option value="96px" selected={props.options.imagesSize == '96px' ? true : false}>{props.fetchData[props.lang].strings[20]}</option>
+                        <option value="128px" selected={props.options.imagesSize == '128px' ? true : false}>{props.fetchData[props.lang].strings[21]}</option>
+                    </select>
                 </div>
-                <img className="user-select-none" src={placeholderImg} style={{width: props.options.imagesSize}}/>
-            </div>
-            <div className="my-2">
-                <div className="dropdown">
-                    <button className="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        {`${props.fetchData[props.lang].strings[24]}: ${props.options.titlesSize == '2vw' ? props.fetchData[props.lang].strings[18] : props.options.titlesSize == '3vw' ? props.fetchData[props.lang].strings[19] : props.options.titlesSize == '4vw' ? props.fetchData[props.lang].strings[20] : props.options.titlesSize == '5vw' ? props.fetchData[props.lang].strings[21] : props.fetchData[props.lang].strings[22]}`}
-                    </button>
-                    <div className="dropdown-menu" aria-labelledby="dropdownMenuButton2">
-                        <a className="dropdown-item" onClick={() => makeSetTitlesSize(props.setTitlesSize, '2vw')}>{props.fetchData[props.lang].strings[18]}</a>
-                        <a className="dropdown-item" onClick={() => makeSetTitlesSize(props.setTitlesSize, '3vw')}>{props.fetchData[props.lang].strings[19]}</a>
-                        <a className="dropdown-item" onClick={() => makeSetTitlesSize(props.setTitlesSize, '4vw')}>{props.fetchData[props.lang].strings[20]}</a>
-                        <a className="dropdown-item" onClick={() => makeSetTitlesSize(props.setTitlesSize, '5vw')}>{props.fetchData[props.lang].strings[21]}</a>
-                        <a className="dropdown-item" onClick={() => makeSetTitlesSize(props.setTitlesSize, '6vw')}>{props.fetchData[props.lang].strings[22]}</a>
+
+                <div class="input-group mt-2" dir={`${props.lang == 'en' ? 'ltr' : 'rtl'}`}>
+                    <div class="input-group-prepend">
+                        <label class="input-group-text" style={{borderRadius: `${props.lang == 'en' ? '3px 0 0 3px' : '0 3px 3px 0'}`}} for="inputGroupSelect02">{props.fetchData[props.lang].strings[24]}</label>
                     </div>
+                    <select style={{borderRadius: `${props.lang == 'en' ? '0 3px 3px 0' : '3px 0 0 3px'}`}} dir={`${props.lang == 'en' ? 'ltr' : 'rtl'}`} onChange={e => makeSetTitlesSize(props.setTitlesSize, e.target.value)} class="custom-select" id="inputGroupSelect01">
+                        <option value="2vw" selected={props.options.titlesSize == '2vw' ? true : false}>{props.fetchData[props.lang].strings[18]}</option>
+                        <option value="3vw" selected={props.options.titlesSize == '3vw' ? true : false}>{props.fetchData[props.lang].strings[19]}</option>
+                        <option value="4vw" selected={props.options.titlesSize == '4vw' ? true : false}>{props.fetchData[props.lang].strings[20]}</option>
+                        <option value="5vw" selected={props.options.titlesSize == '5vw' ? true : false}>{props.fetchData[props.lang].strings[21]}</option>
+                        <option value="6vw" selected={props.options.titlesSize == '6vw' ? true : false}>{props.fetchData[props.lang].strings[22]}</option>
+                    </select>
                 </div>
-                <div className="h5 user-select-none" style={{fontSize: props.options.titlesSize}}><span className="px-2" style={{backgroundColor: '#d0d0d0'}}>{props.fetchData[props.lang].strings[25]}</span></div>
-            </div>
-            <div className="my-2">
-                <div className="dropdown">
-                    <button className="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton3" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        {`${props.fetchData[props.lang].strings[33]}: ${props.listLength}`}
-                    </button>
-                    <div className="dropdown-menu" aria-labelledby="dropdownMenuButton3">
-                        <a className="dropdown-item" onClick={() => makeSetListLength(props.setListLength, 5)}>5</a>
-                        <a className="dropdown-item" onClick={() => makeSetListLength(props.setListLength, 10)}>10</a>
-                        <a className="dropdown-item" onClick={() => makeSetListLength(props.setListLength, 20)}>20</a>
-                        <a className="dropdown-item" onClick={() => makeSetListLength(props.setListLength, 40)}>40</a>
-                        <a className="dropdown-item" onClick={() => makeSetListLength(props.setListLength, 80)}>80</a>
+
+                <div class="input-group mt-2" dir={`${props.lang == 'en' ? 'ltr' : 'rtl'}`}>
+                    <div class="input-group-prepend">
+                        <label class="input-group-text" style={{borderRadius: `${props.lang == 'en' ? '3px 0 0 3px' : '0 3px 3px 0'}`}} for="inputGroupSelect03">{props.fetchData[props.lang].strings[33]}</label>
                     </div>
+                    <select style={{borderRadius: `${props.lang == 'en' ? '0 3px 3px 0' : '3px 0 0 3px'}`}} dir={`${props.lang == 'en' ? 'ltr' : 'rtl'}`} onChange={e => makeSetListLength(props.setListLength, e.target.value)} class="custom-select" id="inputGroupSelect01">
+                        <option value="5" selected={props.listLength == '5' ? true : false}>5</option>
+                        <option value="10" selected={props.listLength == '10' ? true : false}>10</option>
+                        <option value="20" selected={props.listLength == '20' ? true : false}>20</option>
+                        <option value="80" selected={props.listLength == '40' ? true : false}>40</option>
+                        <option value="40" selected={props.listLength == '80' ? true : false}>80</option>
+                    </select>
                 </div>
             </div>
-            <div className="h2 font-weight-bold position-absolute border-top border-right m-0 user-select-none" style={{bottom: 0}}>V-{props.options.appVersion}</div>
+            <div className="d-flex justify-content-between w-75 mt-2" style={{transform: 'translateX(17%)'}}>
+                <img className="user-select-none" src={placeholderImg} style={{width: props.options.imagesSize, transition: '1s'}}/>
+                <div className="h5 user-select-none" style={{fontSize: props.options.titlesSize, transition: '1s'}}><span className="px-2" style={{backgroundColor: '#d0d0d0'}}>{props.fetchData[props.lang].strings[25]}</span></div>
+            </div>
         </div>
     )
 }
