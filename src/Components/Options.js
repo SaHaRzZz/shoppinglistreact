@@ -1,6 +1,6 @@
 import React from 'react';
 import {connect} from 'react-redux';
-import {faHome} from '@fortawesome/free-solid-svg-icons';
+import {faHome, faPlusCircle} from '@fortawesome/free-solid-svg-icons';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {Link, useHistory} from 'react-router-dom';
 
@@ -53,6 +53,28 @@ function Options(props) {
         return '';
     }
     props.setCameFromOptions(true);
+
+    const exampleCard = () => {
+        return (
+            <div>
+            <div className="card flex-row my-1 shadow text-center" style={{backgroundColor: 'rgb(255, 0, 0, 0.5)'}}>
+                <div className="card-header border-0" style={{transition: '1s', height: `${parseInt(props.options.imagesSize.split("").reverse().join("").slice(2).split("").reverse().join("")) + 24}px`}}>
+                    <img src={placeholderImg} className="user-select-none" style={{width: props.options.imagesSize, transition: '1s'}}/>
+                </div>
+                <div className="card-body row p-0 m-0 text-wrap">
+                    <div className="card-title text-decoration-underline font-weight-bold col-5 h5 m-0 user-select-none align-self-center text-capitalize" style={{fontSize: props.options.titlesSize, transition: '1s'}}>{props.fetchData[props.lang].strings[54]}</div>
+                    <div className="text-center h5 font-italic align-self-center">
+                        <div className="rounded-circle shadow-lg col-1 font-italic mx-2">
+                            <div className="mr-2 position-absolute" style={{transform: "translate(-50%, -40%)"}}><FontAwesomeIcon size="2x"  icon={faPlusCircle}/></div>
+                        </div>
+                    </div>
+                    <div className="card-title h-100 text-muted m-0 user-select-none align-self-center position-absolute text-capitalize" style={{right: '10px'}}>{props.fetchData[props.lang].strings[53]}</div>
+                </div>
+                </div>
+            </div>
+        )
+    }
+
     return (
         <div className="text-center">
             <Link to="/">
@@ -63,7 +85,7 @@ function Options(props) {
             <div className="container w-75 p-0">
                 <div class="input-group mt-2" dir={`${props.lang == 'en' ? 'ltr' : 'rtl'}`}>
                     <div class="input-group-prepend">
-                        <label class="input-group-text" style={{borderRadius: `${props.lang == 'en' ? '3px 0 0 3px' : '0 3px 3px 0'}`, width: '10rem'}} for="inputGroupSelect01">{props.fetchData[props.lang].strings[23]}</label>
+                        <label class="input-group-text" style={{borderRadius: `${props.lang == 'en' ? '3px 0 0 3px' : '0 3px 3px 0'}`, width: '11rem'}} for="inputGroupSelect01">{props.fetchData[props.lang].strings[23]}</label>
                     </div>
                     <select style={{borderRadius: `${props.lang == 'en' ? '0 3px 3px 0' : '3px 0 0 3px'}`}} dir={`${props.lang == 'en' ? 'ltr' : 'rtl'}`} onChange={e => makeSetImagesSize(props.setImagesSize, e.target.value)} class="custom-select" id="inputGroupSelect01">
                         <option value="64px" selected={props.options.imagesSize == '64px' ? true : false}>{props.fetchData[props.lang].strings[19]}</option>
@@ -74,7 +96,7 @@ function Options(props) {
 
                 <div class="input-group mt-2" dir={`${props.lang == 'en' ? 'ltr' : 'rtl'}`}>
                     <div class="input-group-prepend">
-                        <label class="input-group-text" style={{borderRadius: `${props.lang == 'en' ? '3px 0 0 3px' : '0 3px 3px 0'}`}} for="inputGroupSelect02">{props.fetchData[props.lang].strings[24]}</label>
+                        <label class="input-group-text" style={{borderRadius: `${props.lang == 'en' ? '3px 0 0 3px' : '0 3px 3px 0'}`, width: '11rem'}} for="inputGroupSelect02">{props.fetchData[props.lang].strings[24]}</label>
                     </div>
                     <select style={{borderRadius: `${props.lang == 'en' ? '0 3px 3px 0' : '3px 0 0 3px'}`}} dir={`${props.lang == 'en' ? 'ltr' : 'rtl'}`} onChange={e => makeSetTitlesSize(props.setTitlesSize, e.target.value)} class="custom-select" id="inputGroupSelect01">
                         <option value="2vw" selected={props.options.titlesSize == '2vw' ? true : false}>{props.fetchData[props.lang].strings[18]}</option>
@@ -85,9 +107,9 @@ function Options(props) {
                     </select>
                 </div>
 
-                <div class="input-group mt-2" dir={`${props.lang == 'en' ? 'ltr' : 'rtl'}`}>
+                <div class="input-group my-2" dir={`${props.lang == 'en' ? 'ltr' : 'rtl'}`}>
                     <div class="input-group-prepend">
-                        <label class="input-group-text" style={{borderRadius: `${props.lang == 'en' ? '3px 0 0 3px' : '0 3px 3px 0'}`}} for="inputGroupSelect03">{props.fetchData[props.lang].strings[33]}</label>
+                        <label class="input-group-text" style={{borderRadius: `${props.lang == 'en' ? '3px 0 0 3px' : '0 3px 3px 0'}`, width: '11rem'}} for="inputGroupSelect03">{props.fetchData[props.lang].strings[33]}</label>
                     </div>
                     <select style={{borderRadius: `${props.lang == 'en' ? '0 3px 3px 0' : '3px 0 0 3px'}`}} dir={`${props.lang == 'en' ? 'ltr' : 'rtl'}`} onChange={e => makeSetListLength(props.setListLength, e.target.value)} class="custom-select" id="inputGroupSelect01">
                         <option value="5" selected={props.listLength == '5' ? true : false}>5</option>
@@ -98,10 +120,8 @@ function Options(props) {
                     </select>
                 </div>
             </div>
-            <div className="d-flex justify-content-between w-75 mt-2" style={{transform: 'translateX(17%)'}}>
-                <img className="user-select-none" src={placeholderImg} style={{width: props.options.imagesSize, transition: '1s'}}/>
-                <div className="h5 user-select-none" style={{fontSize: props.options.titlesSize, transition: '1s'}}><span className="px-2" style={{backgroundColor: '#d0d0d0'}}>{props.fetchData[props.lang].strings[25]}</span></div>
-            </div>
+            {exampleCard()}
+            <div className="h2 font-weight-bold position-absolute border-top border-right m-0 user-select-none" style={{bottom: 0}}>V-{props.options.appVersion}</div>
         </div>
     )
 }

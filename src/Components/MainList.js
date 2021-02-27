@@ -428,9 +428,8 @@ function MainList(props) {
             </div>
             {filterEdit ? 
             <div>
-                <btn className="btn btn-info" onClick={() => setFilterEdit(false)}>{props.fetchData[props.lang].strings[52]}</btn>
                 <div className="container w-50">
-                    <div class="input-group mt-2" dir={`${props.lang == 'en' ? 'ltr' : 'rtl'}`}>
+                    <div class="input-group my-3" dir={`${props.lang == 'en' ? 'ltr' : 'rtl'}`}>
                         <div class="input-group-prepend">
                             <label class="input-group-text" style={{borderRadius: `${props.lang == 'en' ? '3px 0 0 3px' : '0 3px 3px 0'}`}} for="inputGroupSelect01">{props.fetchData[props.lang].strings[50]}</label>
                         </div>
@@ -442,59 +441,50 @@ function MainList(props) {
                         </select>
                     </div>
                 </div>
+                <btn className="btn btn-info" style={{width: '11rem', borderRadius: '10px 10px 0 0'}} onClick={() => setFilterEdit(false)}>{props.fetchData[props.lang].strings[52]}</btn>
             </div>
             :
             <div>
                 <div className="w-100 position-fixed btn" onClick={scrollToTop} style={{zIndex: 4, left: '50%', transform: 'translateX(-50%)', backgroundColor: '#f6f6f6', opacity: 0.75, height: '50px', display: scrollY > 280 ? 'block' : 'none', fontSize: '30px'}}>{props.fetchData[props.lang].strings[32]}</div>
                 {props.filterText ? <a href="#"><div className="d-inline position-absolute" style={{transform: "translate(-12.5%, 12.5%)", width: '2rem', zIndex: 3}} onClick={() => [props.setFilterText(''), document.getElementById('filterText').value = '']}><FontAwesomeIcon icon={faTimesCircle}/></div></a> : ''}
-                <input id="filterText" placeholder={`${props.fetchData[props.lang].strings[0]}: ${props.filterType ? props.fetchData[props.lang].strings[2] : props.fetchData[props.lang].strings[1]}`} className="text-center" onChange={event => props.setFilterText(event.target.value)}></input>
+                <input id="filterText" placeholder={`${props.fetchData[props.lang].strings[0]}: ${props.filterType ? props.fetchData[props.lang].strings[2] : props.fetchData[props.lang].strings[1]}`} className="text-center mt-3" onChange={event => props.setFilterText(event.target.value)}></input>
                 {/* Desktop Section START */}
                 <a className={`position-absolute btn ${SpeechRecognition.browserSupportsSpeechRecognition() ? '' : 'disabled'} ${listening ? 'text-primary' : 'text-danger'}`} style={{transform: `translate(${listening ? '23%' : '0%'}, 150%)`}} onClick={() => listening ? SpeechRecognition.abortListening() : SpeechRecognition.startListening({language: props.lang == 'en' ? 'en-US' : 'he'})}><FontAwesomeIcon icon={listening ? faMicrophone : faMicrophoneSlash} size="3x"/></a>
                 {/* Desktop Section END */}
                 {props.appVersion != props.fetchData.general.version ? <div className="text-danger" dir={`${props.lang == 'en' ? 'ltr' : 'rtl'}`}>{props.fetchData[props.lang].strings[34]}!</div> : ''}
                 <div className="mt-2">
-                    <button className="btn btn-info rounded-0" onClick={() => [props.setFilterText(''), document.getElementById('filterText').value = '', setFilterEdit(true)]}>{props.fetchData[props.lang].strings[51]}</button>
-                    <button className="btn btn-primary rounded-0" type="button" onClick={e => {
+                    <button className={`btn ${props.final ? 'btn-primary' : 'btn-danger'}`} style={{width: '11rem', borderRadius: '10px 10px 0 0'}} type="button" onClick={e => {
                         e.target.blur();
                         props.setFinal(!props.final);
                         props.setFilterText('');
                         document.getElementById('filterText').value = '';
                     }}>{`${props.final ? props.fetchData[props.lang].strings[3] : props.fetchData[props.lang].strings[4]}`}</button>
                     <div>
-                        <div>
-                            <Popup closeOnDocumentClick={false} trigger={<div className="btn btn-info rounded-0"><FontAwesomeIcon icon={faList} size="1x"/></div>}>
+                        <div dir="rtl">
+                            <button className="btn btn-info rounded-0" style={{width: '7rem'}} onClick={() => [props.setFilterText(''), document.getElementById('filterText').value = '', setFilterEdit(true)]}>{props.fetchData[props.lang].strings[51]}</button>
+                            <Popup closeOnDocumentClick={true} trigger={<div className="btn btn-secondary rounded-0" style={{width: '4rem'}}><FontAwesomeIcon icon={faList} size="1x"/></div>}>
                                 <div className="col text-center">
                                     <button className="btn btn-info rounded-0 col-12 font-weight-bold" style={{fontSize: '14px'}} onClick={e => {
                                         e.target.blur();
                                         sharedListMake();
                                     }}>{props.fetchData[props.lang].strings[38]}</button>
-                                    <button className="btn btn-secondary rounded-0 col-12" onClick={e => {
+                                    <button className="btn btn-success rounded-0 col-12" onClick={e => {
                                         e.target.blur();
                                         setPasteCode(props.setList, props.fetchData[props.lang].strings[15], props.fetchData[props.lang].strings[16], props.setOnline, props.setId, props.id, props.isOnline, props.setLastConnected, props.fetchData, setOnlineLoading);
                                     }}>{props.fetchData[props.lang].strings[5]}</button>
-                                    <Popup closeOnDocumentClick={false} trigger={<div className="btn btn-primary rounded-0 col-12">{props.fetchData[props.lang].strings[6]}</div>}>
 
-                                        <Popup closeOnDocumentClick={true} trigger={<div className="btn btn-secondary rounded-0 col-12">{props.fetchData[props.lang].strings[7]}</div>}>
-                                            <div className="d-flex justify-content-around">
-                                                <button className="btn btn-secondary rounded-0" onClick={e => {
-                                                    e.target.blur();
-                                                    getListString(props.list, props.fetchData[props.lang].items, props.fetchData[props.lang].strings[14], props.fetchData[props.lang].strings[26]);
-                                                }}><FontAwesomeIcon icon={faCopy} size="2x"/></button>
-                                                {DynamicWhatsappShareString(props.list, props.fetchData[props.lang].items, props.fetchData[props.lang].strings[26])}
-                                            </div>
-                                        </Popup>
+                                    <div>
+                                        <div className="btn btn-secondary rounded-0 col-6" onClick={e => {
+                                            e.target.blur();
+                                            getListString(props.list, props.fetchData[props.lang].items, props.fetchData[props.lang].strings[14], props.fetchData[props.lang].strings[26]);
+                                        }}>{props.fetchData[props.lang].strings[7]}</div>
 
-                                        <Popup closeOnDocumentClick={true} trigger={<div className="btn btn-secondary rounded-0 col-12">{props.fetchData[props.lang].strings[8]}</div>}>
-                                            <div className="d-flex justify-content-around">
-                                                <button className="btn btn-secondary rounded-0" onClick={e => {
-                                                    e.target.blur();
-                                                    getBase64Code(props.list, props.fetchData[props.lang].strings[14]);
-                                                }}><FontAwesomeIcon icon={faCopy} size="2x"/></button>
-                                                {DynamicWhatsappShareCode(props.list)}
-                                            </div>
-                                        </Popup>
-                                        
-                                    </Popup>
+                                        <div className="btn btn-secondary rounded-0 col-6" onClick={e => {
+                                            e.target.blur();
+                                            getBase64Code(props.list, props.fetchData[props.lang].strings[14]);
+                                        }}>{props.fetchData[props.lang].strings[8]}</div>
+                                    </div>
+
                                     <button className="btn btn-danger rounded-0 col-12" onClick={e => {
                                         e.target.blur();
                                         window.confirm(`${props.fetchData[props.lang].strings[17]}?`) && resetList(props.setList, props.id, props.isOnline, props.fetchData, setCurrentPage);
@@ -508,7 +498,7 @@ function MainList(props) {
             <button onClick={e => {
                     e.target.blur();
                     props.setFilterType(!props.filterType);
-                }} className="btn btn-danger my-2" style={{borderRadius: '20px', width: '12rem'}}>{`${props.fetchData[props.lang].strings[0]}: ${props.filterType ? props.fetchData[props.lang].strings[2] : props.fetchData[props.lang].strings[1]}`}</button>
+                }} className="btn btn-danger mb-2" style={{borderRadius: '0 0 10px 10px', width: '11rem'}}>{`${props.fetchData[props.lang].strings[0]}: ${props.filterType ? props.fetchData[props.lang].strings[2] : props.fetchData[props.lang].strings[1]}`}</button>
                 {onlineLoading ? [<br/>, <img src={loadingGif}/>] : ''}
                 {props.isOnline ? <div dir={`${props.lang == "en" ? 'ltr' : 'rtl'}`} className="btn d-block" onClick={() => {
                     if(window.confirm(`${props.fetchData[props.lang].strings[28]}?`)) {

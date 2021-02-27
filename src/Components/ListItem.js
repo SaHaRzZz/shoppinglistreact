@@ -206,7 +206,6 @@ function ListItem(props) {
                         }
                         </div>
                     </Popup>
-                    
                 ]
             :
             ''}
