@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import {connect} from 'react-redux';
-import {faCog, faCopy, faList, faGlobe, faTimesCircle, faUndo, faMicrophone, faMicrophoneSlash} from '@fortawesome/free-solid-svg-icons';
+import {faCog, faList, faGlobe, faTimesCircle, faUndo, faMicrophone, faMicrophoneSlash} from '@fortawesome/free-solid-svg-icons';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {Link} from 'react-router-dom';
 import {encode, decode} from 'js-base64';
-import {WhatsappShareButton, WhatsappIcon} from '@kashuab/react-share';
 import Popup from 'reactjs-popup';
 import * as uuid from 'uuid';
 import axios from 'axios';
@@ -107,42 +106,6 @@ const getListString = (list, fetchData, successMsg, noteMsg) => {
         alert(`${successMsg}!`);
     }
 }
-
-const DynamicWhatsappShareCode = list => {
-    const getUrl = async () => {
-        updatingList = list;
-        updatingList = JSON.stringify(updatingList);
-        updatingList = encode(updatingList);
-        return updatingList;
-    };
-  
-    return (
-        <WhatsappShareButton url={getUrl}><WhatsappIcon size={60}/></WhatsappShareButton>
-    );
-};
-
-const DynamicWhatsappShareString = (list, fetchData, noteMsg) => {
-    const getUrl = async () => {
-        let listKeys = Object.keys(list);
-        let listValues = Object.values(list).map(item => item[0] != undefined ? item[0] : item);
-        listKeys = listKeys.map((listKey, index) => {
-            const specificItem = fetchData.find(item => item.img.split("").reverse().join("").slice(8).split("").reverse().join("") == listKey);
-            if(specificItem && listValues[index]) {
-                specificItem.title = specificItem.title.replace(/(^\w{1})|(\s{1}\w{1})/g, match => match.toUpperCase());
-                const note = list[specificItem.img.split("").reverse().join("").slice(8).split("").reverse().join("")][1];
-                return `${specificItem.title}: ${listValues[index]}${note ? `, ${noteMsg}: ${note}` : ''}`;
-            }
-        });
-        if(listKeys) {
-            listKeys = listKeys.join('\n');
-            return listKeys;
-        }
-    };
-  
-    return (
-        <WhatsappShareButton url={getUrl}><WhatsappIcon size={60}/></WhatsappShareButton>
-    );
-};
 
 const resetList = (setList, id, isOnline, fetchData, setCurrentPage) => {
     if(isOnline) {
@@ -441,7 +404,14 @@ function MainList(props) {
                         </select>
                     </div>
                 </div>
-                <btn className="btn btn-info" style={{width: '11rem', borderRadius: '10px 10px 0 0'}} onClick={() => setFilterEdit(false)}>{props.fetchData[props.lang].strings[52]}</btn>
+                <div>
+                    <div onClick={e => {
+                        e.target.blur();
+                        props.setFilterType(!props.filterType);
+                    }} className="btn btn-danger" style={{borderRadius: '10px 10px 0 0', width: '11rem'}}>{`${props.fetchData[props.lang].strings[0]}: ${props.filterType ? props.fetchData[props.lang].strings[2] : props.fetchData[props.lang].strings[1]}`}</div>
+                    <br/>
+                    <div className="btn btn-info" style={{width: '11rem', borderRadius: '0 0 10px 10px'}} onClick={() => setFilterEdit(false)}>{props.fetchData[props.lang].strings[52]}</div>
+                </div>
             </div>
             :
             <div>
@@ -461,8 +431,8 @@ function MainList(props) {
                     }}>{`${props.final ? props.fetchData[props.lang].strings[3] : props.fetchData[props.lang].strings[4]}`}</button>
                     <div>
                         <div dir="rtl">
-                            <button className="btn btn-info rounded-0" style={{width: '7rem'}} onClick={() => [props.setFilterText(''), document.getElementById('filterText').value = '', setFilterEdit(true)]}>{props.fetchData[props.lang].strings[51]}</button>
-                            <Popup closeOnDocumentClick={true} trigger={<div className="btn btn-secondary rounded-0" style={{width: '4rem'}}><FontAwesomeIcon icon={faList} size="1x"/></div>}>
+                            <button className="btn btn-info" style={{width: '7rem', borderRadius: '0 0 10px 0'}} onClick={() => [props.setFilterText(''), document.getElementById('filterText').value = '', setFilterEdit(true)]}>{props.fetchData[props.lang].strings[51]}</button>
+                            <Popup closeOnDocumentClick={true} trigger={<div className="btn btn-secondary" style={{width: '4rem', borderRadius: '0 0 0 10px'}}><FontAwesomeIcon icon={faList} size="1x"/></div>}>
                                 <div className="col text-center">
                                     <button className="btn btn-info rounded-0 col-12 font-weight-bold" style={{fontSize: '14px'}} onClick={e => {
                                         e.target.blur();
@@ -495,10 +465,7 @@ function MainList(props) {
                     </div>
                 </div>
             </div>}
-            <button onClick={e => {
-                    e.target.blur();
-                    props.setFilterType(!props.filterType);
-                }} className="btn btn-danger mb-2" style={{borderRadius: '0 0 10px 10px', width: '11rem'}}>{`${props.fetchData[props.lang].strings[0]}: ${props.filterType ? props.fetchData[props.lang].strings[2] : props.fetchData[props.lang].strings[1]}`}</button>
+
                 {onlineLoading ? [<br/>, <img src={loadingGif}/>] : ''}
                 {props.isOnline ? <div dir={`${props.lang == "en" ? 'ltr' : 'rtl'}`} className="btn d-block" onClick={() => {
                     if(window.confirm(`${props.fetchData[props.lang].strings[28]}?`)) {
