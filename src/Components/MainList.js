@@ -92,7 +92,7 @@ const getListString = (list, fetchData, successMsg, noteMsg) => {
             const specificItem = fetchData.find(item => item.id == listKey);
             if(specificItem && listValues[index]) {
                 specificItem.title = specificItem.title.replace(/(^\w{1})|(\s{1}\w{1})/g, match => match.toUpperCase());
-                const note = list[specificitem.id][1];
+                const note = list[specificItem.id][1];
                 return `${specificItem.title}: ${listValues[index]}${note ? `, ${noteMsg}: ${note}` : ''}`;
             }
         }
