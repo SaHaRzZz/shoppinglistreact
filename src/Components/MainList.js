@@ -50,7 +50,7 @@ const renderByFilter = (filtering, filteringType, fetchData, filterCategory, fin
     }
 
     if(final)
-        fetchData = fetchData.filter(item => list[item.img.split("").reverse().join("").slice(8).split("").reverse().join("")]);
+        fetchData = fetchData.filter(item => list[item.id]);
 
     listLength = parseInt(listLength);
     if(fetchData.length <= listLength + currentPage * listLength && !limitPage) {
@@ -65,7 +65,7 @@ const renderByFilter = (filtering, filteringType, fetchData, filterCategory, fin
     fetchData = fetchData.map((item, index)=> {
         if(index < listLength + currentPage * listLength && index >= currentPage * listLength) {
             currentLength += 1;
-            return <ListItem logo={item.img} title={item.title} category={item.category} id={item.img.split("").reverse().join("").slice(8).split("").reverse().join("")}/>;
+            return <ListItem logo={`${item.id}_400.png`} title={item.title} category={item.category} id={item.id}/>;
         }
         else {
             return;
@@ -89,10 +89,10 @@ const getListString = (list, fetchData, successMsg, noteMsg) => {
     let listValues = Object.values(list).map(item => item[0] != undefined ? item[0] : item);
     listKeys = listKeys.map((listKey, index) => {
         try {
-            const specificItem = fetchData.find(item => item.img.split("").reverse().join("").slice(8).split("").reverse().join("") == listKey);
+            const specificItem = fetchData.find(item => item.id == listKey);
             if(specificItem && listValues[index]) {
                 specificItem.title = specificItem.title.replace(/(^\w{1})|(\s{1}\w{1})/g, match => match.toUpperCase());
-                const note = list[specificItem.img.split("").reverse().join("").slice(8).split("").reverse().join("")][1];
+                const note = list[specificitem.id][1];
                 return `${specificItem.title}: ${listValues[index]}${note ? `, ${noteMsg}: ${note}` : ''}`;
             }
         }
@@ -148,7 +148,7 @@ const preloadImages = (fetchData, imagesHost) => {
             }
         }
         list.push(img);
-        img.src = `${imagesHost}${fetchData[i].img}`;
+        img.src = `${imagesHost}${fetchData[i].id}_400.png`;
     }
 }
 
