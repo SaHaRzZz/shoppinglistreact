@@ -115,8 +115,8 @@ function Options(props) {
                         <option value="5" selected={props.listLength == '5' ? true : false}>5</option>
                         <option value="10" selected={props.listLength == '10' ? true : false}>10</option>
                         <option value="20" selected={props.listLength == '20' ? true : false}>20</option>
-                        <option value="80" selected={props.listLength == '40' ? true : false}>40</option>
-                        <option value="40" selected={props.listLength == '80' ? true : false}>80</option>
+                        <option value="40" selected={props.listLength == '40' ? true : false}>40</option>
+                        <option value="80" selected={props.listLength == '80' ? true : false}>80</option>
                     </select>
                 </div>
             </div>

@@ -28,8 +28,9 @@ let historyList = [];
 let callHistory = false;
 
 const renderByFilter = (filtering, filteringType, fetchData, filterCategory, final, list, currentPage, listLength, setLimitPage, limitPage, setCurrentPage, setItemsRendered, itemsRendered, subFilter1) => {
-    if(filterCategory)
-        fetchData = fetchData.filter(item => item.filter == filterCategory);
+    if(filterCategory) {
+        fetchData = fetchData.filter(item => item.filters.category == filterCategory);
+    }
         
     if(filtering != '') {
         filtering = filtering.toLowerCase();
@@ -42,7 +43,7 @@ const renderByFilter = (filtering, filteringType, fetchData, filterCategory, fin
         }
     }
 
-    fetchData = fetchData.sort((a, b) => `${a.order}${a.title}` < `${b.order}${b.title}` ? -1 : 1);
+    fetchData = fetchData.sort((a, b) => a.title > b.title);
 
     if(subFilter1) {
         fetchData = fetchData.filter(item => item.filters.kosher ? item.filters.kosher.includes(subFilter1) : false);
@@ -398,12 +399,12 @@ function MainList(props) {
                         </div>
                         <select style={{borderRadius: `${props.lang == 'en' ? '0 3px 3px 0' : '3px 0 0 3px'}`}} dir={`${props.lang == 'en' ? 'ltr' : 'rtl'}`} onChange={e => [props.setFilterCategory(e.target.value), props.setSubFilter1('')]} class="custom-select" id="inputGroupSelect01">
                             <option value="" selected={props.filterCategory == '' ? true : false}>{props.fetchData[props.lang].strings[10]}</option>
-                            <option value="1" selected={props.filterCategory == '1' ? true : false}>{props.fetchData[props.lang].strings[11]}</option>
-                            <option value="2" selected={props.filterCategory == '2' ? true : false}>{props.fetchData[props.lang].strings[12]}</option>
-                            <option value="3" selected={props.filterCategory == '3' ? true : false}>{props.fetchData[props.lang].strings[13]}</option>
+                            <option value="food" selected={props.filterCategory == 'food' ? true : false}>{props.fetchData[props.lang].strings[11]}</option>
+                            <option value="hygiene" selected={props.filterCategory == 'hygiene' ? true : false}>{props.fetchData[props.lang].strings[12]}</option>
+                            <option value="baby" selected={props.filterCategory == 'baby' ? true : false}>{props.fetchData[props.lang].strings[13]}</option>
                         </select>
                     </div>
-                    {props.filterCategory == '1' ?
+                    {props.filterCategory == 'food' ?
                         <div class="input-group" dir={`${props.lang == 'en' ? 'ltr' : 'rtl'}`}>
                             <div class="input-group-prepend">
                             <label class="input-group-text" style={{borderRadius: `${props.lang == 'en' ? '3px 0 0 3px' : '0 3px 3px 0'}`}} for="inputGroupSelect02">{props.fetchData[props.lang].strings[50]}</label>
