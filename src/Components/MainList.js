@@ -45,7 +45,7 @@ const renderByFilter = (filtering, filteringType, fetchData, filterCategory, fin
     fetchData = fetchData.sort((a, b) => `${a.order}${a.title}` < `${b.order}${b.title}` ? -1 : 1);
 
     if(subFilter1) {
-        fetchData = fetchData.filter(item => item.filters.kosher == subFilter1)
+        fetchData = fetchData.filter(item => item.filters.kosher ? item.filters.kosher.includes(subFilter1) : false);
     }
 
     if(final)
@@ -359,7 +359,7 @@ function MainList(props) {
     return (
         !props.fetchLoading ?
         <div className="text-center">
-            <div className="position-absolute" style={{left: 0}}>
+            <div className="position-absolute" style={{left: 0, top: 0}}>
                 <Link to="/options">
                     <FontAwesomeIcon type="button" onClick={() => {
                         if(props.isOnline) {
@@ -386,23 +386,37 @@ function MainList(props) {
                 : ''}
             </div>
             
-            <div className="position-absolute" style={{right: 0}}>
+            <div className="position-absolute" style={{right: 0, top: 0}}>
                 <img type="button" onClick={() => changeLangauge(props.setLangauge, props.lang == 'en' ? 'he' : 'en')} src={props.lang == 'en' ? enFlag : heFlag} style={{zIndex: 2}}></img>
             </div>
             {filterEdit ? 
             <div>
-                <div className="container w-50">
-                    <div class="input-group my-3" dir={`${props.lang == 'en' ? 'ltr' : 'rtl'}`}>
+                <div className="container w-50 my-3">
+                    <div class="input-group" dir={`${props.lang == 'en' ? 'ltr' : 'rtl'}`}>
                         <div class="input-group-prepend">
-                            <label class="input-group-text" style={{borderRadius: `${props.lang == 'en' ? '3px 0 0 3px' : '0 3px 3px 0'}`}} for="inputGroupSelect01">{props.fetchData[props.lang].strings[50]}</label>
+                            <label class="input-group-text" style={{borderRadius: `${props.lang == 'en' ? '3px 0 0 3px' : '0 3px 3px 0'}`}} for="inputGroupSelect01">{props.fetchData[props.lang].strings[55]}</label>
                         </div>
-                        <select style={{borderRadius: `${props.lang == 'en' ? '0 3px 3px 0' : '3px 0 0 3px'}`}} dir={`${props.lang == 'en' ? 'ltr' : 'rtl'}`} onChange={e => props.setSubFilter1(e.target.value)} class="custom-select" id="inputGroupSelect01">
-                            <option value="" selected={props.subFilter1 == '' ? true : false}>{props.fetchData[props.lang].strings[10]}</option>
-                            <option value="parve" selected={props.subFilter1 == 'parve' ? true : false}>{props.fetchData[props.lang].strings[47]}</option>
-                            <option value="milk" selected={props.subFilter1 == 'milk' ? true : false}>{props.fetchData[props.lang].strings[48]}</option>
-                            <option value="meat" selected={props.subFilter1 == 'meat' ? true : false}>{props.fetchData[props.lang].strings[49]}</option>
+                        <select style={{borderRadius: `${props.lang == 'en' ? '0 3px 3px 0' : '3px 0 0 3px'}`}} dir={`${props.lang == 'en' ? 'ltr' : 'rtl'}`} onChange={e => [props.setFilterCategory(e.target.value), props.setSubFilter1('')]} class="custom-select" id="inputGroupSelect01">
+                            <option value="" selected={props.filterCategory == '' ? true : false}>{props.fetchData[props.lang].strings[10]}</option>
+                            <option value="1" selected={props.filterCategory == '1' ? true : false}>{props.fetchData[props.lang].strings[11]}</option>
+                            <option value="2" selected={props.filterCategory == '2' ? true : false}>{props.fetchData[props.lang].strings[12]}</option>
+                            <option value="3" selected={props.filterCategory == '3' ? true : false}>{props.fetchData[props.lang].strings[13]}</option>
                         </select>
                     </div>
+                    {props.filterCategory == '1' ?
+                        <div class="input-group" dir={`${props.lang == 'en' ? 'ltr' : 'rtl'}`}>
+                            <div class="input-group-prepend">
+                            <label class="input-group-text" style={{borderRadius: `${props.lang == 'en' ? '3px 0 0 3px' : '0 3px 3px 0'}`}} for="inputGroupSelect02">{props.fetchData[props.lang].strings[50]}</label>
+                            </div>
+                            <select style={{borderRadius: `${props.lang == 'en' ? '0 3px 3px 0' : '3px 0 0 3px'}`}} dir={`${props.lang == 'en' ? 'ltr' : 'rtl'}`} onChange={e => props.setSubFilter1(e.target.value)} class="custom-select" id="inputGroupSelect02">
+                                <option value="" selected={props.subFilter1 == '' ? true : false}>{props.fetchData[props.lang].strings[10]}</option>
+                                <option value="parve" selected={props.subFilter1 == 'parve' ? true : false}>{props.fetchData[props.lang].strings[47]}</option>
+                                <option value="milk" selected={props.subFilter1 == 'milk' ? true : false}>{props.fetchData[props.lang].strings[48]}</option>
+                                <option value="meat" selected={props.subFilter1 == 'meat' ? true : false}>{props.fetchData[props.lang].strings[49]}</option>
+                            </select>
+                        </div>
+                        :
+                        ''}
                 </div>
                 <div>
                     <div onClick={e => {
@@ -473,7 +487,7 @@ function MainList(props) {
                         dListGetTimeout = undefined;
                         props.setOnline(false);
                     }
-                }}><FontAwesomeIcon icon={faGlobe} size="2x"/><div>{props.fetchData[props.lang].strings[27]}</div></div> : onlineLoading ? '' : props.lastConnected ? [<br/>, <btn dir={`${props.lang == "en" ? 'ltr' : 'rtl'}`} className="btn btn-info mb-1 rounded-0" onClick={() => sharedListStart(props.lastConnected, props.setList, props.fetchData[props.lang].strings[15], props.fetchData[props.lang].strings[16], props.setOnline, props.setId, props.setLastConnected, props.fetchData, setOnlineLoading)}>{`${props.fetchData[props.lang].strings[29]}: ${props.lastConnected}`}</btn>] : ''}
+                }}><FontAwesomeIcon icon={faGlobe} size="2x"/><div>{props.fetchData[props.lang].strings[27]}</div></div> : onlineLoading ? '' : props.lastConnected ? [<br/>, <button dir={`${props.lang == "en" ? 'ltr' : 'rtl'}`} className="btn btn-info mb-1 rounded-0" onClick={() => sharedListStart(props.lastConnected, props.setList, props.fetchData[props.lang].strings[15], props.fetchData[props.lang].strings[16], props.setOnline, props.setId, props.setLastConnected, props.fetchData, setOnlineLoading)}>{`${props.fetchData[props.lang].strings[29]}: ${props.lastConnected}`}</button>] : <div className="my-5"></div>}
                 <div className="w-100">
                     <div className={`btn btn-primary col-6 rounded-0 ${limitPage ? 'disabled' : ''}`} onClick={() => !limitPage ? setCurrentPage(currentPage + 1) : ''}>{props.fetchData[props.lang].strings[30]}</div>
                     <div className={`btn btn-primary col-6 rounded-0 ${!currentPage ? 'disabled' : ''}`}  onClick={() => currentPage ? setCurrentPage(currentPage - 1) : ''}>{props.fetchData[props.lang].strings[31]}</div>
